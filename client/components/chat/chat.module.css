@@ -1,0 +1,74 @@
+
+.mainDiv{
+    text-align: center;
+    height: 90%;
+   } 
+   .chatDiv{
+     margin: 0 auto;
+     width: 100%;
+     height: 90%;  
+     text-align: center;  
+   } 
+   
+   .chatDiv input{
+     margin: 0 auto;
+     bottom: 0;
+   }
+   .chatDiv button{
+     margin: 0 auto;
+     bottom: 0;
+   }
+
+   .chatBoxHeader{
+    margin: 0 auto;
+    height: 2.2rem;
+    width: 95%;
+    padding-top: 0.2rem;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: burlywood;
+    box-shadow: 1px 1px 4px 0px rgba(57, 55, 55, 0.692);
+
+   }
+   
+   .chatBoxDiv{
+     padding: 0.5rem;
+     margin: 0 auto;
+     margin-bottom: 0.5rem;
+     width: 98%;
+     height: 90%;
+     overflow-y: scroll;
+     display: flex;
+     flex-direction: column; 
+   } 
+   .chatBoxDiv li{
+     list-style: none;
+   }
+   .chatBoxDiv::-webkit-scrollbar{
+     display: none;
+   } 
+   .chatBoxBottom{
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    width: 90%;
+    padding: 0.8rem;
+    background-color: lightgreen;
+   }
+   .textAreaInput{
+    resize: none;
+    width: 80%;
+   } 
+   .chatBoxBottom button{
+    border: none;
+    background-color: rgb(90, 125, 90);
+    width:4rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.5s;
+   } 
+   
+   .chatBoxBottom button:hover{
+    background-color: rgba(90, 125, 90, 0.643);
+   }
+   

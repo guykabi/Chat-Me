@@ -1,0 +1,33 @@
+.conversationDiv{
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    height: 4rem;
+    display: inline-block;
+    border-bottom: 1px lightgray solid;
+    transition: 0.4s;
+    cursor: pointer;
+    padding-top: 0.2rem;
+    padding-left: 0.2rem;
+} 
+.conversationDiv:hover{
+  background-color: rgb(228, 218, 218);
+} 
+
+.conversationImage{
+    float: left;
+    width: 15%;
+}  
+.conversationImage img{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.conversationName{
+    float: left;
+    font-weight: bold;
+    width: 40%;
+    margin-top: 8%;
+}

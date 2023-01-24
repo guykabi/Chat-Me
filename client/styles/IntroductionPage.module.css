@@ -1,0 +1,13 @@
+
+.mainHomeDiv{
+  margin: 0 auto;
+  width: 100%;
+  height: 100vh;
+  float: left;
+  padding: 0;
+  background-color: burlywood;
+  text-align: center;
+}  
+.titlesWrapper h4 a{
+  text-decoration: none;
+}

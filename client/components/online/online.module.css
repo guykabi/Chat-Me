@@ -1,0 +1,38 @@
+.mainOnlineDiv{
+    width: 100%;
+    margin: 0 auto;
+    height: 3rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem; 
+    display: flex;
+    cursor: pointer;
+    transition: 0.5s;
+}  
+.mainOnlineDiv:hover{
+    background-color: rgb(226, 221, 221);
+}
+
+.chatOnlineImgContainer{
+    position: relative;
+    margin-right: 20px;
+} 
+.chatOnlineImg{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+} 
+
+.chatOnlineBadge{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: limegreen;
+} 
+.chatOnlineName{
+   width: 50%;
+   float: left;
+}

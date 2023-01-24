@@ -1,0 +1,40 @@
+.mainMessageDiv{
+    width: 99%;
+    height: max-content;
+    margin-top: 0.2rem;
+}
+
+.ownMessage{
+  max-width: 40%;
+    float: left;
+    background-color: green;
+    color: rgb(255, 255, 255);
+    word-wrap: break-word;
+    border-radius: 8px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }  
+
+  .ownMessage span{
+    float: left;
+    font-size: x-small;
+  }
+  
+  .otherMessage{
+    max-width: 40%;
+    float: right;
+    background-color: rgba(120, 55, 181, 0.818);
+    border-radius: 8px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    color: black;
+    word-wrap: break-word;
+  }   
+
+  .otherMessage span{
+    float: right;
+    font-size: x-small;
+  }
+  
+
+  

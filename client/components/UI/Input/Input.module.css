@@ -1,0 +1,24 @@
+.inputWrapper{
+    margin: 0 auto;
+    width: 50%;
+    height: 1.5rem;
+    padding: 0.2rem;
+    border-radius: 10px;
+    margin-bottom: 0.4rem;
+    border: 1px solid gray;
+    transition: 0.4s;
+} 
+.inputWrapper:hover{
+  background-color: rgba(0, 255, 255, 0.654);
+}
+
+.inputStyle{
+    margin: 0 auto;
+    border: none;
+    width: 90%;
+    height: 90%;
+    padding-left: 0.1rem;
+    float: left;
+    outline:none;
+    background-color: rgba(0, 255, 255, 0);
+}
