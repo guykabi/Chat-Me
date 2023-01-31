@@ -24,7 +24,7 @@ const MessageSchema = new Schema({
     text:String,
     seen:Boolean
 },
- {timestamps:true}
+    {timestamps:true}
 ) 
 
 const User = model('users',UserSchema)

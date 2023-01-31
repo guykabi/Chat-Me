@@ -2,16 +2,27 @@ import * as cookie from 'cookie'
 import {push} from 'next/router'
 
 
-export const getCurrentTime = ()=>{
+export const getTime = (date)=>{
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });  
+
+        return formatter.format(Date.parse(date))
+    } 
+
+
+
+  export const getCurrentTime = () =>{
     let dateWithouthSecond = new Date();
     let timer = dateWithouthSecond
     .toLocaleTimeString(
          navigator.language, 
          {hour: '2-digit', 
-         minute:'2-digit'});
+         minute:'2-digit'}) 
          
-    return timer
-}   
+         return timer
+  }
 
 
 export const exctractCredentials = (req,tokenField)=>{

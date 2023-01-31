@@ -14,38 +14,34 @@ router.get('/logout',async(req,resp)=>{
         expires: new Date(Date.now() + 5 * 1000),
         httpOnly: true,
     })
-        return resp
-       .status(200)
-       .json({ success: true, message: 'User logged out successfully' })
+    resp
+    .status(200)
+    .json({ success: true, message: 'User logged out successfully' })
   }) 
   
   
   router.post('/refresh',async(req,resp,next)=>{
-     
-     const refreshToken = req.headers?.['refresh-token']
+     const refreshToken = req.headers['refresh-token']
      try{
         verify(refreshToken, process.env.REFRESH_TOKEN,async (err, data)  => {
             if (err) {
-               return next(new Error('Failed to authenticate refresh token'))
+                return next(new Error('Failed to authenticate refresh token'))
             }else{
-               const accessToken = generateToken()
-               resp.cookie('token',{accessToken,refreshToken},{
-                  maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
+                
+                const accessToken = generateToken()
+                
+                resp.cookie('token',{accessToken,refreshToken},{
+                maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
                 })
 
-               resp
-               .status(200)
-               .json({ success: true, message: 'New access token' })
+                resp.status(200)
+                .json({ success: true, message: 'New access token' })
             }
          })
-     }catch(err){
-         next(err)
-     }
+     }catch(err){next(err)}
   })
   
   
-  
-  //Check is user exists - if does return the user data and token
   router.post('/',async(req,resp,next)=>{ 
        const {email,password} = req.body
        
@@ -67,7 +63,7 @@ router.get('/logout',async(req,resp)=>{
              .cookie('userData',JSON.stringify(newData),{
               maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
              }) 
-  
+             
              resp.status(200).json({message:'User got authorized',userData:data})
   
      } catch(err){next(err)}

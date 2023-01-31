@@ -1,0 +1,13 @@
+.messagesDiv{
+    padding: 0.5rem;
+    margin: 0 auto;
+    width: 98%;
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column; 
+  } 
+  
+  .messagesDiv::-webkit-scrollbar{
+    display: none;
+  } 

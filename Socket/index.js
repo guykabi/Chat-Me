@@ -27,19 +27,36 @@ io.on('connection', socket=>{
         io.emit("getUsers",users)
     })  
 
-    socket.on('sendMessage',(recieverId,message,room)=>{
+    socket.on('sendMessage',(message,room)=>{
         
         if(!room){ 
               //To specific user
               const user = getUser(recieverId)
-              io.to(user?.socketId).emit('recieve-message',message)
+              socket.to(user?.socketId).emit('recieve-message',message)
+              console.log(`Message is: ${message.text}`);
         }
         else{     
               //To chat group   
               io.in(room).emit('recieve-message',message)
               console.log(`Private room message ${message.text}`);
         } 
-    }) 
+    })  
+
+    socket.on('typing',(recieverId,userTyping,room)=>{
+        if(!room){ 
+            //To specific user
+            const user = getUser(recieverId)
+            socket.to(user?.socketId).emit('user_typing',recieverId)
+            console.log(`Message is: typing...`)
+      }
+      else{     
+            //To chat group   
+            io.in(room).emit('user_typing',
+            {message:`${userTyping} is typing...`,
+            reciever:recieverId})
+            console.log(`Private room message:${userTyping} typing...`);
+      } 
+    })
 
     socket.on('join_room',room =>{
         socket.join(room)

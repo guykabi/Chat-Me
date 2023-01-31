@@ -11,12 +11,12 @@ const Conversations = ({conversations}) => {
 
   return (
     <div className={styles.conversationsDiv}> 
-    <div className={styles.searchInputWrapper}>
+     <div className={styles.searchInputWrapper}>
         <input type='text' placeholder='Search for chat...'/>
-    </div>
-      <div className={styles.allConversationsWrapper}>
+     </div>
+     <div className={styles.allConversationsWrapper}>
         {renderedCons}
-        </div>
+     </div>
     </div>
   )
 }

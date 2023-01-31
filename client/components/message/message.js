@@ -1,14 +1,16 @@
 import React,{memo} from 'react'
 import styles from './message.module.css'
+import { getTime } from '../../utils/utils'
 
-const Message = ({props,own}) => {
+const Message = ({message,own}) => {
+  
   return (
     <>
     <div className={styles.mainMessageDiv}>
       <div className={styles.contentWrapper}>
          <div className={own?styles.ownMessage:styles.otherMessage}>
-              {props.text} <br/>
-              <span>{props.time}</span>
+               <div>{message.text}</div>
+              <span>{message.createdAt?getTime(message.createdAt):message.time}</span>
          </div>  
       </div>
     </div>
@@ -16,4 +18,4 @@ const Message = ({props,own}) => {
   )
 }
 
-export default Message
+export default memo(Message)

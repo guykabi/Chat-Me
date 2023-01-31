@@ -4,7 +4,8 @@
     height: 3.5rem;
     display: flex;
     padding: 0.2rem;
-    background-color: burlywood;
+    background-color: rgb(210, 213, 167);
+
 } 
 .logo{
     float: left;

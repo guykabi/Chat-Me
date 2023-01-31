@@ -13,7 +13,7 @@ import { exctractCredentials, loginRedirectOnError } from '../../utils/utils'
 
 const Messenger = ({conversations,hasError,user}) => {
     const [socket, setSocket] = useState(null);
-    const {currentUser,dispatch} = useContext(chatContext) 
+    const {currentUser,currentChat,dispatch} = useContext(chatContext) 
     
 
     useEffect(()=>{
@@ -41,20 +41,22 @@ const Messenger = ({conversations,hasError,user}) => {
       {currentUser?<div className={styles.innerWrapper}>
 
           <div className={styles.conversationsWrapper}>
+            <span className='threeDots'></span>
              <h2>Conversations</h2><br/> 
              <Conversations conversations={conversations}/>
           </div>
 
           <div className={styles.chatWrapper}>
-             <Chat socket={socket} uid={user?._id}/>
+             {currentChat?<Chat socket={socket}/>:
+             <div className={styles.noChatDiv}>Open chat to start talk...</div>}
           </div>
 
           <div className={styles.onlineWrapper}>
              <h2>Online</h2><br/>
-             <OnlineList/>
+             <OnlineList socket={socket}/>
           </div>
 
-       </div>:<div className='center'>Loading...</div>}
+       </div>:<div className='center'><h2>Loading...</h2></div>}
     </div>
   )
 } 

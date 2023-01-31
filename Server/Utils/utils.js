@@ -20,7 +20,7 @@ const generateInitialToken = async (data,password)=>{
    const accessToken = sign(
        {id:data._id},
        process.env.ACCESS_SECRET_TOKEN,
-       {expiresIn: 30}
+       {expiresIn:process.env.JWT_EXPIRES_IN}
        ) 
    const refreshToken = sign(
         {id:data._id},

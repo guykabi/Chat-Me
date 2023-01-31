@@ -1,6 +1,11 @@
-const errorHnadler = (error,req,resp,next)=>{
-    console.log(error.message)
-    return resp.status(500).json(error.message)
+const errorHnadler = (err,req,resp,next)=>{
+    const status = err.status || 500
+    const message = err.message || 'Something went wrong'
+    return resp.status(status).json({
+        success:false,
+        status,
+        message
+    })
  }
  
  module.exports = errorHnadler

@@ -2,29 +2,45 @@ import React,{useEffect, useState,useContext} from 'react'
 import styles from './conversation.module.css' 
 import { chatContext } from '../../context/chatContext'
 
-const Conversation = ({participants,name}) => {
-  const [friendName,setFriendName]=useState(null)
-  const {currentUser} = useContext(chatContext)
+const Conversation = (props) => {
+  const [friend,setFriend]=useState(null)
+  const {currentUser,currentChat,dispatch} = useContext(chatContext)
   
 useEffect(()=>{
-  if(!name){//If not a group chat
-    let friend = participants?.find(p=>p._id !== currentUser?._id)
-      setFriendName(friend)
+  //If not a group chat
+  if(!props.chatName){
+    let friend = props.participants?.find(p=>p._id !== currentUser?._id)
+    setFriend(friend)
   }
+  
 },[])
 
+const selectedConversation = ()=>{
+  let conversation = {...props}
+  //If it's not a group chat!
+  if(!props.chatName){
+    conversation.friend = friend
+  }
+  dispatch({type:'CURRENT_CHAT',payload:conversation})
+}
 
   return (
     <>
-    <div className={styles.conversationDiv}>
+    <div className={currentChat?._id === props?._id?
+         styles.currentConversationDiv:
+         styles.conversationDiv} 
+         onClick={selectedConversation}>
+
         <div className={styles.conversationImage}> 
-          <img src={friendName?.image
+          <img src={friend?.image
           ?'/images/Andromeda_Galaxy.jpg'
           :'/images/no-avatar.png'}/>
         </div> 
+
         <div className={styles.conversationName}>
-          {name?name:friendName?.name}
+          {props.chatName?props.chatName:friend?.name}
         </div>
+        
     </div>
     </>
   )

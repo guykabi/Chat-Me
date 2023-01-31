@@ -16,3 +16,13 @@ body {
     font-size: xx-large;
   }
   
+  .threeDots::after{
+    cursor: pointer;
+    right:0;
+    z-index: 10;
+    position: absolute;
+    margin-top: 0.2rem;
+    content: '\2807';
+    font-size: 20px; 
+    transition: 0.5s;     
+}
