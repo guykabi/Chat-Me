@@ -25,11 +25,12 @@ export const getTime = (date)=>{
   }
 
 
-export const exctractCredentials = (req,tokenField)=>{
+export const exctractCredentials = (req)=>{
     let accessToken = cookie.parse(req.headers?.cookie)
-    let token = JSON.parse(accessToken.token.slice(2))[tokenField]
+    let token = JSON.parse(accessToken.token.slice(2)) 
+    let tokensObj = {accessToken:token.accessToken,refreshToken:token.refreshToken}
     let user = JSON.parse(accessToken.userData)
-    return {user,token}
+    return {user,tokensObj}
 } 
 
 

@@ -1,22 +1,22 @@
 import styles from '../styles/IntroductionPage.module.css'
 import { exctractCredentials,loginRedirectOnError,needToReSign } from '../utils/utils'; 
-import { sendRefreshToken } from '../utils/apiUtils';
+import { tokenValidation } from '../utils/apiUtils';
 import {useMutation} from 'react-query'
 import {push} from 'next/router'
 import Link from 'next/link'
 import { useEffect } from 'react';
 
- const Introduction = ({isLoggedIn,userName,token}) => { 
+ const Introduction = ({isLoggedIn,userName,tokens}) => { 
   
-  const {mutate,error,isLoading} = useMutation(sendRefreshToken,{
+  const {mutate,error,isLoading} = useMutation(tokenValidation,{
     onSuccess:()=>{
         push('/messenger')
     }
   })
 
   useEffect(()=>{
-    if(!token) return
-      mutate(token)
+    if(!tokens) return
+      mutate(tokens)
   },[])
    
   
@@ -29,7 +29,8 @@ if(isLoading){
 }
 
   if(error){
-    if(error?.response?.data?.message){
+    if(error?.response?.data?.message === 'Failed to authenticate refresh token'){
+      //If refreshToken is no more valid
       return needToReSign(userName)
     }
     return loginRedirectOnError('Welcome to messenger')
@@ -54,14 +55,13 @@ export async function getServerSideProps({req}){
   if(!req.headers.cookie){ 
     return{
       props:{isLoggedIn:false}
-    }
+    } 
   }    
 
-  /*If there is a cookie, send refresh token to get a new accesstoken*/
-  const {user,token} = exctractCredentials(req,'refreshToken')
+  const {user,tokensObj} = exctractCredentials(req)
   
   return{
-    props:{token,userName:user.name}
+    props:{tokens:tokensObj,userName:user.name}
    }
 }
 

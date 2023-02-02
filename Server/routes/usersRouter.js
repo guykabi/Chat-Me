@@ -3,6 +3,7 @@ const router = express.Router()
 const {User} =require('../models/messagesModel')
 const {hash,genSalt} = require('bcryptjs')
 const {verify} = require('jsonwebtoken')
+const {Auth} = require('../middleware/auth')
 const {excludePassword} = require('../Utils/utils')
 
 
@@ -14,24 +15,14 @@ router.get('/',async(req,resp,next)=>{
 })
 
 
-router.get('/:id',async(req,resp,next)=>{
+router.get('/:id',Auth,async(req,resp,next)=>{
    const {id} = req.params
-   const token = req?.headers?.['x-access-token']
-  
-   if (!token) return next(new Error('No Token Provided'))
-     
-    //Compares the token provided with the saved token in the env file
-      verify(token, process.env.ACCESS_SECRET_TOKEN,async (err, data)  => {
-      if (err) return next(new Error('Failed to authenticate token'))
-
       try{
             let user = await User.findById(id)
             resp.status(200).json(excludePassword(user))
       }catch(err){
             return next(new Error('No such user!'))
-      } 
-   })
-      
+      }       
 }) 
 
 
@@ -47,9 +38,11 @@ router.post('/',async (req,resp,next)=>{
 
 //Changing only the password
 router.patch('/:id',async(req,resp,next)=>{
+   
    //Crypt the changed password
    const salt = await genSalt(12)
    const passwordHash = await hash(req.body.password,salt)
+
   //Update only the password
   try{  
          let data = await User.updateOne( { _id:req.params.id} , { $set: { password:passwordHash } })

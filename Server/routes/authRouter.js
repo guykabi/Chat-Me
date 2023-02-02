@@ -1,8 +1,8 @@
 const express = require('express') 
 const router = express.Router() 
 const {User} =require('../models/messagesModel')
-const {verify} = require('jsonwebtoken')
-const {excludePassword,generateInitialToken,generateToken} = require('../Utils/utils')
+const {Auth} = require('../middleware/auth')
+const {excludePassword,generateInitialToken,generateTokens} = require('../Utils/utils')
 
 
 router.get('/logout',async(req,resp)=>{
@@ -20,28 +20,17 @@ router.get('/logout',async(req,resp)=>{
   }) 
   
   
-  router.post('/refresh',async(req,resp,next)=>{
-     const refreshToken = req.headers['refresh-token']
-     try{
-        verify(refreshToken, process.env.REFRESH_TOKEN,async (err, data)  => {
-            if (err) {
-                return next(new Error('Failed to authenticate refresh token'))
-            }else{
-                
-                const accessToken = generateToken()
-                
-                resp.cookie('token',{accessToken,refreshToken},{
-                maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
-                })
-
-                resp.status(200)
-                .json({ success: true, message: 'New access token' })
-            }
-         })
-     }catch(err){next(err)}
+  router.post('/validation',Auth,async(req,resp,next)=>{
+    try{
+      resp.status(200)
+      .json({ success: true, message: 'New access token' })  
+    }catch(err){
+      next(err)
+    }        
   })
   
   
+
   router.post('/',async(req,resp,next)=>{ 
        const {email,password} = req.body
        

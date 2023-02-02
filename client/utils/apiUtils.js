@@ -5,28 +5,30 @@ export const checkUser = async (credentials)=>{
   return data
 } 
 
-export const getConversations = async (userId,token)=>{
+export const getConversations = async (userId,tokens)=>{
   const {data:res} = await Axios('conversation/'+userId,{
     headers: {
-      'x-access-token': token
+      'x-access-token': JSON.stringify(tokens)
       }
   })
   return res
 } 
 
-export const getUserDetails = async (userId,token)=>{
+
+export const getUserDetails = async (userId,tokens)=>{
   const {data:res} = await Axios('users/'+userId,{
     headers: {
-      'x-access-token': token
+      'x-access-token':JSON.stringify(tokens)
       }
   })
   return res
 }  
 
-export const sendRefreshToken = async (refreshToken)=>{
-  const {data:res} = await Axios.post('auth/refresh',{task:'RefreshToken'},{
+
+export const tokenValidation = async (tokens)=>{
+  const {data:res} = await Axios.post('auth/validation',{task:'Auth-tokens'},{
     headers: {
-      'refresh-token': refreshToken
+      'x-access-token': JSON.stringify(tokens) 
       }
   }) 
   return res
@@ -40,7 +42,6 @@ export const logOut =async () =>{
 
 export const getMessages = async(conversationId)=> {
     const {data:res} = await Axios('messages/'+conversationId)
-    console.log(res);
     return res
 }
 

@@ -1,10 +1,12 @@
-import React,{useMemo} from 'react'
+import React,{useMemo, useState} from 'react'
 import styles from './conversations.module.css'
 import Conversation from '../conversation/conversation'
 
-const Conversations = ({conversations}) => {
-
-  const renderedCons =useMemo(()=>conversations.map((con,index)=>(
+const Conversations = ({conversations}) => { 
+   
+  const [allConversations,setAllConversations]=useState(conversations)
+   
+  const renderedCons =useMemo(()=>allConversations?.map((con,index)=>(
     <Conversation key={index} {...con}/>
 )),[conversations])
 

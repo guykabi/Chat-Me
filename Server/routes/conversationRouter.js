@@ -2,33 +2,20 @@ const express = require('express')
 const router = express.Router() 
 const Conversation = require('../models/conversationModel')
 const {verify} = require('jsonwebtoken')
+const {Auth} = require('../middleware/auth')
 
-
-router.get('/:id',async(req,resp,next)=>{
-  
-const token = req?.headers?.['x-access-token']
-
-if (!token) {
-       return next(new Error('No Token Provided'))
-   }
-    verify(token, process.env.ACCESS_SECRET_TOKEN,async (err, data)  => {
-    if(err) {
-       return next(new Error('Failed to authenticate token'))
-     }
-
-   else{
+router.get('/:id',Auth,async(req,resp,next)=>{
+        
         try{
            let allConversations =  await Conversation
            .find({participants:{$in:{_id:req.params.id}}})
            //Exclude password&friends
            .populate({path:'participants',select: '-password -friends -__v'})
    
-           resp.status(200).json(allConversations)
+           return resp.status(200).json(allConversations)
          }catch(err){
             next(err)
          }
-      }
-   }) 
 })
 
 

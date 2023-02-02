@@ -5,15 +5,18 @@ import { chatContext } from '../../context/chatContext'
 const Conversation = (props) => {
   const [friend,setFriend]=useState(null)
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
-  
+ 
 useEffect(()=>{
   //If not a group chat
   if(!props.chatName){
-    let friend = props.participants?.find(p=>p._id !== currentUser?._id)
+    let friend = props?.participants?.find(p=>p._id !== currentUser?._id)
     setFriend(friend)
   }
   
 },[])
+
+
+
 
 const selectedConversation = ()=>{
   let conversation = {...props}
