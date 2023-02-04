@@ -33,7 +33,6 @@ router.get('/logout',async(req,resp)=>{
 
   router.post('/',async(req,resp,next)=>{ 
        const {email,password} = req.body
-       
        try{
             let data = await User.findOne({email}) 
             if(!data) {
