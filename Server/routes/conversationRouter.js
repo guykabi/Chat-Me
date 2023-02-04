@@ -1,7 +1,6 @@
 const express = require('express') 
 const router = express.Router() 
 const Conversation = require('../models/conversationModel')
-const {verify} = require('jsonwebtoken')
 const {Auth} = require('../middleware/auth')
 
 router.get('/:id',Auth,async(req,resp,next)=>{
@@ -9,6 +8,7 @@ router.get('/:id',Auth,async(req,resp,next)=>{
         try{
            let allConversations =  await Conversation
            .find({participants:{$in:{_id:req.params.id}}})
+           .sort({lastActive:-1})
            //Exclude password&friends
            .populate({path:'participants',select: '-password -friends -__v'})
    
