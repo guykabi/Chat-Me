@@ -1,6 +1,8 @@
 const express = require('express') 
 const router = express.Router() 
 const {Message} =require('../models/messagesModel') 
+const Conversation = require('../models/conversationModel')
+
 
 
 router.get('/:conversationId',async(req,resp,next)=>{
@@ -23,7 +25,13 @@ router.post('/',async(req,resp,next)=>{
     //Set seen as false automatically??
    try{
       await newMessage.save()
+      await Conversation
+      .updateOne(
+      { _id:newMessage.conversationId},
+      { $set: { lastActive:new Date() } })
+
       resp.status(200).json('New message just added')
+      
    }catch(err){
     next(err)
    }
