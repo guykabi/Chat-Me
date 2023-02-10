@@ -14,9 +14,6 @@ let users = []
     return users
 } 
 
- const getUser =  (userId)=>
-{
-    return users.find(user=>user.userId === userId)
-}
+ 
 
-module.exports = {getUser,addUsers,removeUser}
+module.exports = {addUsers,removeUser}
