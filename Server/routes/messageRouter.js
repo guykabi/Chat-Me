@@ -2,15 +2,22 @@ const express = require('express')
 const router = express.Router() 
 const {Message} =require('../models/messagesModel') 
 const Conversation = require('../models/conversationModel')
+const {Auth} = require('../middleware/auth')
 
 
 
-router.get('/:conversationId',async(req,resp,next)=>{
+router.get('/:conversationId',Auth,async(req,resp,next)=>{
     const {conversationId} = req.params
+    
+    //The amount of documents to skip
+    const amount = req.headers['load-more']
+
     try{
       let messages = await Message.find({conversationId})
+      .sort({createdAt:-1})
+      .limit(30)
+      .skip(amount)
       .select('-__v')
-      //.populate({path:'sender',select: '-password -friends -__v'})
 
       resp.status(200).json(messages)
      
@@ -22,8 +29,8 @@ router.get('/:conversationId',async(req,resp,next)=>{
 
 router.post('/',async(req,resp,next)=>{
     const newMessage = new Message(req.body)
-    //Set seen as false automatically??
-   try{
+    
+    try{
       await newMessage.save()
       await Conversation
       .updateOne(
