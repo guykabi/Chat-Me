@@ -7,7 +7,8 @@ const UserSchema = new Schema({
     email:{type: String,unique: true},
     password:String,
     image:String,
-    friends:[{type: Schema.Types.ObjectId, ref: 'users' }]
+    friends:[{type: Schema.Types.ObjectId, ref: 'users' }],
+    friendsWaitingList:[{type: Schema.Types.ObjectId, ref: 'users'}]
   })  
 
   //Crypt the new user password
