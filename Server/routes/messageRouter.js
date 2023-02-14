@@ -42,7 +42,23 @@ router.post('/',async(req,resp,next)=>{
    }catch(err){
     next(err)
    }
-})  
+})   
+
+
+router.patch('/seen/:id',async(req,resp,next)=>{
+  const {id} = req.params 
+  try{
+     if(req.body.reason){
+        await Message.updateMany({conversationId:id,"seen": false}, {"$set":{"seen": true}})
+        return resp.status(200).json('Handled all unseen messages!')
+      }
+        await Message.findOneAndUpdate({_id:id},{seen:true})
+        return resp.status(200).json('Handled unseen message!')
+
+   }catch(err){
+      next(err)
+   }
+ })
 
 
 
