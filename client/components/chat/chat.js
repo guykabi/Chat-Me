@@ -1,11 +1,13 @@
 import styles from './chat.module.css'
-import { useEffect, useState,useContext,useRef} from 'react'
+import { useEffect, useState,useContext} from 'react'
 import { needToReSign,loginRedirectOnError } from '../../utils/utils'
 import { chatContext} from '../../context/chatContext'
 import {getCurrentTime} from '../../utils/utils'
 import {useQuery,useMutation} from 'react-query'
 import { getMessages,sendNewMessage } from '../../utils/apiUtils'
 import Messages from '../messages/messages'
+import { Loader } from '../UI/clipLoader/clipLoader'
+
 
 const Chat = ()=> {
   
@@ -14,14 +16,17 @@ const Chat = ()=> {
   const [messages,setMessages]= useState([])
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
-  const[typingText,setTypingText]=useState(null)
+  const [typingText,setTypingText]=useState(null)
 
 
- const {data,error} = useQuery(['messages',currentChat],()=>(
+ const {data,error,isLoading} = useQuery(['messages',currentChat],()=>(
     getMessages(currentChat?._id)),
  {
-    onSuccess:(data)=>{setMessages(data.reverse())}, 
-    staleTime:10000
+    onSuccess:(data)=>{
+      setMessages(data.reverse())
+    }, 
+    staleTime:2000,
+    refetchOnWindowFocus:false
  }) 
 
 const {mutate:sendMessage,isError} = useMutation(sendNewMessage) 
@@ -52,19 +57,15 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage)
         return () => clearTimeout(timer)
     })  
 
-    Socket.removeAllListeners('recieve-message')
-    Socket.on('recieve-message',({message,reciever})=>{
-      if(message.sender === currentUser._id || reciever !== currentUser._id){
-        setMessages(prev =>[...prev,message])
-       }
-    }) 
-   
   },[Socket])
 
 
   useEffect(()=>{
+    
+    if(!newMessage)return
     let reciever = currentChat.friend._id
     Socket.emit('typing',reciever,currentUser.name,room)
+
   },[newMessage])
 
 
@@ -76,10 +77,12 @@ const handleNewMessage = ()=>{
    messageObj.conversationId = currentChat._id
    messageObj.sender = currentUser._id
    messageObj.text = newMessage
+   messageObj.seen = false
+
+   //This field is only for the initial socket message
    messageObj.time = getCurrentTime()
    
-   let reciever = currentChat.friend._id
-   Socket.emit('sendMessage',messageObj,room,reciever)
+   Socket.emit('sendMessage',messageObj,room)
    sendMessage(messageObj)
    setNewMessage('')
   }  
@@ -91,12 +94,12 @@ const handleNewMessage = ()=>{
      }
     return loginRedirectOnError()
   }
-
+  
 
   return (
     <>
     <div className={styles.mainDiv}>
-       {messages?<div className={styles.chatDiv}>
+       <div className={styles.chatDiv}>
 
          <div className={styles.chatBoxHeader}>
 
@@ -110,13 +113,22 @@ const handleNewMessage = ()=>{
 
             </span>
 
-            <div className={styles.friendName}>{currentChat?.friend.name}</div>
-            {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
-            <span className='threeDots'></span>
+            <div className={styles.friendName}>
+              {currentChat?.friend?
+              currentChat.friend.name:
+              currentChat.chatName}
+            </div> 
+              {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
+              <span className='threeDots'></span>
          </div>
 
          <div className={styles.chatBoxDiv} >  
-                 <Messages messages={messages} />
+                 {messages&&<Messages messages={messages}/>}
+                 {isLoading&&
+                  <div className={styles.loadingMessages}>
+                  <div>Loading messages...</div>
+                  <Loader size={20}/>
+                  </div>}
          </div>
 
          <div className={styles.chatBoxBottom}>
@@ -128,7 +140,7 @@ const handleNewMessage = ()=>{
             <button onClick={handleNewMessage}>Send</button><br/> 
          </div>
 
-       </div>:<div className='center'>Couldn't get messages...</div>}
+       </div>
     </div>
   </>
   )
