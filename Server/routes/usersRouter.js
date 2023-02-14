@@ -23,7 +23,8 @@ router.get('/:id',Auth,async(req,resp,next)=>{
       }catch(err){
             return next(new Error('No such user!'))
       }       
-}) 
+})  
+
 
 
 
@@ -33,17 +34,45 @@ router.post('/',async (req,resp,next)=>{
       await newUser.save()
       resp.status(200).json('User added')
    }catch(err){next(err)}
-}) 
+})  
 
 
-//Changing only the password
-router.patch('/:id',async(req,resp,next)=>{
+
+router.post('/search-user',async (req,resp,next)=>{
+    const body = req.body 
+  try{
+     //Search for any username - without case sensitivity
+     let user = await User.find({"name" : {$regex : `${body.userName}`,$options: 'i'}})
+     resp.status(200).json(user) 
+  }catch(err){next(err)}
+})  
+
+
+
+router.patch('/add-friend/:id',async(req,resp,next)=>{
+   const {id} = req.params
+   const {friend} = req.body
+   try{
+         let data = await User.findOneAndUpdate(
+         { _id: id }, 
+         { $push: { friends: friend } },
+         {new: true}
+     ) 
+     return resp.status(200).json(data)
+
+   }catch(err){
+     next(err)
+   }
+})
+
+
+
+router.patch('/reset-pass/:id',async(req,resp,next)=>{
    
    //Crypt the changed password
    const salt = await genSalt(12)
    const passwordHash = await hash(req.body.password,salt)
 
-  //Update only the password
   try{  
          let data = await User.updateOne( { _id:req.params.id} , { $set: { password:passwordHash } })
          if(data) return resp.status(200).json('Updated')
