@@ -2,7 +2,7 @@ const express = require('express')
 const app = express() 
 const cors = require('cors')
 const http = require('http')
-const {addUsers,removeUser} = require('./utils/utils')
+const {addUsers,removeUser,getUser} = require('./utils/utils')
 const {Server} = require('socket.io')
 
 
@@ -21,15 +21,22 @@ const io =new Server(server,{
 io.on('connection', socket=>{
 
     console.log(`User connected: ${socket.id}`)
+   
     
     //On user connect - add to the connected users
     socket.on("addUser",(userId)=>{
         let users = addUsers(userId,socket.id)
+        console.log(users);
         io.emit("getUsers",users)
-    })  
+    })   
 
-    socket.on('sendMessage',(message,room,reciever)=>{
-              io.in(room).emit('recieve-message',{message,reciever})
+    socket.on('notification',({reciever,sender,message})=>{
+        let result = getUser(reciever)
+        io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message})
+    })
+
+    socket.on('sendMessage',(message,room)=>{
+              io.in(room).emit('recieve-message',{message})
 
               //To inform the user about another in coming message
               io.local.emit('background-message',message)
