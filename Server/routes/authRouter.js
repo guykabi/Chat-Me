@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router() 
 const {User} =require('../models/messagesModel')
 const {Auth} = require('../middleware/auth')
-const {excludePassword,generateInitialToken,generateTokens} = require('../Utils/utils')
+const {generateInitialToken,generateTokens} = require('../Utils/utils')
 
 
 router.get('/logout',async(req,resp)=>{
@@ -34,7 +34,9 @@ router.get('/logout',async(req,resp)=>{
   router.post('/',async(req,resp,next)=>{ 
        const {email,password} = req.body
        try{
-            let data = await User.findOne({email}) 
+            let data = await User.findOne({email})
+            .select('-password')
+
             if(!data) {
                return resp.status(200).json('Email does not exist') 
             }
@@ -42,13 +44,13 @@ router.get('/logout',async(req,resp)=>{
              const {accessToken,refreshToken,invalidPassword} = await generateInitialToken(data,password)
              if(invalidPassword) return resp.status(200).json(invalidPassword)
              
-             let newData = excludePassword(data)
+             
   
              resp.cookie('token',{accessToken,refreshToken},{
                maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
              })   
   
-             .cookie('userData',JSON.stringify(newData),{
+             .cookie('userData',JSON.stringify(data),{
               maxAge:process.env.COOKIE_EXPIRE_IN , httpOnly: true
              }) 
              
