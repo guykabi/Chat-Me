@@ -1,5 +1,12 @@
 const {Schema,model} = require('mongoose') 
 const {hash} = require('bcryptjs/dist/bcrypt')
+const moment = require('moment');
+
+let createdAt = function(){
+    let d = new Date();
+    let formattedDate = moment(d).format("MM-DD-YYYY, h:mm:ss a");
+    return formattedDate;
+};
 
 const UserSchema = new Schema({
     name:String,
@@ -8,7 +15,13 @@ const UserSchema = new Schema({
     password:String,
     image:String,
     friends:[{type: Schema.Types.ObjectId, ref: 'users' }],
-    friendsWaitingList:[{type: Schema.Types.ObjectId, ref: 'users'}]
+    friendsWaitingList:[{type: Schema.Types.ObjectId, ref: 'users'}],
+    notifications:[
+       {sender:{type: Schema.Types.ObjectId, ref: 'users'},
+       message:String,
+       seen:Boolean,
+       createdAt:{type:String,default:createdAt}}
+     ]
   })  
 
   //Crypt the new user password
