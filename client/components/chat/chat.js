@@ -14,6 +14,7 @@ const Chat = ()=> {
   const {currentChat,currentUser,Socket} = useContext(chatContext)
   const [newMessage,setNewMessage]=useState('')
   const [messages,setMessages]= useState([])
+  const [messageToSend,setMessageToSend] = useState()
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
   const [typingText,setTypingText]=useState(null)
@@ -29,7 +30,12 @@ const Chat = ()=> {
     refetchOnWindowFocus:false
  }) 
 
-const {mutate:sendMessage,isError} = useMutation(sendNewMessage) 
+const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
+  onSuccess:(data)=>{
+    if(data !== 'New message just added')return
+    Socket.emit('sendMessage',messageToSend,room)
+  }
+}) 
 
 
   useEffect(()=>{
@@ -81,8 +87,8 @@ const handleNewMessage = ()=>{
 
    //This field is only for the initial socket message
    messageObj.time = getCurrentTime()
-   
-   Socket.emit('sendMessage',messageObj,room)
+
+   setMessageToSend(messageObj)
    sendMessage(messageObj)
    setNewMessage('')
   }  
