@@ -3,7 +3,7 @@ const router = express.Router()
 const {User} =require('../models/messagesModel')
 const {hash,genSalt} = require('bcryptjs')
 const {Auth} = require('../middleware/auth')
-const {excludePassword} = require('../Utils/utils')
+const {approveFriend} = require('../Utils/utils')
 
 
 router.get('/',async(req,resp,next)=>{
@@ -20,10 +20,9 @@ router.get('/:id',Auth,async(req,resp,next)=>{
       try{
             let user = await User.findById(id)
             .select('-password')
-            .populate({path:'friends',select: '-password -friends -__v'})
-            .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -__v'})
-
-            resp.status(200).json(excludePassword(user))
+            .populate({path:'friends',select: '-password -friends -friendsWaitingList -notifications -__v'})
+            .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -notifications -__v'})
+            return resp.status(200).json(user)
       }catch(err){
             return next(new Error('No such user!'))
       }       
@@ -47,11 +46,10 @@ router.post('/search-user',async(req,resp,next)=>{
   try{
      //Search for any username - without case sensitivity
      let user = await User.find({"name" : {$regex : `${body.userName}`,$options: 'i'}})
-     .select('-password')
-     .populate({path:'friends',select: '-password -friends -__v'})
-     .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -__v'})
-
+     .select('-password -__v')
+     
      resp.status(200).json(user) 
+
   }catch(err){next(err)}
 })  
 
@@ -59,16 +57,27 @@ router.post('/search-user',async(req,resp,next)=>{
 
 router.patch('/friendship-request/:id',Auth,async(req,resp,next)=>{
    const {id} = req.params
-   const {friendId} = req.body
+   const {friendId,message} = req.body
+   
+   try{    
 
-   try{
-         let friendRequest = await User.findOneAndUpdate(
-         { _id: id }, { $push: { friendsWaitingList: friendId } },{new: true})
-         .select('-password')
-         .populate({path:'friends',select: '-password -friends -__v'})
-         .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -__v'})
+         let isAlreadyRequest = await User.find({_id:friendId,friendsWaitingList:id})
+         if(isAlreadyRequest.length){
 
-     return resp.status(200).json(friendRequest)
+            //Removing the request + notification the other person
+            await User.findOneAndUpdate(                                         
+            { _id: friendId }, { $pull: { friendsWaitingList:id , notifications:{sender:id}}})
+            return resp.status(200).json('Request has been removed!')
+
+         } 
+
+         //Insert to the friend's waitinglist + to notifications list
+         let notifyObj = {sender:id,message,seen:false}
+         
+         await User.findOneAndUpdate(
+         { _id: friendId }, { $push: { friendsWaitingList: id, notifications:notifyObj }})
+         
+         return resp.status(200).json('Request has been made!')
 
    }catch(err){
      next(err)
@@ -80,21 +89,15 @@ router.patch('/friendship-request/:id',Auth,async(req,resp,next)=>{
 router.patch('/add-friend/:id',Auth,async(req,resp,next)=>{
    const {id} = req.params
    const {friendId} = req.body
-
+   
    try{  
-      
-      let removeRequest =  await User.findOneAndUpdate(
-      { _id: id }, { $pull: { friendsWaitingList: friendId } },{new: true})
+       let isRequestExsit = await User.find({_id:id,friendsWaitingList:friendId})
+       if(!isRequestExsit.length) return resp.status(200).json('Request is not exsit')
 
-      if(!removeRequest) return next(new Error('Unable to complete the friendship requset proccess'))
-
-      let addedFriend = await User.findOneAndUpdate(
-      { _id: id }, { $push: { friends: friendId } },{new: true})
-      .select('-password')
-      .populate({path:'friends',select: '-password -friends -__v'})
-      .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -__v'})
-
-      return resp.status(200).json(addedFriend)
+       let result = await approveFriend(id,friendId,next)
+       if(result.message === 'The Friend approval has been done'){
+       return resp.status(200).json(result)
+       }
 
    }catch(err){
      next(err)
@@ -102,23 +105,48 @@ router.patch('/add-friend/:id',Auth,async(req,resp,next)=>{
 })
 
 
-router.patch('/remove-friend/:id',Auth,async(req,resp)=>{
+router.patch('/remove-friend/:id',Auth,async(req,resp,next)=>{
+   const {id} = req.params
+   const {friendId} = req.body
+ 
+   try{
+         let isAlreadyFriend = await User.find({_id:id,friends:friendId})
+         if(!isAlreadyFriend.length) return resp
+         .status(200)
+         .json('Cannot remove non existing friend')
+
+         let user = await User.findOneAndUpdate(
+         { _id: id }, { $pull: { friends: friendId } },{new: true})
+         .select('-password -__v')
+         .populate({path:'friends',select: '-password -friends -friendsWaitingList -notifications -__v'})
+         .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -notifications -__v'})
+
+         return resp.status(200).json({message:'Friend has been removed!',user})
+      
+      
+   }catch(err){
+      next(err)
+   }
+})
+
+
+router.patch('/unapprove-request/:id',Auth,async(req,resp,next)=>{
    const {id} = req.params
    const {friendId} = req.body
    try{
+         let user = await User.findOneAndUpdate(
+         { _id: id }, { $pull: { friendsWaitingList: friendId , notifications:{sender:friendId} } },{new: true})
+         .select('-password -__v')
+         .populate({path:'friends',select: '-password -friends -friendsWaitingList -notifications -__v'})
+         .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -notifications -__v'})
 
-      let removeFriend =  await User.findOneAndUpdate(
-      { _id: id }, { $pull: { friends: friendId } },{new: true})
-      .select('-password')
-      .populate({path:'friends',select: '-password -friends -__v'})
-      .populate({path:'friendsWaitingList',select: '-password -friends -friendsWaitingList -__v'})
-
-      return resp.status(200).json(removeFriend)
+         return resp.status(200).json({message:'Request has been decline!',user})
 
    }catch(err){
       next(err)
    }
 })
+
 
 
 router.patch('/reset-pass/:id',async(req,resp,next)=>{
