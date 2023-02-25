@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router() 
 const Conversation = require('../models/conversationModel')
 const {Auth} = require('../middleware/auth')
+const excludeFields = '-password -friends -friendsWaitingList -notifications -__v'
+
 
 router.get('/:id',Auth,async(req,resp,next)=>{
         
@@ -10,7 +12,7 @@ router.get('/:id',Auth,async(req,resp,next)=>{
            .find({participants:{$in:{_id:req.params.id}}})
            .sort({lastActive:-1})
            //Exclude password&friends
-           .populate({path:'participants',select: '-password -friends -__v'})
+           .populate({path:'participants',select:excludeFields})
    
            return resp.status(200).json(allConversations)
          }catch(err){
