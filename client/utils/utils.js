@@ -1,5 +1,5 @@
 import * as cookie from 'cookie'
-import {push} from 'next/router'
+import {push,useRouter} from 'next/router'
 
 
 export const getTime = (date)=>{
@@ -26,27 +26,27 @@ export const getTime = (date)=>{
 
 
 export const exctractCredentials = (req)=>{
-    let accessToken = cookie.parse(req.headers?.cookie)
-    let token = JSON.parse(accessToken.token.slice(2)) 
-    let tokensObj = {accessToken:token.accessToken,refreshToken:token.refreshToken}
-    let user = JSON.parse(accessToken.userData)
-    return {user,tokensObj}
+    let Cookie = cookie.parse(req.headers?.cookie)
+    let user = JSON.parse(Cookie.userData)
+    return user
 } 
 
 
 export const loginRedirectOnError = (title)=>{
-      setTimeout(()=>{
-        push('/login')
-      },4000)
+  const {reload} = useRouter()
       return (
          <div className='center'>
             {title&&<h1>{title}</h1>}
-            Cannot load page, try to login!
+            Cannot load page! <br/> 
+            <button onClick={() => reload()}>
+            Refresh
+            </button>
         </div>
      )
  } 
 
  
+//When refresh token is not valid any more
 export const needToReSign = (name) =>{
       setTimeout(()=>{
         push('/login')
@@ -58,6 +58,41 @@ export const needToReSign = (name) =>{
            </section> 
         </div>
       )
+} 
+
+//For sender field on the socket notification event 
+export const excludeFieldsUserData = (userData) =>{
+   const newData = {} 
+   newData._id = userData._id
+   newData.name = userData.name
+   newData.lastName = userData.lastName
+   newData.image = userData.image 
+   
+   return newData
+   
+}
+
+export const setUserStatus = (currentUser,user) =>{
+  
+  if(currentUser.friends.find(u=>u._id === user._id)){
+    if(currentUser.friendsWaitingList.find(u=>u._id === user._id)){
+       return 'Approve'
+     }
+    return 'Friend'
+  }
+
+ if(user?.friendsWaitingList.find(u=> u === currentUser._id)){
+    return 'Pending'
+  }
+
+ if(currentUser?.friendsWaitingList.find(u=>u._id === user._id)){
+    return 'Approve'
+  }
+
+ else{
+    return '+'
+ }
+
 }
 
 
