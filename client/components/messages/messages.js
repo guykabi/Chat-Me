@@ -53,7 +53,9 @@ const Messages = ({messages}) => {
     
       Socket.removeAllListeners('recieve-message')
       Socket.on('recieve-message',({message})=>{
-     
+        
+      if(message.conversationId !== currentChat._id) return
+
       //In order to avoid messages duplication - 
       //increase the amouint of documnets to skip on
       setAmountToSkip( prev => prev += 1)
