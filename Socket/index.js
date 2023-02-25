@@ -2,7 +2,7 @@ const express = require('express')
 const app = express() 
 const cors = require('cors')
 const http = require('http')
-const {addUsers,removeUser,getUser} = require('./utils/utils')
+const {addUsers,removeUser,getUser,getAllUsers} = require('./utils/utils')
 const {Server} = require('socket.io')
 
 
@@ -25,14 +25,28 @@ io.on('connection', socket=>{
     
     //On user connect - add to the connected users
     socket.on("addUser",(userId)=>{
+        let exists = getUser(userId)
         let users = addUsers(userId,socket.id)
-        console.log(users);
-        io.emit("getUsers",users)
+        
+        //Checking if the socket exists - if not, emit the event!
+        if(exists)return
+        io.emit('getUsers',users)
     })   
+
 
     socket.on('notification',({reciever,sender,message})=>{
         let result = getUser(reciever)
-        io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message})
+        
+        if(message === 'The Friend approval has been done'){ 
+            let users = getAllUsers()
+            
+            io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message,users})
+            io.to(result?.socketId).emit('getUsers',users)
+            return
+        }
+
+        io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message})            
+        
     })
 
     socket.on('sendMessage',(message,room)=>{
