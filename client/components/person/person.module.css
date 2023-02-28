@@ -1,0 +1,85 @@
+.personWrapper{
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    height: 3rem;
+    padding-top: 0.2rem;
+    float: left;
+    border-bottom: 1px solid black;
+    cursor: pointer; 
+    background-color: rgb(219, 230, 230);
+    transition: 0.6s;
+}  
+.personWrapper:hover{
+    background-color: rgb(184, 209, 209);
+}
+
+.personImageWrapper{
+    width: 20%;
+    float: left;
+}  
+
+.personImageWrapper img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    text-align: center;
+}
+
+.personNameWrapper{
+    width: 40%;
+    float: left;
+}  
+
+.personNameWrapper div{
+    float: left;
+    margin-top: 0.6rem;
+    margin-left: 0.4rem;
+} 
+
+
+.addSign{
+    width: 25%;
+    float: right;
+    margin: 0 auto;
+    margin-right: 2.7rem;
+}
+
+.personActionSign{
+    float: right;
+    width: 1rem;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    font-size: small;
+} 
+.personActionSign:hover, .declineRequestDiv:hover{
+    color: rgb(63, 60, 60);
+}
+
+.declineRequestDiv{
+    float: left;
+    width: 1rem;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    font-size: small;
+}
+
+
+
+@media screen and (max-width:650px)
+{
+    .personNameWrapper div{
+        float: left;
+        margin-top: 0.6rem;
+        margin-left: 0.5rem;
+    } 
+    .personActionSign{
+        float: right;
+        width: 1rem;
+        margin-top: 0.6rem;
+        font-weight: 600;
+        font-size: small;
+        margin-left: 4.5rem;
+    } 
+} 
