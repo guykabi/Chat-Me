@@ -33,6 +33,9 @@
     background-color: limegreen;
 } 
 .chatOnlineName{
-   width: 50%;
+   font-weight: 600;
+   width: 20%;
+   padding-top: 0.6rem;
    float: left;
+   text-align: left;
 }
