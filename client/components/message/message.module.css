@@ -4,8 +4,14 @@
     margin-top: 0.2rem;
 }
 
+.contentWrapper{
+  position: relative;
+}
+
 .ownMessage{
     max-width: 60%;
+    min-width: 2rem;
+    cursor: pointer;
     float: left;
     background-color: antiquewhite;
     color:black;
@@ -14,33 +20,54 @@
     padding-bottom: 0.2rem;
     padding-top: 0.3rem;
     padding-left: 0.5rem;
-    padding-right: 0.9rem;
+    padding-right: 0.5rem;
     font-size: 2.2vmin;
-  }  
+    text-align: left;
+    transition: 0.5s;
+  }    
+
+  .ownMessage:hover{
+    background-color: rgb(232, 218, 200);
+  }
+
+  .messageTextDiv{
+    margin-bottom: 0.2rem;
+  }
 
   .ownMessage span{
-    float: left;
+    float: right;
     font-size: x-small;
   }
   
   .otherMessage{
     max-width: 40%;
     float: right;
+    cursor: pointer;
     background-color: rgba(158, 121, 193, 0.818);
     border-radius: 5px;
     padding-bottom: 0.2rem;
     padding-top: 0.3rem;
-    padding-left: 0.9rem;
+    padding-left: 0.4rem;
     padding-right: 0.5rem;
     color: black;
     word-wrap: break-word;
-    font-size: 2.5vmin;
+    text-align: left;
+    font-size: 2.2vmin;
+    transition: 0.5s;
   }   
+
+  .otherMessage:hover{
+    background-color: rgba(165, 131, 198, 0.818);
+  }
 
   .otherMessage span{
     float: right;
     font-size: x-small;
   }
   
+
+  .messageMenuDiv div:hover{
+    background-color: rgb(218, 199, 199);
+  }
 
   
