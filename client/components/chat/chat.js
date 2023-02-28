@@ -1,8 +1,7 @@
 import styles from './chat.module.css'
 import { useEffect, useState,useContext} from 'react'
-import { needToReSign,loginRedirectOnError } from '../../utils/utils'
+import { needToReSign,onError } from '../../utils/utils'
 import { chatContext} from '../../context/chatContext'
-import {getCurrentTime} from '../../utils/utils'
 import {useQuery,useMutation} from 'react-query'
 import { getMessages,sendNewMessage } from '../../utils/apiUtils'
 import Messages from '../messages/messages'
@@ -14,7 +13,6 @@ const Chat = ()=> {
   const {currentChat,currentUser,Socket} = useContext(chatContext)
   const [newMessage,setNewMessage]=useState('')
   const [messages,setMessages]= useState([])
-  const [messageToSend,setMessageToSend] = useState()
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
   const [typingText,setTypingText]=useState(null)
@@ -29,11 +27,13 @@ const Chat = ()=> {
     staleTime:2000,
     refetchOnWindowFocus:false
  }) 
+ 
 
 const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
-  onSuccess:(data)=>{
-    if(data !== 'New message just added')return
-    Socket.emit('sendMessage',messageToSend,room)
+  onSuccess:({message,data})=>{
+    
+    if(message !== 'New message just added')return
+    Socket.emit('sendMessage',data,room)
   }
 }) 
 
@@ -45,14 +45,25 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
      setMessages(data) 
     }
      setRoom(currentChat._id)
-     Socket.emit('join_room',currentChat._id)
+     Socket.emit('join_room',currentChat._id) 
+
       
   },[currentChat]) 
 
+  
+  useEffect(()=>{
+    //Notifying that user is typing
+    if(!newMessage)return
+    let reciever = currentChat.friend._id
+    Socket.emit('typing',reciever,currentUser.name,room)
+
+  },[newMessage])
 
  
   useEffect(()=>{
+    //Listens to user's typing
     Socket.on('user_typing',(data)=>{
+    
       if(data.reciever !== currentUser._id || data.room !== currentChat._id)return
          setTypingText(data.message)
          setIsTyping(true)
@@ -66,16 +77,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   },[Socket])
 
 
-  useEffect(()=>{
-    
-    if(!newMessage)return
-    let reciever = currentChat.friend._id
-    Socket.emit('typing',reciever,currentUser.name,room)
-
-  },[newMessage])
-
-
-
+  
 const handleNewMessage = ()=>{
   if(!newMessage || newMessage.trim().length === 0)return
 
@@ -85,10 +87,7 @@ const handleNewMessage = ()=>{
    messageObj.text = newMessage
    messageObj.seen = false
 
-   //This field is only for the initial socket message
-   messageObj.time = getCurrentTime()
-
-   setMessageToSend(messageObj)
+  //Condition if its the first message of that chat... 
    sendMessage(messageObj)
    setNewMessage('')
   }  
@@ -98,8 +97,8 @@ const handleNewMessage = ()=>{
     if(error?.response?.status === 401){
       return needToReSign(currentUser.name)
      }
-    return loginRedirectOnError()
-  }
+    return onError()
+  } 
   
 
   return (
@@ -111,17 +110,17 @@ const handleNewMessage = ()=>{
 
             <span className={styles.imageWrapper}>
 
-               {!currentChat.friend.image?<img src={currentChat.friend.image?
-               currentChat.friend.image:'/images/no-avatar.png'}/>
+               {!currentChat.friend?.image?<img src={currentChat.friend?.image?
+               currentChat.friend?.image:'/images/no-avatar.png'}/>
                :
-               <img src={currentChat.image?
-               currentChat.image:'/images/no-avatarGroup.png'}/>}
+               <img src={currentChat?.image?
+               currentChat?.image:'/images/no-avatarGroup.png'}/>}
 
             </span>
 
             <div className={styles.friendName}>
               {currentChat?.friend?
-              currentChat.friend.name:
+              currentChat.friend?.name:
               currentChat.chatName}
             </div> 
               {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
