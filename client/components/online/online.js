@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{memo} from 'react'
 import styles from './online.module.css'
 
 const Online = ({user}) => {
@@ -8,10 +8,9 @@ const Online = ({user}) => {
             <img className={styles.chatOnlineImg} src='/images/no-avatar.png' />
             <div className={styles.chatOnlineBadge}></div>
         </div>
-        <span className={styles.chatOnlineName}>{user.userId}</span>
-        <div></div>
+        <span className={styles.chatOnlineName}>{user.name}</span>
     </div>
   )
 }
 
-export default Online
+export default memo(Online)
