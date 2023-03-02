@@ -109,9 +109,10 @@ const {mutate:remove} = useMutation(removeFriend,{
 const {mutate:newConversation} = useMutation(createConversation,{
   onSuccess:(data)=>{
     if(data === 'Conversation already exist')return
-      Socket.emit('new-conversation',data.conversation,currentUser._id)
+      Socket.emit('new-conversation',currentUser._id,data.conversation)
   }
 })
+
 
 //Triggered by the incoming socket to get user update data
 const onSuccess = () =>{
@@ -137,7 +138,6 @@ useEffect(()=>{
     if(data.message === 'Friend request'){ 
       setPersonStatus('Approve')
       setToDeclineRequest(true)
-      //console.log('Called?');
       getUserData()
     }
     if(data.message === 'Request has been removed!'){
@@ -168,22 +168,26 @@ useEffect(()=>{
     e.stopPropagation()
     let obj = {currentUserId:currentUser._id,friendId:user._id}
     if(personStatus === '+'){
+      
        //Send friendship request
        friendshipRequest(obj)
        return
     }
     if(personStatus === 'Pending'){
+
        //Cancelling the friendship request
        friendshipRequest(obj)
        return
     } 
     if(personStatus === 'Approve'){
+
       //Approve person's friendship request
       approveRequest(obj)
       setToDeclineRequest(false)
       return
     }
     if(personStatus === 'Friend'){
+      
       //Unfriend
       remove(obj)
       return
