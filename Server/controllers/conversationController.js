@@ -1,4 +1,4 @@
-const Conversation = require('../models/conversationModel')
+const {Conversation} = require('../models/conversationModel')
 const {Message} = require('../models/messagesModel')
 const excludeFields = '-password -friends -friendsWaitingList -notifications -__v'
 
@@ -30,7 +30,9 @@ const addNewConversation = async(req,resp,next)=>{
       if(isAlreadyConversation.length) return resp.status(200).json('Conversation already exist')
 
       await newConversation.save()
-      let conversation = await newConversation.populate({path:'participants',select:excludeFields})
+      
+      let conversation = await newConversation
+      .populate({path:'participants',select:excludeFields})
 
       resp.status(200).json({message:'New conversation made',conversation})
    }catch(err){
@@ -51,4 +53,19 @@ const updateConversation = async(req,resp,next)=>{
    }
 }
 
-module.exports = {getAllConversations,addNewConversation,updateConversation}
+
+const deleteConversation = async(req,resp,next) =>{
+   const {id} = req.params
+    try{
+      let isDeleted = await Conversation.findByIdAndDelete(id)
+      if(isDeleted){
+         await Message.deleteMany({conversation:id})
+      }
+       resp.status(200).json('Conversation deleted!')
+    }catch(err){
+     next(err)
+    }
+}
+
+module.exports = {getAllConversations,addNewConversation,
+                  updateConversation,deleteConversation }
