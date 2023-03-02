@@ -1,4 +1,5 @@
 const {Schema,model} = require('mongoose') 
+const {ConversationSchema} = require('../models/conversationModel')
 const {hash} = require('bcryptjs/dist/bcrypt')
 const moment = require('moment');
 
@@ -33,7 +34,7 @@ UserSchema.pre('save',async function (){
   
 
 const MessageSchema = new Schema({
-    conversationId:String,
+    conversation:{type: Schema.Types.ObjectId, ref: 'conversations' },
     sender:{type: Schema.Types.ObjectId, ref: 'users' },
     text:String,
     seen:Boolean
@@ -41,7 +42,9 @@ const MessageSchema = new Schema({
     {timestamps:true}
 ) 
 
+
 const User = model('users',UserSchema)
 const Message = model('messages',MessageSchema) 
+model('conversations',ConversationSchema)
 
 module.exports = {User,Message}
