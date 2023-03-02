@@ -1,24 +1,25 @@
 import React,{useContext, useEffect,useRef,memo, useState,useMemo} from 'react'
-import { needToReSign,loginRedirectOnError } from '../../utils/utils'
+import { needToReSign,onError } from '../../utils/utils'
 import styles from './messages.module.css'
 import Message from '../message/message'
 import { chatContext } from '../../context/chatContext'
-import {useQuery} from 'react-query'
-import {getMessages} from '../../utils/apiUtils'
+import {useMutation, useQuery} from 'react-query'
+import {getMessages,deleteConversation} from '../../utils/apiUtils'
 
 
 const Messages = ({messages}) => {
   
     const {currentUser,currentChat,Socket} = useContext(chatContext)
     const scrollRef = useRef()
-    const [allMessages,setAllMessages]=useState()  
+    const [allMessages,setAllMessages]=useState([])  
     const [amountToSkip,setAmountToSkip]=useState(30)
     const[isMoreMessages,setIsMoreMessages]=useState()
-
+    const [newChatToDelete,setNewChatToDelete]=useState(null)
      
-    const {refetch:loadMore,error} = useQuery(['more-messages',currentChat],()=>(
+
+    const {refetch:loadMore,error} = useQuery('more-messages',()=>(
       getMessages(currentChat?._id,amountToSkip)),
-   {
+    {
     onSuccess:(data)=>{   
       
       if(data.length){
@@ -36,69 +37,111 @@ const Messages = ({messages}) => {
        }
     }, 
     enabled:false
-  })   
+  })    
+
+
+  const {mutate:removeConversation} = useMutation(deleteConversation,{
+    onSuccess:(data)=>{
+      if(data !== 'Conversation deleted!')return 
+
+      //Emit event to trigger the conversations-component to fetch updated conversations
+      Socket.emit('new-conversation',currentUser._id)
+    }
+  })
 
    
    useEffect(()=>{
-    if(!messages)return
+       
+      //Only on chat switching - or new chat creation
+      if(!messages.length)return
       setAllMessages(messages)
-      setIsMoreMessages(true)
+      
+      if(messages.length === 30)setIsMoreMessages(true)
+      
       //Reset the amount when switching chats
       if(!(amountToSkip > 30))return
       setAmountToSkip(30)
+
    },[messages])
+
+
+   useEffect(()=>{   
+    
+    //Detecting if it's a new chat without messages
+    if(!messages.length && !allMessages.length){
+      
+       //Sets the new chat in advance to delete - if no message will be send
+       setNewChatToDelete(currentChat._id)
+       return
+     }
+   
+    setNewChatToDelete(null)
+    if(!isMoreMessages)return
+      scrollRef.current?.scrollIntoView({
+      behavior:'smooth',
+      block: 'start',
+      inline: 'nearest' 
+    })   
+     
+  },[allMessages])
+
 
 
    useEffect(()=>{
     
       Socket.removeAllListeners('recieve-message')
       Socket.on('recieve-message',({message})=>{
-        
-      if(message.conversationId !== currentChat._id) return
-
+       
+      if(message.conversation._id !== currentChat._id) return
+      
       //In order to avoid messages duplication - 
-      //increase the amouint of documnets to skip on
+      //increasing the amount of documnets to skip on when new message is added
       setAmountToSkip( prev => prev += 1)
       setAllMessages(prev =>[...prev,message])
-
+      
+      //If at least one message was sent - there is no need to delete new chat
+      if(!newChatToDelete)return
+      setNewChatToDelete(null)
       }) 
-   },[Socket])
+
+   },[Socket,newChatToDelete])
   
 
-
-    useEffect(()=>{    
-      if(!isMoreMessages)return
-        scrollRef.current?.scrollIntoView({
-        behavior:'smooth',
-        block: 'start',
-        inline: 'nearest' 
-      })   
-    },[allMessages]) 
-
+    useEffect(()=>{
+         //If no message was sent in the new chat - delete it
+         if(!newChatToDelete)return  
+         setNewChatToDelete(null)
+         removeConversation(newChatToDelete)
+    },[currentChat])    
+   
   
 
     const handleMoreLoading =(e)=>{
         if(e.target.scrollTop === 0 && isMoreMessages){
           loadMore()
         }
-      } 
+      }  
 
 
       if(error){
         if(error?.response?.status === 401){
           return needToReSign(currentUser.name)
          }
-        return loginRedirectOnError()
+        return onError()
       }
+
       
     const memoMessages = useMemo(()=>allMessages,[allMessages])
+
+
    
   return (
     <>
      <div className={styles.messagesDiv} onScroll={handleMoreLoading} >  
      {memoMessages?.map((message)=>(
         <div key={message._id} ref={scrollRef}>
-              <Message message={message} own={message.sender===currentUser._id} />
+              <Message message={message}
+               own={message.sender===currentUser._id}/>
         </div>))}
      </div>
     </>
