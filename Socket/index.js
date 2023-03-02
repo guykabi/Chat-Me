@@ -25,9 +25,11 @@ io.on('connection', socket=>{
     
     //On user connect - add to the connected users
     socket.on("addUser",(userId)=>{
+        
         let exists = getUser(userId)
         let users = addUsers(userId,socket.id)
-        
+        console.log(users);
+
         //Checking if the socket exists - if not, emit the event!
         if(exists)return
         io.emit('getUsers',users)
@@ -47,14 +49,20 @@ io.on('connection', socket=>{
 
         io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message})            
         
-    })
+    }) 
+
+    socket.on('new-conversation',(reciever,conversation=undefined)=>{
+        let result = getUser(reciever) 
+        io.to(result?.socketId).emit('arrival-conversation',conversation)
+    }) 
+
 
     socket.on('sendMessage',(message,room)=>{
               io.in(room).emit('recieve-message',{message})
 
               //To inform the user about another in coming message
               io.local.emit('background-message',message)
-
+              
               console.log(`Private room message ${message.text}`);
     })  
 
