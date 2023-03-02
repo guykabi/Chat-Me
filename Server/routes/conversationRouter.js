@@ -5,11 +5,13 @@ const {Auth} = require('../middleware/auth')
 const {
       getAllConversations,
       addNewConversation,
-      updateConversation} = require('../controllers/conversationController')
+      updateConversation,
+      deleteConversation} = require('../controllers/conversationController')
 
 router
-.get('/:id',getAllConversations)
+.get('/:id',Auth,getAllConversations)
 .post('/',Auth,addNewConversation)
 .patch('/:id',Auth,updateConversation)
+.delete('/:id',deleteConversation)
 
 module.exports = router;
