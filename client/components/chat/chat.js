@@ -20,7 +20,7 @@ const Chat = ()=> {
 
  const {data,error,isLoading} = useQuery(['messages',currentChat],()=>(
     getMessages(currentChat?._id)),
- {
+  {
     onSuccess:(data)=>{
       setMessages(data.reverse())
     }, 
@@ -46,7 +46,6 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
     }
      setRoom(currentChat._id)
      Socket.emit('join_room',currentChat._id) 
-
       
   },[currentChat]) 
 
@@ -82,7 +81,7 @@ const handleNewMessage = ()=>{
   if(!newMessage || newMessage.trim().length === 0)return
 
    let messageObj = {} 
-   messageObj.conversationId = currentChat._id
+   messageObj.conversation = currentChat._id
    messageObj.sender = currentUser._id
    messageObj.text = newMessage
    messageObj.seen = false
@@ -97,6 +96,7 @@ const handleNewMessage = ()=>{
     if(error?.response?.status === 401){
       return needToReSign(currentUser.name)
      }
+    
     return onError()
   } 
   
@@ -128,7 +128,7 @@ const handleNewMessage = ()=>{
          </div>
 
          <div className={styles.chatBoxDiv} >  
-                 {messages&&<Messages messages={messages}/>}
+                 {messages.length?<Messages messages={messages}/>:null}
                  {isLoading&&
                   <div className={styles.loadingMessages}>
                   <div>Loading messages...</div>
