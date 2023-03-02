@@ -1,17 +1,29 @@
 import React from 'react'
-import {getUserDetails} from '../../../utils/apiUtils'
-import { exctractCredentials,loginRedirectOnError } from '../../../utils/utils'
+import { exctractCredentials,onError } from '../../../utils/utils'
+import { useGetUser } from '../../../hooks/useUser'
 
 
-const UserPage = ({details,hasError}) => {
+const UserPage = ({user,hasError}) => { 
+
+  const {data,error,isLoading} = useGetUser(user._id)
 
   if(hasError){
-   return loginRedirectOnError()
+   return onError()
+  } 
+
+  if(error){
+    if(error?.response?.status === 401){
+      return needToReSign(user.name)
+     }
+    return onError('Details are not available')
   }
   
   return (
-    <div className='center'>
-         <h2>{details?.name}details</h2>
+    <div className='center'> 
+         {isLoading?
+         <div className='center'>Loading details...</div>:
+         <h2>{data?.name} details</h2>}
+         
     </div>
   )
 } 
@@ -21,17 +33,10 @@ export async function getServerSideProps({req}){
   if(!req.headers.cookie){
     return{props:{hasError:true}}
   }
-    const {user,tokensObj} = exctractCredentials(req,'accessToken')
-    let details;
-
-    try{
-     details = await getUserDetails(user._id,tokensObj)
-    }catch(err){
-      return {props:{hasError:true}}
-    }
-
+    const user = exctractCredentials(req)
+    
     return{
-      props:{details}
+      props:{user}
      }
 }
 
