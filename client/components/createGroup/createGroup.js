@@ -25,8 +25,8 @@ const [pickedUsers,setPickedUsers]=useState([])
       setGroupName(null)
       setPickedUsers([]) 
       Socket.emit('new-conversation',currentUser._id,data.conversation)
-      onSwitch()
-    }
+      onSwitch()     
+    }         
   })
 
 
