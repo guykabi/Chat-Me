@@ -28,20 +28,76 @@
     margin: 0 auto;
 }
 
+
 .addedFriendsList{
+    position: relative;
     display: flex;
     flex-direction: row;
     margin: 0 auto;
-    width: 90%;
-    height: 2rem;
-    border: 1px solid black;
+    width:95%;
+    height: 1.6rem;
     margin-bottom: 1rem;
     overflow-x: scroll;
+    gap: 14px;
+    padding-top: 0.5rem;
 } 
-
 .addedFriendsList::-webkit-scrollbar{
     display: none;
 }
+
+.addedFriendsListActive{
+    position: relative;
+    background-color: rgb(213, 240, 230);
+    box-shadow: -1px 2px 3px 0px rgba(57, 55, 55, 0.392);
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    width:95%;
+    height: 1.6rem;
+    margin-bottom: 1rem;
+    overflow-x: scroll;
+    gap: 14px;
+    padding-top: 0.5rem;
+    padding-left: 0.4rem;
+} 
+
+.addedFriendsListActive::-webkit-scrollbar{
+    display: none;
+}
+
+.pickedUserShow{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    gap: 4px;
+}
+
+ .pickedUserShow img{
+    float: left;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+ }
+
+.xDelete{
+    width: 0.8rem;
+    height:1rem;
+    background-color: snow;
+    border-radius: 40%;
+    font-size: small;
+    float: left;
+    cursor: pointer;
+    transition: 0.2s;
+} 
+
+.xDelete:hover{
+  transform: scale(1.15);
+}
+
+
+
 
 
 .searchFriendToAddInput{
