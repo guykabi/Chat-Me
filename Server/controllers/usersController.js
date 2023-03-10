@@ -1,28 +1,30 @@
 const {User} =require('../models/messagesModel')
 const {hash,genSalt} = require('bcryptjs')
-const {approveFriend} = require('../Utils/utils')
+const {approveFriend} = require('../utils/utils')
 const excludeFields = '-password -friends -friendsWaitingList -notifications -__v'
 
 
 const getAllUsers = async(req,resp,next) =>{
    try{
       let users = await User.find()
+      .select(excludeFields)
       return resp.status(200).json(users)
    }catch(err){return next(err)}
 }
 
 
-
 const getUser = async (req,resp,next)=>{
+   
    const {id} = req.params
+
       try{
             let user = await User.findById(id)
             .select('-password')
             .populate({path:'friends',select:excludeFields})
             .populate({path:'friendsWaitingList',select:excludeFields})
             .populate({path:'notifications',select:excludeFields,
-                       populate:{path:'sender',select:excludeFields}})    
-            
+                    populate:{path:'sender',select:excludeFields}}) 
+           
             return resp.status(200).json(user)
 
       }catch(err){
@@ -45,7 +47,7 @@ const addUser = async (req,resp,next)=>{
 
 const searchUser = async(req,resp,next)=>{
     const body = req.body 
-   console.log(body);
+  
   try{
      //Search for any username - without case sensitivity
      let user = await User.find({"name" : {$regex : `${body.userName}`,$options: 'i'}})
@@ -61,15 +63,16 @@ const searchUser = async(req,resp,next)=>{
 const friendShipRequest = async(req,resp,next)=>{
    const {id} = req.params
    const {friendId,message} = req.body
-   
+   let pull = { $pull: { friendsWaitingList:id , notifications:{sender:id}}}
+
    try{    
 
          let isAlreadyRequest = await User.find({_id:friendId,friendsWaitingList:id})
          if(isAlreadyRequest.length){
 
-            //Removing the request + notification the other person
-            await User.findOneAndUpdate(                                         
-            { _id: friendId }, { $pull: { friendsWaitingList:id , notifications:{sender:id}}})
+            //Removing the request + notification of the other person
+            await User.findOneAndUpdate(                                        
+            { _id: friendId },pull)
             return resp.status(200).json('Request has been removed!')
 
          } 
@@ -91,13 +94,13 @@ const friendShipRequest = async(req,resp,next)=>{
 
 const friendApproval = async(req,resp,next)=>{
    const {id} = req.params
-   const {friendId} = req.body
+   const {friendId,message} = req.body
   
    try{  
        let isRequestExsit = await User.find({_id:id,friendsWaitingList:friendId})
        if(!isRequestExsit.length) return resp.status(200).json('Request is not exsit')
 
-       let result = await approveFriend(id,friendId,next)
+       let result = await approveFriend(id,friendId,message,next)
        
        if(result.message === 'The Friend approval has been done'){
        return resp.status(200).json(result)
@@ -124,6 +127,8 @@ const removeFriend = async(req,resp,next)=>{
          .select('-password -__v')
          .populate({path:'friends',select: excludeFields})
          .populate({path:'friendsWaitingList',select: excludeFields})
+         .populate({path:'notifications',select:excludeFields,
+                    populate:{path:'sender',select:excludeFields}})
 
          return resp.status(200).json({message:'Friend has been removed!',user})
       
@@ -137,18 +142,50 @@ const removeFriend = async(req,resp,next)=>{
 const unapproveFriend = async(req,resp,next)=>{
    const {id} = req.params
    const {friendId} = req.body
+   let pull = {$pull:{ friendsWaitingList: friendId , notifications:{sender:friendId} }}
+
    try{
          let user = await User.findOneAndUpdate(
-         { _id: id }, { $pull: { friendsWaitingList: friendId , notifications:{sender:friendId} } },{new: true})
+         { _id: id }, pull ,{new: true})
          .select('-password -__v')
          .populate({path:'friends',select: excludeFields})
          .populate({path:'friendsWaitingList',select: excludeFields})
+         .populate({path:'notifications',select:excludeFields,
+                    populate:{path:'sender',select:excludeFields}})
 
          return resp.status(200).json({message:'Request has been decline!',user})
 
    }catch(err){
       next(err)
    }
+}
+
+
+
+const handleSeenNotification = async(req,resp,next)=>{
+    const {id} = req.params
+  
+    let update = {'$set':{'notifications.$[elem].seen': true}}
+    let pull = {$pull:{'notifications':{message: { $in:['Friend approval']}}}}
+    let filterSet = { "arrayFilters": [{ "elem.seen": false}], "multi": true }
+    
+    try{ 
+         //Set all unseen friend-requests notifications to seen/true
+         await User.updateOne({_id:id},update,filterSet)  
+         
+         //Removing all friends approval-requests notifications
+         let user =  await User.findByIdAndUpdate({_id:id},pull,{multi:true,new:true})
+         .select('-password')
+         .populate({path:'friends',select:excludeFields})
+         .populate({path:'friendsWaitingList',select:excludeFields})
+         .populate({path:'notifications',select:excludeFields,
+                    populate:{path:'sender',select:excludeFields}})
+
+         return resp.status(200).json({message:'Notification has seen',user})
+
+    }catch(err){
+       next(err)
+    }
 }
 
 
@@ -185,5 +222,5 @@ const deleteUser = async(req,resp,next)=>{
 
 module.exports = {getAllUsers,getUser,searchUser,addUser,
                   friendShipRequest,friendApproval,removeFriend,
-                  unapproveFriend,resetPassword,deleteUser}
+                  unapproveFriend,resetPassword,deleteUser,handleSeenNotification}
 
