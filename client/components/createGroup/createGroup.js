@@ -1,4 +1,4 @@
-import React, { useState, useContext} from 'react'
+import React, { useState, useContext, useMemo} from 'react'
 import styles from './createGroup.module.css'
 import { useMutation, useQuery } from 'react-query'
 import { getAllusers , createGroup } from '../../utils/apiUtils'
@@ -9,6 +9,7 @@ const CreateGroup = ({onSwitch}) => {
 
 const {currentUser,Socket} = useContext(chatContext)
 const [allUsers,setAllUsers]=useState([])
+const [query,setQuery]=useState("")
 const [groupName,setGroupName]=useState(null)
 const [pickedUsers,setPickedUsers]=useState([])
 
@@ -35,9 +36,10 @@ const handleUserPick = (e) =>{
   setPickedUsers(prev=> [...prev,e])
 }   
 
-const handleGroupCreation = (e) =>{
-
+const handleGroupSubmit = (e) =>{
   e.preventDefault() 
+  
+  if(!pickedUsers.length) return
   let group = {} 
   group.chatName = groupName
   group.participants = pickedUsers.map(p=> p._id) 
@@ -45,19 +47,46 @@ const handleGroupCreation = (e) =>{
   group.manager = currentUser._id 
   
   addGroup(group)
+
  }
 
+const removePickedFriend = (pickedUser) =>{
+    setPickedUsers(prev=>prev.filter(u=>u._id !== pickedUser._id))
+} 
 
 
-  const searchForUsers = allUsers?.map(user=>(
-      <GroupPerson key={user._id} user={user} onPick={handleUserPick}/>
+const filteredItems = useMemo(()=>{
+ return allUsers?.filter(item=>(
+    item.name?.toLowerCase().includes(query?.toLowerCase())
   ))
+},[allUsers,query]) 
+
+
+
+ const searchForUsers = filteredItems?.map(user=>(  
+      <GroupPerson key={user._id} user={user} onPick={handleUserPick}/>
+  )) 
+
+
+
+  const pickedUsersForGroup = pickedUsers.map(user=>(
+      <div key={user._id} className={styles.pickedUserShow}>
+        <img src={user?.image?user.image:'/images/no-avatar.png'} />
+        <span aria-label='user-image'>{user.name}</span> 
+        <span 
+         className={styles.xDelete}
+         onClick={()=>removePickedFriend(user)}
+         role='button'>x</span>
+      </div>
+  ))
+
+
 
   return (
     <section className={styles.createGroupMainSection}>
-      <h2>Create a group</h2> 
+      <h2 aria-label='Create a group'>Create a group</h2> 
       <section>
-        <form className={styles.newGroupForm} onSubmit={handleGroupCreation}>
+        <form className={styles.newGroupForm} onSubmit={handleGroupSubmit}>
 
            <div className={styles.groupNameInputWrapper} >
             <input 
@@ -66,12 +95,17 @@ const handleGroupCreation = (e) =>{
             onChange={(e)=>setGroupName(e.target.value)}/>
            </div><br/>
 
-          <div className={styles.addedFriendsList}></div>
+          {pickedUsersForGroup.length?<div className={pickedUsers.length?
+               styles.addedFriendsListActive:
+               styles.addedFriendsList}>
+               {pickedUsersForGroup}
+          </div>:null}
 
           <article className={styles.searchInputWrapper}>
             <input 
             className={styles.searchFriendToAddInput}
-            placeholder='Search user to add'/> 
+            placeholder='Search user to add'
+            onChange={(e)=>setQuery(e.target.value)}/> 
           </article> 
 
           <article className={styles.allUsers}>
@@ -79,12 +113,13 @@ const handleGroupCreation = (e) =>{
           </article><br/>
           
             <button 
+            aria-label='Create group'
             type='submit'>
-            Create
+            Create group
             </button>
-
+     
         </form>
-
+        
       </section>
     </section>
   )
