@@ -11,9 +11,11 @@ const getAllConversations = async(req,resp,next)=>{
            .sort({lastActive:-1})
            //Exclude password&friends
            .populate({path:'participants',select:excludeFields})
+           .populate({path:'manager',select:excludeFields})
           
    
            return resp.status(200).json(allConversations)
+           
          }catch(err){
             next(err)
          }
@@ -21,20 +23,31 @@ const getAllConversations = async(req,resp,next)=>{
 
 
 const addNewConversation = async(req,resp,next)=>{
-   const {body} = req
-   const newConversation = new Conversation(body)
+   const {participants} = req.body 
+   const newConversation = new Conversation(req.body)
    
    try{ 
 
-      let isAlreadyConversation = await Conversation.find({participants:body.participants})
-      if(isAlreadyConversation.length) return resp.status(200).json('Conversation already exist')
-
-      await newConversation.save()
+      let isAlreadyConversation;
+       
+      //Only non group chats are not allowed to duplicate
+      if(!req.body?.chatName){
+        isAlreadyConversation = await Conversation.
+        find({participants:{$all:participants}})
+      }
       
-      let conversation = await newConversation
-      .populate({path:'participants',select:excludeFields})
+      if(isAlreadyConversation?.length) 
+      return resp.status(200).json('Conversation already exist')
 
-      resp.status(200).json({message:'New conversation made',conversation})
+       let newAddedCon =  await newConversation.save()
+
+       let conversation = await Conversation
+       .findById(newAddedCon._doc._id.toString())
+       .populate({path:'manager',select:excludeFields})
+       .populate({path:'participants',select:excludeFields})
+       
+       resp.status(200).json({message:'New conversation made',conversation})
+
    }catch(err){
       next(err)
    }
