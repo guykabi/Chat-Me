@@ -1,12 +1,14 @@
 const {Schema,model} = require('mongoose') 
 
+const userRef = {type:Schema.Types.ObjectId,ref:'users'}
+
 const ConversationSchema = new Schema({
     chatName:String, //For chat group
-    manager:{type:Schema.Types.ObjectId,ref:'users'}, //For chat group
-    participants:[{type:Schema.Types.ObjectId,ref:'users'}],
+    manager:userRef, //For chat group
+    participants:[userRef],
     //Media consider as message that contains image
     media:[{type:Schema.Types.ObjectId,ref:'messages'}],
-    //unSeenCount:[{type:Schema.Types.ObjectId,ref:'messages'}],
+    image:String,
     lastActive:Date
 },
     {timestamps:true}
