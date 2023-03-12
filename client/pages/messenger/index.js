@@ -1,4 +1,4 @@
-import React,{ useEffect,useContext} from 'react'
+import React,{ useEffect,useContext,useState} from 'react'
 import {chatContext} from '../../context/chatContext'
 import styles from './messenger.module.css'
 import Chat from '../../components/chat/chat'
@@ -7,12 +7,17 @@ import Navbar from '../../components/navbar/navbar'
 import OnlineList from '../../components/onlineList/online'
 import { exctractCredentials, onError } from '../../utils/utils'
 import { useGetUser } from '../../hooks/useUser'
+import CreateGroup from '../../components/createGroup/createGroup'
 
 
 const Messenger = ({hasError,user}) => {
     
     const {currentUser,currentChat,Socket,dispatch} = useContext(chatContext)
     const {data,error} = useGetUser(user._id) 
+    
+    const [openMenu,setOpenMenu] = useState(false)
+    const [openCreateGroup,setOpenCreateGroup]=useState(false)
+    
   
     useEffect(()=>{
       
@@ -23,7 +28,17 @@ const Messenger = ({hasError,user}) => {
       if(!currentUser) return
          Socket?.emit('addUser',user._id)
 
-    },[data,currentUser])
+    },[data,currentUser]) 
+
+    const handleOpenCreateGroup = () =>{
+      setOpenCreateGroup(true)
+      setOpenMenu(false)
+    } 
+
+    const handleCloseCreateGroup = () =>{
+       setOpenCreateGroup(false)
+       setOpenMenu(false)
+    }
       
    
   if(hasError || error){
@@ -40,11 +55,30 @@ const Messenger = ({hasError,user}) => {
       <Navbar/>
       <div className={styles.innerWrapper}>
 
-          <div className={styles.conversationsWrapper}>
-             <span className='threeDots'></span>
-             <h2>Conversations</h2><br/> 
-             <Conversations/>
-          </div>
+      <div className={openCreateGroup?
+           styles.createGroupsWrapper:
+           styles.conversationsWrapper}>
+
+         <span 
+         className='threeDots'
+         onClick={()=>setOpenMenu(!openMenu)}></span> 
+
+        {openMenu&&
+        <div className={styles.popupMenuConversations}>
+           <div onClick={handleOpenCreateGroup} role='button'>Create group</div>
+           <div onClick={handleCloseCreateGroup} role='button'>All conversations</div>
+        </div>}
+
+        {openCreateGroup?
+        <article>
+             <CreateGroup onSwitch={handleCloseCreateGroup}/>
+         </article>:
+         <article>
+            <h2>Conversations</h2><br/> 
+            <Conversations/>
+         </article>}
+
+      </div>
 
           <div className={styles.chatWrapper}>
              {currentChat?<Chat/>:
