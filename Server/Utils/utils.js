@@ -54,6 +54,7 @@ const approveFriend =async (id,friendId,next) =>{
             .select('-password')
             .populate({path:'friends',select:excludeFields})
             .populate({path:'friendsWaitingList',select:excludeFields})
+            .populate({path:'notifications',select:excludeFields})
 
          
             //Adding the user to the user's array of friends!
