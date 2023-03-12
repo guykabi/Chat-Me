@@ -17,22 +17,70 @@
   padding: 0;
   width: 100%;
   display: flex;
+  flex-direction: row;
 }
+
 .conversationsWrapper{
     width: 18rem; 
+    min-width:16rem;
     height: 87vh;
     margin: 0 auto;
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
     font-size: 2.2vmin;
     padding: 0.2rem;
     position: relative;
+    flex-grow: 1;
   }  
+
+  .createGroupsWrapper{
+    width: 22rem; 
+    min-width:20rem;
+    height: 87vh;
+    margin: 0 auto;
+    box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
+    font-size: 2.2vmin;
+    padding: 0.2rem;
+    position: relative;
+    flex-grow: 1;
+  } 
+
+  .popupMenuConversations{
+    position: absolute;
+    right: 0;
+    margin-right: -10rem;
+    margin-top: 2.2rem;
+    z-index: 100;
+    width: 10rem;
+    height: fit-content;
+    line-height: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    background-color: bisque;
+    box-shadow: -2px 2px 3px 2px rgba(57, 55, 55, 0.392);
+
+  }
+
+  .popupMenuConversations div{
+    width: 100%;
+    text-align: left;
+    padding-left: 0.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+  } 
+
+  .popupMenuConversations div:hover{
+    width: 98%;
+    background-color: rgb(227, 210, 190);
+  }
 
   .chatWrapper{
     width: 55%; 
+    min-width:24rem;
     height: 88vh;
     margin: 0 auto;
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
+    flex-grow: 1;
   }  
   .noChatDiv{
     margin: 0 auto;
@@ -45,6 +93,7 @@
   }
   .onlineWrapper{
     width: 20%; 
+    min-width:15rem;
     height: 88vh;
     margin: 0 auto;
     font-size: 2.2vmin;
