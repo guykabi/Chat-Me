@@ -6,7 +6,7 @@ import {useQuery,useMutation} from 'react-query'
 import { getMessages,sendNewMessage } from '../../utils/apiUtils'
 import Messages from '../messages/messages'
 import { Loader } from '../UI/clipLoader/clipLoader'
-
+import InputEmoji from "react-input-emoji";
 
 const Chat = ()=> {
   
@@ -53,7 +53,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   useEffect(()=>{
     //Notifying that user is typing
     if(!newMessage)return
-    let reciever = currentChat.friend._id
+    let reciever = currentChat?.friend?._id
     Socket.emit('typing',reciever,currentUser.name,room)
 
   },[newMessage])
@@ -62,8 +62,8 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   useEffect(()=>{
     //Listens to user's typing
     Socket.on('user_typing',(data)=>{
-    
-      if(data.reciever !== currentUser._id || data.room !== currentChat._id)return
+       
+      if(data?.reciever !== currentUser._id || data.room !== currentChat._id)return
          setTypingText(data.message)
          setIsTyping(true)
 
@@ -73,7 +73,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
         return () => clearTimeout(timer)
     })  
 
-  },[Socket])
+  },[Socket,currentChat])
 
 
   
@@ -85,8 +85,7 @@ const handleNewMessage = ()=>{
    messageObj.sender = currentUser._id
    messageObj.text = newMessage
    messageObj.seen = false
-
-  //Condition if its the first message of that chat... 
+   
    sendMessage(messageObj)
    setNewMessage('')
   }  
@@ -104,9 +103,9 @@ const handleNewMessage = ()=>{
   return (
     <>
     <div className={styles.mainDiv}>
-       <div className={styles.chatDiv}>
+       <article className={styles.chatDiv}>
 
-         <div className={styles.chatBoxHeader}>
+         <section className={styles.chatBoxHeader}>
 
             <span className={styles.imageWrapper}>
 
@@ -125,27 +124,35 @@ const handleNewMessage = ()=>{
             </div> 
               {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
               <span className='threeDots'></span>
-         </div>
+         </section>
 
-         <div className={styles.chatBoxDiv} >  
-                 {messages.length?<Messages messages={messages}/>:null}
+         <section className={styles.chatBoxDiv} >  
+                 {messages?.length?<Messages messages={messages}/>:null}
                  {isLoading&&
                   <div className={styles.loadingMessages}>
                   <div>Loading messages...</div>
                   <Loader size={20}/>
                   </div>}
-         </div>
+         </section>
 
-         <div className={styles.chatBoxBottom}>
-            <textarea 
-            dir='auto'
-            value={newMessage} 
-            className={styles.textAreaInput}
-            onChange={(e)=>setNewMessage(e.target.value)}/> &nbsp;
-            <button onClick={handleNewMessage}>Send</button><br/> 
-         </div>
+         <section className={styles.chatBoxBottom}>
+            <div className={styles.inputEmojiWrapper}>
+              <InputEmoji
+              value={newMessage}
+              onChange={setNewMessage}
+              width={40}
+              height={15}
+              placeholder="Type a message..."
+              borderRadius={10}
+              />
+            </div>
+             
+            <button 
+            className={styles.submitMessageBtn}
+            onClick={handleNewMessage}>Send</button>
+         </section>
 
-       </div>
+       </article>
     </div>
   </>
   )
