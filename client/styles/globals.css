@@ -1,12 +1,15 @@
 
 body {
-    font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
-      'Arial', sans-serif;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     padding:0;
     max-width: 100%;
     min-height: 100%;
     margin: 0 auto;
-  }  
+  }   
+
+  input{
+    outline: none;
+  }
 
   .center{
     text-align: center;
