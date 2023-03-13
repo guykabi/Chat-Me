@@ -37,14 +37,15 @@ if(isLoading){
  
   return (  
     <>
-      {isLoggedIn===false&&<div className='center'>
+      {isLoggedIn===false&&
+      <section className='center'>
        <h1>Welcome to messenger</h1>
          <div className={styles.titlesWrapper}>
              <h4> <Link href='/login'>Sign in</Link></h4>
              <h6>or</h6>
              <h4>Sign up</h4>
          </div>
-      </div>}
+      </section>}
      </>
   )
 } 
