@@ -32,7 +32,7 @@ export const exctractCredentials = (req)=>{
 } 
 
 
-export const loginRedirectOnError = (title)=>{
+export const onError = (title)=>{
   const {reload} = useRouter()
       return (
          <div className='center'>
@@ -96,4 +96,8 @@ export const setUserStatus = (currentUser,user) =>{
 }
 
 
-
+export const handleChatFriendField = (conversation,userId) =>{
+  let newConversation = {...conversation} 
+  newConversation.friend = userId
+  return newConversation
+}
