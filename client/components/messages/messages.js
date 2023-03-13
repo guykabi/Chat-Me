@@ -13,10 +13,9 @@ const Messages = ({messages}) => {
     const scrollRef = useRef()
     const [allMessages,setAllMessages]=useState([])  
     const [amountToSkip,setAmountToSkip]=useState(30)
-    const[isMoreMessages,setIsMoreMessages]=useState()
+    const [isMoreMessages,setIsMoreMessages]=useState()
     const [newChatToDelete,setNewChatToDelete]=useState(null)
      
-
     const {refetch:loadMore,error} = useQuery('more-messages',()=>(
       getMessages(currentChat?._id,amountToSkip)),
     {
@@ -137,13 +136,13 @@ const Messages = ({messages}) => {
    
   return (
     <>
-     <div className={styles.messagesDiv} onScroll={handleMoreLoading} >  
+     <section className={styles.messagesDiv} onScroll={handleMoreLoading} >  
      {memoMessages?.map((message)=>(
         <div key={message._id} ref={scrollRef}>
               <Message message={message}
                own={message.sender===currentUser._id}/>
         </div>))}
-     </div>
+     </section>
     </>
   )
 }
