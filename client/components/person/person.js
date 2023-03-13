@@ -146,7 +146,7 @@ useEffect(()=>{
        getUserData()
     }
     if(data.message === 'The Friend approval has been done'){
-      console.log(data.message);
+      
       //User just got approved!
       setPersonStatus('Friend') 
       getUserData()
@@ -225,11 +225,13 @@ useEffect(()=>{
            <div 
            className={styles.declineRequestDiv} 
            onClick={unapproveRequest}
+           role='button'
            onMouseDown={(e) => e.preventDefault()}>
            Decline
            </div>} 
            <div 
            className={styles.personActionSign}
+           role='button'
            onClick={handlePersonStatusChange} 
            onMouseDown={(e) => e.preventDefault()}>
            {personStatus}
