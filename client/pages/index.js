@@ -1,12 +1,12 @@
 import styles from '../styles/IntroductionPage.module.css'
-import { exctractCredentials,loginRedirectOnError,needToReSign } from '../utils/utils'; 
+import { exctractCredentials,onError,needToReSign } from '../utils/utils'; 
 import { tokenValidation } from '../utils/apiUtils';
 import {useMutation} from 'react-query'
 import {push} from 'next/router'
 import Link from 'next/link'
 import { useEffect } from 'react';
 
- const Introduction = ({isLoggedIn,userName,tokens}) => { 
+ const Introduction = ({isLoggedIn,userName}) => { 
   
   const {mutate,error,isLoading} = useMutation(tokenValidation,{
     onSuccess:()=>{
@@ -15,8 +15,7 @@ import { useEffect } from 'react';
   })
 
   useEffect(()=>{
-    if(!tokens) return
-      mutate(tokens)
+      mutate()
   },[])
    
   
@@ -33,7 +32,7 @@ if(isLoading){
       //If refreshToken is no more valid
       return needToReSign(userName)
     }
-    return loginRedirectOnError('Welcome to messenger')
+    return onError('Welcome to messenger')
   }
  
   return (  
@@ -58,10 +57,10 @@ export async function getServerSideProps({req}){
     } 
   }    
 
-  const {user,tokensObj} = exctractCredentials(req)
+  const user= exctractCredentials(req)
   
   return{
-    props:{tokens:tokensObj,userName:user.name}
+    props:{userName:user.name}
    }
 }
 
