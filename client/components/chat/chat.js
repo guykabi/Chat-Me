@@ -109,8 +109,12 @@ const handleNewMessage = ()=>{
 
             <span className={styles.imageWrapper}>
 
-               {!currentChat.friend?.image?<img src={currentChat.friend?.image?
-               currentChat.friend?.image:'/images/no-avatar.png'}/>
+               {!currentChat.friend?.image?
+               <img 
+               src={currentChat.friend?.image?
+               currentChat.friend?.image:'/images/no-avatar.png'}
+               alt={currentUser?.image?
+               currentUser?.image:'/images/no-avatar.png'}/>
                :
                <img src={currentChat?.image?
                currentChat?.image:'/images/no-avatarGroup.png'}/>}
