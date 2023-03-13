@@ -2,7 +2,7 @@ import React,{useContext, useEffect, useState} from 'react'
 import styles from './notification.module.css'
 import { chatContext } from '../../context/chatContext'
 import { useMutation } from 'react-query'
-import {excludeFieldsUserData, exctractCredentials} from '../../utils/utils'
+import {excludeFieldsUserData} from '../../utils/utils'
 import { approveFriend , unapproveFriend } from '../../utils/apiUtils'
 
 
@@ -66,6 +66,7 @@ const Notification = ({notification,decreaseNotify}) => {
  }
    
   return (
+    <>
     <div className={styles.notificationMainDiv}>
 
       <div className={styles.notifyPersonImgWrapper}>
@@ -73,7 +74,11 @@ const Notification = ({notification,decreaseNotify}) => {
          className={styles.notifyPersonImg} 
          src={notification.sender.image?
          notification.sender.image:
-         '/images/no-avatar.png'}/>
+         '/images/no-avatar.png'}
+         
+         alt={notification.sender.image?
+         notification.sender.image:
+         'no-avatar.png'}/>
       </div>
      
         {notification.sender.name} {notification.message}
@@ -91,6 +96,7 @@ const Notification = ({notification,decreaseNotify}) => {
         </div>}
    
     </div>
+    </>
   )
 }
 
