@@ -185,8 +185,8 @@ const notis = notifications?.map((notif,index)=>(
         
     
   return (
-    <div className={styles.mainNav}>
-        <div className={styles.logo}>Next chat</div>
+    <nav className={styles.mainNav}>
+        <div className={styles.logo} role='banner'>Next chat</div>
 
         <div className={styles.searchInput}>
           <input 
@@ -228,15 +228,26 @@ const notis = notifications?.map((notif,index)=>(
         <div 
         className={styles.userImage} 
         onClick={handleSideMenu}>
-            <img src='/images/Andromeda_Galaxy.jpg'/>
+            <img 
+            src={currentUser?.image?
+            currentUser?.image:
+            '/images/no-avatar.png'} 
+            
+            alt={currentUser?.image?
+            currentUser?.image:
+            '/images/no-avatar.png'}/>
         </div>
 
         {isMenu&&
         <div className={styles.isMenuDiv}>
-          <div onClick={()=>push('messenger/userPage')}>Private</div>
-          <div onClick={refetch}>Logout</div>
+          <div 
+          role='link'
+          onClick={()=>push('messenger/userPage')}>Private</div>
+          <div 
+          role='link'
+          onClick={refetch}>Logout</div>
         </div>}
-    </div>
+    </nav>
   )
 }
 
