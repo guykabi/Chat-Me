@@ -8,7 +8,7 @@ const {
      handleSeenMessage} = require('../controllers/messageController') 
 
 router
-.get('/:conversationId',Auth,getMessageByConId)  
+.get('/:conversation',Auth,getMessageByConId)  
 .post('/',Auth,addNewMessage)
 .patch('/seen/:id',handleSeenMessage)
 

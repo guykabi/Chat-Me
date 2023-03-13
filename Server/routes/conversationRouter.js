@@ -12,6 +12,6 @@ router
 .get('/:id',Auth,getAllConversations)
 .post('/',Auth,addNewConversation)
 .patch('/:id',Auth,updateConversation)
-.delete('/:id',deleteConversation)
+.delete('/:id',Auth,deleteConversation)
 
 module.exports = router;

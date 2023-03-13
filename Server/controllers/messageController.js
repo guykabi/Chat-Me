@@ -7,7 +7,7 @@ const getMessageByConId = async(req,resp,next)=>{
     
     //The amount of documents to skip
     const amount = req.headers['load-more']
-
+    
     try{
       let messages = await Message.find({conversation})
       .sort({createdAt:-1})
@@ -15,6 +15,7 @@ const getMessageByConId = async(req,resp,next)=>{
       .skip(amount)
       .select('-__v')
 
+   
       resp.status(200).json(messages)
      
     }catch(err){
