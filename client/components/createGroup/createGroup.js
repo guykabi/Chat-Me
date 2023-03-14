@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'react-query'
 import { getAllusers , createGroup } from '../../utils/apiUtils'
 import {chatContext} from '../../context/chatContext'
 import GroupPerson from '../group-person/groupPerson'
+import Button from '../UI/Button/button'
 
 const CreateGroup = ({onSwitch}) => {
 
@@ -32,9 +33,16 @@ const [pickedUsers,setPickedUsers]=useState([])
 
 
 const handleUserPick = (e) =>{
+  setQuery("")
   if(pickedUsers.find(p=>p._id === e._id)) return
   setPickedUsers(prev=> [...prev,e])
+  
 }   
+
+
+const removePickedFriend = (pickedUser) =>{
+  setPickedUsers(prev=>prev.filter(u=>u._id !== pickedUser._id))
+}
 
 const handleGroupSubmit = (e) =>{
   e.preventDefault() 
@@ -50,10 +58,7 @@ const handleGroupSubmit = (e) =>{
 
  }
 
-const removePickedFriend = (pickedUser) =>{
-    setPickedUsers(prev=>prev.filter(u=>u._id !== pickedUser._id))
-} 
-
+ 
 
 const filteredItems = useMemo(()=>{
  return allUsers?.filter(item=>(
@@ -105,23 +110,27 @@ const filteredItems = useMemo(()=>{
 
           <article className={styles.searchInputWrapper}>
             <input 
+            value={query}
             className={styles.searchFriendToAddInput}
             placeholder='Search user to add'
+            aria-label='Search user to add'
             onChange={(e)=>setQuery(e.target.value)}/> 
           </article> 
 
           <article className={styles.allUsers}>
               {searchForUsers}
-          </article><br/>
+          </article><br/><br/>
           
-            <button 
-            aria-label='Create group'
-            type='submit'>
-            Create group
-            </button>
+          <Button 
+          className={'primaryBtn'}
+          width={70}
+          height={25}
+          text='Create group'
+          arialable='Create group button'
+          type='submit'/>
      
         </form>
-        
+
       </section>
     </section>
   )
