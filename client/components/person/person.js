@@ -109,7 +109,7 @@ const {mutate:remove} = useMutation(removeFriend,{
 const {mutate:newConversation} = useMutation(createConversation,{
   onSuccess:(data)=>{
     if(data === 'Conversation already exist')return
-      Socket.emit('new-conversation',currentUser._id,data.conversation)
+      Socket.emit('new-conversation',data.conversation)
   }
 })
 
