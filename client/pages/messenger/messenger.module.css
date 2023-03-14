@@ -16,6 +16,7 @@
   margin: 0;
   padding: 0;
   width: 100%;
+  height: 89vh;
   display: flex;
   flex-direction: row;
 }
@@ -23,8 +24,9 @@
 .conversationsWrapper{
     width: 22rem; 
     min-width:16rem;
-    height: 87vh;
+    height: 100%;
     margin: 0 auto;
+    background-color: rgb(255, 252, 252);
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
     font-size: 2.2vmin;
     padding: 0.2rem;
@@ -35,8 +37,9 @@
   .createGroupsWrapper{
     width: 24rem; 
     min-width:20rem;
-    height: 87vh;
+    height: 100%;
     margin: 0 auto;
+    background-color: rgb(255, 252, 252);
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
     font-size: 2.2vmin;
     padding: 0.2rem;
@@ -47,10 +50,10 @@
   .popupMenuConversations{
     position: absolute;
     right: 0;
-    margin-right: -10rem;
-    margin-top: 2.2rem;
+    margin-right: -8rem;
+    margin-top: 2.4rem;
     z-index: 100;
-    width: 10rem;
+    width: 8rem;
     height: fit-content;
     line-height: 2.2rem;
     display: flex;
@@ -77,7 +80,7 @@
   .chatWrapper{
     width: 55%; 
     min-width:24rem;
-    height: 88vh;
+    height: 100%;
     margin: 0 auto;
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
     flex-grow: 1;
@@ -94,7 +97,7 @@
   .onlineWrapper{
     width: 20%; 
     min-width:15rem;
-    height: 88vh;
+    height: 100%;
     margin: 0 auto;
     font-size: 2.2vmin;
     padding: 0.2rem;
