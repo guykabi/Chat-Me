@@ -27,7 +27,7 @@ export const ChatContextProvider = ({children})=>{
    }) 
 
 useEffect(()=>{
-    const socket = io('http://localhost:3001') 
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL) 
     socket.on('connection')
     dispatch({type:'SOCKET',payload:socket})
     return ()=> socket.close()
