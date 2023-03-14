@@ -7,6 +7,11 @@ body {
     margin: 0 auto;
   }   
 
+input::placeholder{
+    letter-spacing: 0.8px;
+}
+
+
   input{
     outline: none;
   }
