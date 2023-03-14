@@ -51,7 +51,7 @@ const Conversations = () => {
 
     //When a new chat is created
     Socket.on('arrival-conversation',conversation=>{
-        
+    
        if(!conversation){
          //When a new conversation with no messages was deleted -
          //fetching updated conversations
@@ -59,20 +59,30 @@ const Conversations = () => {
          return
        }
 
+      if(!conversation.participants.find(p=>p._id === currentUser._id))return
+        
         setAllConversations(prev=> [conversation,...prev]) 
+
+        
+      if( //If the current user is not the manager or the creator of the new conversation
+      conversation.manager._id !== currentUser._id  ||
+      conversation.participants[0] !== currentUser._id
+      )return
+
 
         let conPlusFriend;
         if(!conversation.chatName){
            //Adding a friend field to conversation
-           conPlusFriend =  handleChatFriendField(conversation,currentUser._id)
+           let friend = conversation.participants.find(p=>p._id !== currentUser._id)
+           conPlusFriend = handleChatFriendField(conversation,friend)
         }
-
-        dispatch({type:'CURRENT_CHAT',payload:conPlusFriend})
+        
+        dispatch({type:'CURRENT_CHAT',payload:conPlusFriend?conPlusFriend:conversation})
     })
 
     return () => Socket.off('arrival-conversation')
 
-},[Socket,allConversations]) 
+},[Socket,currentUser,allConversations]) 
 
 
 
@@ -90,16 +100,18 @@ if(error){
 
 
   return (
-    <div className={styles.conversationsDiv}> 
+    <>
+     <article className={styles.conversationsDiv}> 
      <div className={styles.searchInputWrapper}>
-        <input type='text' placeholder='Search for chat...'/>
-     </div>
-     {isLoading?
-     <div><strong>Loading conversations...</strong></div>:
-     <div className={styles.allConversationsWrapper}>
-     {memoCons}
-     </div>}
-    </div>
+         <input type='text' placeholder='Search for chat...'/>
+      </div>
+      {isLoading?
+       <title><strong>Loading conversations...</strong></title>:
+       <section className={styles.allConversationsWrapper}>
+       {memoCons}
+       </section>}
+     </article>
+   </>
   )
 }
 
