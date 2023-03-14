@@ -27,7 +27,6 @@ export const ChatContextProvider = ({children})=>{
    }) 
 
 useEffect(()=>{
-  //if(!state.currentUser)return 
     const socket = io('http://localhost:3001') 
     socket.on('connection')
     dispatch({type:'SOCKET',payload:socket})
