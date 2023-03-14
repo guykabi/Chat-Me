@@ -51,9 +51,8 @@ io.on('connection', socket=>{
         
     }) 
 
-    socket.on('new-conversation',(reciever,conversation=undefined)=>{
-        let result = getUser(reciever) 
-        io.to(result?.socketId).emit('arrival-conversation',conversation)
+    socket.on('new-conversation',(conversation=undefined)=>{    
+            io.local.emit('arrival-conversation',conversation)      
     }) 
 
 
@@ -66,11 +65,11 @@ io.on('connection', socket=>{
               console.log(`Private room message ${message.text}`);
     })  
 
-    socket.on('typing',(recieverId,userTyping,room)=>{
+    socket.on('typing',(sender,userTyping,room)=>{
 
             io.in(room).emit('user_typing',
             {message:`${userTyping} is typing...`,
-            reciever:recieverId,room})
+            sender,room})
 
             console.log(`Private room message:${userTyping} typing...`);
     
