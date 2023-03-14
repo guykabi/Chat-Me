@@ -53,8 +53,8 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   useEffect(()=>{
     //Notifying that user is typing
     if(!newMessage)return
-    let reciever = currentChat?.friend?._id
-    Socket.emit('typing',reciever,currentUser.name,room)
+    let sender = currentUser._id
+    Socket.emit('typing',sender,currentUser.name,room)
 
   },[newMessage])
 
@@ -63,7 +63,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
     //Listens to user's typing
     Socket.on('user_typing',(data)=>{
        
-      if(data?.reciever !== currentUser._id || data.room !== currentChat._id)return
+      if(data.sender === currentUser._id || data.room !== currentChat._id)return
          setTypingText(data.message)
          setIsTyping(true)
 
@@ -73,7 +73,9 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
         return () => clearTimeout(timer)
     })  
 
-  },[Socket,currentChat])
+    return () => Socket.off('user_typing')
+
+  },[Socket,currentChat,currentUser])
 
 
   
@@ -109,15 +111,18 @@ const handleNewMessage = ()=>{
 
             <span className={styles.imageWrapper}>
 
-               {!currentChat.friend?.image?
+               {currentChat?.friend?
+
                <img 
                src={currentChat.friend?.image?
                currentChat.friend?.image:'/images/no-avatar.png'}
-               alt={currentUser?.image?
-               currentUser?.image:'/images/no-avatar.png'}/>
-               :
+               alt={currentChat.friend?.image?
+               currentChat.friend.image:'no-avatar.png'}/>:
+
                <img src={currentChat?.image?
-               currentChat?.image:'/images/no-avatarGroup.png'}/>}
+               currentChat?.image:'/images/no-avatarGroup.png'}
+               alt={currentChat?.image?
+               currentChat.image:'no-avatarGroup.png'}/>}
 
             </span>
 
