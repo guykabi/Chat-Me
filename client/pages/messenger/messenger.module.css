@@ -21,7 +21,7 @@
 }
 
 .conversationsWrapper{
-    width: 18rem; 
+    width: 22rem; 
     min-width:16rem;
     height: 87vh;
     margin: 0 auto;
@@ -33,7 +33,7 @@
   }  
 
   .createGroupsWrapper{
-    width: 22rem; 
+    width: 24rem; 
     min-width:20rem;
     height: 87vh;
     margin: 0 auto;
