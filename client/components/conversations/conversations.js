@@ -63,13 +63,12 @@ const Conversations = () => {
         
         setAllConversations(prev=> [conversation,...prev]) 
 
+       
+      if( //If the current user is the manager or the creator of the new conversation
+      conversation.manager._id === currentUser._id  ||
+      conversation.participants[0] === currentUser._id
+      ){
         
-      if( //If the current user is not the manager or the creator of the new conversation
-      conversation.manager._id !== currentUser._id  ||
-      conversation.participants[0] !== currentUser._id
-      )return
-
-
         let conPlusFriend;
         if(!conversation.chatName){
            //Adding a friend field to conversation
@@ -78,6 +77,7 @@ const Conversations = () => {
         }
         
         dispatch({type:'CURRENT_CHAT',payload:conPlusFriend?conPlusFriend:conversation})
+      }
     })
 
     return () => Socket.off('arrival-conversation')
@@ -101,7 +101,7 @@ if(error){
 
   return (
     <>
-     <article className={styles.conversationsDiv}> 
+     <div className={styles.conversationsDiv}> 
      <div className={styles.searchInputWrapper}>
          <input type='text' placeholder='Search for chat...'/>
       </div>
@@ -110,7 +110,7 @@ if(error){
        <section className={styles.allConversationsWrapper}>
        {memoCons}
        </section>}
-     </article>
+     </div>
    </>
   )
 }
