@@ -34,27 +34,37 @@ const selectedConversation = ()=>{
 
   return (
     <>
-    <div className={currentChat?._id === con?._id?
+    <article className={currentChat?._id === con?._id?
          styles.currentConversationDiv:
          styles.conversationDiv} 
+         role='button'
          onClick={selectedConversation}>
 
         <div className={styles.conversationImage}> 
-          <Image src={friend?.image
-          ?'/images/Andromeda_Galaxy.jpg'
+          {friend?<Image src={friend?.image
+          ?friend.image
           :'/images/no-avatar.png'}
-          alt={currentUser.name}
+          alt={friend?.name?friend.name:'no-avatar.png'}
           width={35}
           height={35}
           loading='lazy'
-          />
+          />:
+          <Image
+          src={con?.image
+            ?con.image
+            :'/images/no-avatarGroup.png'}
+            alt={con?.chatName?con.chatName:'no-avatarGroup.png'}
+            width={35}
+            height={35}
+            loading='lazy'
+          />}
         </div> 
 
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
         
-    </div>
+    </article>
     </>
   )
 }
