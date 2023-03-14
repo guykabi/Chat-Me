@@ -25,7 +25,7 @@ const [pickedUsers,setPickedUsers]=useState([])
       
       setGroupName(null)
       setPickedUsers([]) 
-      Socket.emit('new-conversation',currentUser._id,data.conversation)
+      Socket.emit('new-conversation',data.conversation)
       onSwitch()     
     }         
   })
@@ -91,15 +91,17 @@ const filteredItems = useMemo(()=>{
            <div className={styles.groupNameInputWrapper} >
             <input 
             placeholder='Group name'
+            aria-label='Insert a group name'
             required
             onChange={(e)=>setGroupName(e.target.value)}/>
            </div><br/>
 
-          {pickedUsersForGroup.length?<div className={pickedUsers.length?
+          {pickedUsersForGroup.length?
+           <div className={pickedUsers.length?
                styles.addedFriendsListActive:
                styles.addedFriendsList}>
                {pickedUsersForGroup}
-          </div>:null}
+           </div>:null}
 
           <article className={styles.searchInputWrapper}>
             <input 
