@@ -1,0 +1,54 @@
+
+.primaryBtn{
+    min-height: 20px;
+    color: rgb(34, 32, 32);
+    font-weight: 400;
+    background-color: rgb(210, 213, 167);
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 0.2rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0px 2px 3px 0px rgba(57, 55, 55, 0.292);
+    transition: 0.5s;
+   
+}  
+
+.primaryBtn:hover{
+    color:white;
+    background-color: rgb(173, 157, 138);
+} 
+
+
+.secondaryBtn{
+    min-height: 20px;
+    min-width: 3rem;
+    color: rgb(34, 32, 32);
+    font-weight: 400;
+    background-color: rgb(182, 181, 180);
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 0.2rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0px 2px 3px 0px rgba(57, 55, 55, 0.292);
+    transition: 0.5s;
+   
+}  
+
+.secondaryBtn:hover{
+    color:rgb(255, 255, 255);
+    background-color: rgb(162, 160, 158);
+}
+
+
+
+
+
+
