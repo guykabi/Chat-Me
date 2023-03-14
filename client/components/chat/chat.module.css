@@ -63,11 +63,12 @@
    }
 
    .typingDiv{
-    font-size: small;
+    bottom: 0;
+    font-size: x-small;
     margin-left: 0.4rem;
     color: rgb(59, 57, 57);
     float: left;
-    margin-top: 0.6rem;
+    margin-top: 1rem;
    }
    
    .chatBoxDiv{ 
