@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
+import Head from 'next/head'
 import { chatContext } from "../../context/chatContext";
 import styles from "./messenger.module.css";
 import Chat from "../../components/chat/chat";
@@ -8,11 +9,12 @@ import OnlineList from "../../components/onlineList/online";
 import { exctractCredentials, onError } from "../../utils/utils";
 import { useGetUser } from "../../hooks/useUser";
 import CreateGroup from "../../components/createGroup/createGroup";
+import ReturnIcon from "../../components/UI/returnIcon/returnIcon";
 
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
     useContext(chatContext);
-  const { data, error } = useGetUser(user._id);
+  const { data, error , isLoading } = useGetUser(user._id);
 
   const [openMenu, setOpenMenu] = useState(false);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -34,7 +36,15 @@ const Messenger = ({ hasError, user }) => {
   const handleCloseCreateGroup = () => {
     setOpenCreateGroup(false);
     setOpenMenu(false);
-  };
+  }; 
+
+  if(isLoading){
+    return(
+      <div className='center'>
+        <h2>Loading...</h2>
+      </div>
+    )
+  }
 
   if (hasError || error) {
     if (error) return onError("Connection problem...");
@@ -47,8 +57,9 @@ const Messenger = ({ hasError, user }) => {
     <>
       {currentUser ? (
         <section className={styles.messangerWrapper}>
+          <Head><title>Chat Me</title></Head>
           <Navbar />
-          <div className={styles.innerWrapper}>
+          <main className={styles.innerWrapper}>
             <div
               className={
                 openCreateGroup
@@ -56,19 +67,21 @@ const Messenger = ({ hasError, user }) => {
                   : styles.conversationsWrapper
               }
             >
-              <span
+              {openCreateGroup?
+              <ReturnIcon onClick={handleCloseCreateGroup}/>
+              :<span
                 className="threeDots"
                 role="button"
                 onClick={() => setOpenMenu(!openMenu)}
-              ></span>
+              ></span>}
 
               {openMenu && (
                 <div className={styles.popupMenuConversations}>
                   <div onClick={handleOpenCreateGroup} role="button">
                     Create group
                   </div>
-                  <div onClick={handleCloseCreateGroup} role="button">
-                    All conversations
+                  <div role="button">
+                    Sort by:
                   </div>
                 </div>
               )}
@@ -101,7 +114,7 @@ const Messenger = ({ hasError, user }) => {
               <br />
               <OnlineList />
             </div>
-          </div>
+          </main>
         </section>
       ) : (
         <section className="center">
