@@ -100,4 +100,20 @@ export const handleChatFriendField = (conversation,userId) =>{
   let newConversation = {...conversation} 
   newConversation.friend = userId
   return newConversation
+} 
+
+
+export const handleFilterCons = (allConversations,query) =>{
+     return allConversations?.filter(con=>{
+
+     return con.chatName?.toLowerCase().includes(query?.trim().toLowerCase()) || 
+     !con.chatName &&
+     (
+      con.participants[0].name
+     .toLowerCase().includes(query?.trim().toLowerCase()) ||
+      con.participants[1].name
+     .toLowerCase().includes(query?.trim().toLowerCase())
+     )
+
+  })
 }
