@@ -1,4 +1,5 @@
 import React from 'react'
+import Head from 'next/head'
 import { exctractCredentials,onError } from '../../../utils/utils'
 import { useGetUser } from '../../../hooks/useUser'
 
@@ -20,6 +21,7 @@ const UserPage = ({user,hasError}) => {
   
   return (
     <div className='center'> 
+    <Head><title>{data?.name}'s page</title></Head>
          {isLoading?
          <div className='center'>Loading details...</div>:
          <h2>{data?.name} details</h2>}
