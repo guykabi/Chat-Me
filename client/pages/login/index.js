@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
+import Head from 'next/head'
 import {chatContext} from '../../context/chatContext'
 import styles from './login.module.css'
 import Input from '../../components/UI/Input/Input'
@@ -52,6 +53,7 @@ const Login = () => {
 
   return (
     <div className={styles.mainLoginWrapper}>
+      <Head><title>Chat me login</title></Head>
         <div className={styles.loginWrapper}>
             <div>
                 <h2>Login</h2>
