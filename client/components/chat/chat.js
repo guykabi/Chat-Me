@@ -7,6 +7,7 @@ import { getMessages,sendNewMessage } from '../../utils/apiUtils'
 import Messages from '../messages/messages'
 import { Loader } from '../UI/clipLoader/clipLoader'
 import InputEmoji from "react-input-emoji";
+import Button from '../UI/Button/button'
 
 const Chat = ()=> {
   
@@ -105,7 +106,7 @@ const handleNewMessage = ()=>{
   return (
     <>
     <div className={styles.mainDiv}>
-       <article className={styles.chatDiv}>
+       <main className={styles.chatDiv}>
 
          <section className={styles.chatBoxHeader}>
 
@@ -155,13 +156,18 @@ const handleNewMessage = ()=>{
               borderRadius={10}
               />
             </div>
-             
-            <button 
-            className={styles.submitMessageBtn}
-            onClick={handleNewMessage}>Send</button>
+           
+              <Button 
+              className={'secondaryBtn'}
+              width={10}
+              height={35}
+              text='Send'
+              arialable='Send message'
+              onClick={handleNewMessage}/>
+            
          </section>
 
-       </article>
+       </main>
     </div>
   </>
   )
