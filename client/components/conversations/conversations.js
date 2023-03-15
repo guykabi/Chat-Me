@@ -4,14 +4,14 @@ import Conversation from '../conversation/conversation'
 import { chatContext} from '../../context/chatContext'
 import { getConversations } from '../../utils/apiUtils'
 import {useQuery} from 'react-query'
-import { needToReSign,onError,handleChatFriendField } from '../../utils/utils'
+import { needToReSign,onError,handleChatFriendField,handleFilterCons } from '../../utils/utils'
 
 
 const Conversations = () => { 
    
   const {currentUser,dispatch,Socket} = useContext(chatContext)
   const [allConversations,setAllConversations]=useState([])
-
+  const [query,setQuery]=useState("")
 
   const {error,isLoading,refetch} = useQuery('conversations',
           ()=>getConversations(currentUser._id),{      
@@ -85,7 +85,6 @@ const Conversations = () => {
 },[Socket,currentUser,allConversations]) 
 
 
-
 if(error){
   if(error?.response?.status === 401){
         return needToReSign(currentUser.name)
@@ -94,16 +93,24 @@ if(error){
 }
 
 
-  const memoCons =useMemo(()=>allConversations?.map((con)=>(
+const filteredConversations = useMemo(()=>(
+       handleFilterCons(allConversations,query)      
+),[allConversations,query]) 
+
+const memoCons =filteredConversations.map((con)=>(
      <Conversation key={con._id} con={con} />
-  )),[allConversations])
+))
 
 
   return (
     <>
      <div className={styles.conversationsDiv}> 
      <div className={styles.searchInputWrapper}>
-         <input type='text' placeholder='Search for chat...'/>
+         <input 
+         type='text' 
+         placeholder='Search for chat...'
+         onChange={(e)=>setQuery(e.target.value)}
+         />
       </div>
       {isLoading?
        <title><strong>Loading conversations...</strong></title>:
@@ -115,4 +122,4 @@ if(error){
   )
 }
 
-export default Conversations
+export default Conversations 
