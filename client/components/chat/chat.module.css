@@ -85,7 +85,6 @@
      display: none;
    } 
 
-
    .chatBoxBottom{
     text-align: center;
     align-items: center;
@@ -98,25 +97,7 @@
     padding-bottom: 0.4rem;
     background-color: rgba(205, 210, 205, 0.9);
    }
-   
-
-   .submitMessageBtn{
-    border: none;
-    background-color: rgb(159, 171, 159);
-    width:4rem;
-    height: 2.4rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.5s;
-    font-size: 2.5vmin;
-   } 
-   
-   .submitMessageBtn:hover{
-    color: white;
-    background-color: rgba(87, 109, 87, 0.832);
-   } 
-
-
+  
    .inputEmojiWrapper{
     width: 80%;
    } 
