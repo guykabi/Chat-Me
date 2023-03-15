@@ -1,8 +1,7 @@
+import React from 'react'
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications'
 import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton'; 
-import React,{useState} from 'react'
-import styles from './notificationIcon'
 
 
 const NotificationIcon = ({count}) => {
