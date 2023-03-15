@@ -5,8 +5,8 @@
     display: inline-flex;
     padding: 0.2rem;
     background-color: rgb(210, 213, 167);
-   
 } 
+
 .logo{
     float: left;
     min-width: 8rem;
@@ -15,6 +15,7 @@
     font-weight: bold;
     font-size: larger;
 } 
+
 .searchInput{
   width: 22rem;
   margin: 0 auto;
@@ -26,7 +27,7 @@
     border-radius: 8px;
     height: 1.8rem;
     padding-left: 0.5rem;
-} 
+}  
 
 .foundPersons{
     z-index: 100;
