@@ -28,24 +28,24 @@ if(isLoading){
 }
 
   if(error){
-    if(error?.response?.data?.message === 'Failed to authenticate refresh token'){
+    if(error?.response?.status === 401){
       //If refreshToken is no more valid
       return needToReSign(userName)
     }
-    return onError('Welcome to messenger')
+    return onError('Welcome to Chat Me')
   }
  
   return (  
     <>
       {isLoggedIn===false&&
-      <section className='center'>
+      <main className='center'>
        <h1>Welcome to messenger</h1>
          <div className={styles.titlesWrapper}>
-             <h4> <Link href='/login'>Sign in</Link></h4>
+             <h4><Link href='/login'>Sign in</Link></h4>
              <h6>or</h6>
              <h4>Sign up</h4>
          </div>
-      </section>}
+      </main>}
      </>
   )
 } 
