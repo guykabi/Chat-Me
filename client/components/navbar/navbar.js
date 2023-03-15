@@ -50,7 +50,8 @@ const Navbar = () => {
   const { isError, refetch } = useQuery("logout", logOut, {
     onSuccess: (data) => {
       if (data.message === "User logged out successfully") {
-        dispatch({ type: "CURRENT_USER", payload: null }), Socket.close();
+        dispatch({ type: "CURRENT_USER", payload: null }), 
+        Socket.close();
         push("/login");
       }
     },
@@ -184,7 +185,6 @@ const Navbar = () => {
     />
   ));
 
-  
   return (
     <nav className={styles.mainNav}>
       <div className={styles.logo} role="banner">
