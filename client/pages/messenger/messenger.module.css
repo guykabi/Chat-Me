@@ -1,27 +1,28 @@
 .messangerWrapper{
     text-align: center;
+    display: flex;
+    flex-direction: column;
     margin: 0;
     padding: 0;
     width: 100%;
+    height: 100vh;
     overflow: hidden;
 }  
 
-.header{
-  width: 100%;
-  height: 3.5rem;
-  background-color: rgb(226, 204, 174); 
-}
+
 .innerWrapper{
   text-align: center;
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 89vh;
+  height: 90vh;
   display: flex;
   flex-direction: row;
+  justify-content: center;
 }
 
 .conversationsWrapper{
+    position: relative;
     width: 22rem; 
     min-width:16rem;
     height: 100%;
@@ -29,9 +30,9 @@
     background-color: rgb(255, 252, 252);
     box-shadow: 2px 0 5px -2px rgba(57, 55, 55, 0.692);
     font-size: 2.2vmin;
-    padding: 0.2rem;
-    position: relative;
     flex-grow: 1;
+    border: 0px solid black;
+  
   }  
 
   .createGroupsWrapper{
@@ -87,8 +88,8 @@
   }  
   .noChatDiv{
     margin: 0 auto;
-    width: 80%;
-    height: 90%;  
+    width: 70%;
+    height: 100%;  
     text-align: center;  
     font-size: 5vw;
     color: rgb(220, 215, 215);

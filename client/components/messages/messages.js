@@ -18,7 +18,7 @@ const Messages = ({ messages }) => {
   const scrollRef = useRef();
   const [allMessages, setAllMessages] = useState([]);
   const [amountToSkip, setAmountToSkip] = useState(30);
-  const [isMoreMessages, setIsMoreMessages] = useState();
+  const [isMoreMessages, setIsMoreMessages] = useState(false);
   const [newChatToDelete, setNewChatToDelete] = useState(null);
 
   const { refetch: loadMore, error } = useQuery(
@@ -28,10 +28,10 @@ const Messages = ({ messages }) => {
       onSuccess: (data) => {
         if (data.length) {
           let reverseMessages = [...data].reverse();
-          setAllMessages((prev) => [...reverseMessages, ...prev]);
+          setAllMessages(prev => [...reverseMessages, ...prev]);
 
           if (data.length === 30) {
-            setAmountToSkip((prev) => (prev += 30));
+            setAmountToSkip(prev => (prev += 30));
           }
 
           if (data.length < 30) {
@@ -52,6 +52,8 @@ const Messages = ({ messages }) => {
     },
   });
 
+
+
   useEffect(() => {
     //Only on chat switching - or new chat creation
     if (!messages.length) return;
@@ -64,6 +66,8 @@ const Messages = ({ messages }) => {
     setAmountToSkip(30);
   }, [messages]);
 
+
+
   useEffect(() => {
     //Detecting if it's a new chat without messages
     if (!messages.length && !allMessages.length) {
@@ -73,13 +77,16 @@ const Messages = ({ messages }) => {
     }
 
     setNewChatToDelete(null);
-    if (!isMoreMessages) return;
+
+    if (isMoreMessages) return;
     scrollRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
       inline: "nearest",
     });
+
   }, [allMessages]);
+
 
   useEffect(() => {
     Socket.removeAllListeners("recieve-message");
@@ -97,6 +104,7 @@ const Messages = ({ messages }) => {
     });
   }, [Socket, newChatToDelete]);
 
+
   useEffect(() => {
     //If no message was sent in the new chat - delete it
     if (!newChatToDelete) return;
@@ -104,11 +112,13 @@ const Messages = ({ messages }) => {
     removeConversation(newChatToDelete);
   }, [currentChat]);
 
+
   const handleMoreLoading = (e) => {
     if (e.target.scrollTop === 0 && isMoreMessages) {
       loadMore();
     }
   };
+
 
   if (error) {
     if (error?.response?.status === 401) {
@@ -117,12 +127,13 @@ const Messages = ({ messages }) => {
     return onError();
   }
 
+  
   const memoMessages = useMemo(() => allMessages, [allMessages]);
 
   return (
     <>
       <section className={styles.messagesDiv} onScroll={handleMoreLoading}>
-        {memoMessages?.map((message) => (
+        {memoMessages?.map(message => (
           <div key={message._id} ref={scrollRef}>
             <Message
               message={message}

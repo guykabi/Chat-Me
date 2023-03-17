@@ -1,9 +1,8 @@
 .messageMenuDiv{
     position:absolute;
-    z-index: 100;
+    z-index: 10;
+    right: 50%;
     top: 0;
-    margin-left: 6rem;
-    margin-top: -0.4rem;
     width: 8rem;
     height: 4rem;
     background-color: rgb(232, 218, 200);

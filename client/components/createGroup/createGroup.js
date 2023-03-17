@@ -51,7 +51,7 @@ const handleGroupSubmit = (e) =>{
   let group = {} 
   group.chatName = groupName
   group.participants = pickedUsers.map(p=> p._id) 
-  group.participants.push(currentUser._id)
+  group.participants.unshift(currentUser._id)
   group.manager = currentUser._id 
   
   addGroup(group)

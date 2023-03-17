@@ -9,7 +9,7 @@ import { needToReSign,onError,handleChatFriendField,handleFilterCons } from '../
 
 const Conversations = () => { 
    
-  const {currentUser,dispatch,Socket} = useContext(chatContext)
+  const {currentUser,currentChat,dispatch,Socket} = useContext(chatContext)
   const [allConversations,setAllConversations]=useState([])
   const [query,setQuery]=useState("")
 
@@ -85,6 +85,12 @@ const Conversations = () => {
 },[Socket,currentUser,allConversations]) 
 
 
+useEffect(()=>{
+  if(!query.length)return
+  setQuery('')
+},[currentChat])
+
+
 if(error){
   if(error?.response?.status === 401){
         return needToReSign(currentUser.name)
@@ -109,6 +115,7 @@ const memoCons =filteredConversations.map((con)=>(
          <input 
          type='text' 
          placeholder='Search for chat...'
+         value={query}
          onChange={(e)=>setQuery(e.target.value)}
          />
       </div>

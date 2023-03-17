@@ -21,7 +21,8 @@
 
 .allConversationsWrapper{
     width: 100%;
-    height: 70vh;
+    height: 68vh;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 .allConversationsWrapper::-webkit-scrollbar{
