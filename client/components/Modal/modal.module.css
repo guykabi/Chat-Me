@@ -1,0 +1,71 @@
+.overlay{
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(88, 83, 83, 0.517);
+} 
+
+.mainModal{
+    position: absolute;
+    z-index: 100;
+    margin: 0 auto;
+    width: fit-content;
+    height: fit-content;
+    max-width: 30rem;
+    min-width: 25rem;
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
+    border-radius: 5px;
+    font-weight: 600;
+    background-color: whitesmoke;
+    box-shadow: 0px 4px 5px -2px rgba(57, 55, 55, 0.692);
+} 
+
+.modalHeader{
+    text-align: center;
+    margin: 0 auto;
+    width: 50%;
+} 
+
+.modalContent{
+    margin: 0 auto;
+    width: 90%;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btnWrapper{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    margin:  0 auto;
+}
+
+
+.mainModal {
+    animation: mainModal 0.4s forwards;
+    -webkit-animation: mainModal 0.4s forwards;
+} 
+
+.mainModal{
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+} 
+
+@keyframes mainModal {
+    0%{opacity: 0;}
+    100% { transform: translateX(0%); opacity: 1; }
+}
+
+@-webkit-keyframes mainModal  {
+    100% { -webkit-transform: translateX(0%); }
+}  
+
