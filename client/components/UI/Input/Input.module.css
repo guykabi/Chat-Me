@@ -1,6 +1,6 @@
 .inputWrapper{
     margin: 0 auto;
-    width: 50%;
+    width: 20%;
     height: 1.5rem;
     padding: 0.2rem;
     border-radius: 10px;
@@ -13,12 +13,11 @@
 }
 
 .inputStyle{
+    text-align: center;
     margin: 0 auto;
     border: none;
-    width: 90%;
-    height: 90%;
     padding-left: 0.1rem;
-    float: left;
     outline:none;
+    border-bottom: 1px lightgray solid;
     background-color: rgba(0, 255, 255, 0);
 }
