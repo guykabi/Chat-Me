@@ -8,16 +8,20 @@ import Messages from '../messages/messages'
 import { Loader } from '../UI/clipLoader/clipLoader'
 import InputEmoji from "react-input-emoji";
 import Button from '../UI/Button/button'
+import EditGroup from '../chatDetails/chatDetails'
+import Modal from '../Modal/modal'
+import { style } from '@mui/system'
 
 const Chat = ()=> {
   
   const {currentChat,currentUser,Socket} = useContext(chatContext)
+  const [showModal,setShowModal]=useState(false)
   const [newMessage,setNewMessage]=useState('')
   const [messages,setMessages]= useState([])
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
   const [typingText,setTypingText]=useState(null)
-
+  const [isEditGroup,setIsEditGroup]=useState(false)
 
  const {data,error,isLoading} = useQuery(['messages',currentChat],()=>(
     getMessages(currentChat?._id)),
@@ -47,6 +51,9 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
     }
      setRoom(currentChat._id)
      Socket.emit('join_room',currentChat._id) 
+
+     if(!isEditGroup)return
+     setIsEditGroup(false)
       
   },[currentChat]) 
 
@@ -93,6 +100,21 @@ const handleNewMessage = ()=>{
    setNewMessage('')
   }  
 
+const handleImage = (currentChat?.friend?
+    <img 
+    src={currentChat.friend?.image?
+    currentChat.friend?.image:'/images/no-avatar.png'}
+    alt={currentChat.friend?.image?
+    currentChat.friend.image:'no-avatar.png'}
+    onClick={()=>setShowModal(true)}/>:
+
+    <img src={currentChat?.image?
+    currentChat?.image:'/images/no-avatarGroup.png'}
+    alt={currentChat?.image?
+    currentChat.image:'no-avatarGroup.png'}
+    onClick={()=>setShowModal(true)}/>)
+
+
 
   if(error){
     if(error?.response?.status === 401){
@@ -106,46 +128,52 @@ const handleNewMessage = ()=>{
   return (
     <>
     <div className={styles.mainDiv}>
+      
        <main className={styles.chatDiv}>
 
-         <section className={styles.chatBoxHeader}>
+         <Modal 
+         show={showModal} 
+         onClose={()=>setShowModal(false)}
+         >
+          <div className={styles.modalImageWrapper}>
+          {handleImage}
+          </div>
+         </Modal>
+
+         {isEditGroup?
+          <section className={styles.editGroupSection}>
+           <EditGroup onReturn={()=>setIsEditGroup(false)}/>
+          </section>:
+          <section className={styles.chatBoxHeader}>
 
             <span className={styles.imageWrapper}>
-
-               {currentChat?.friend?
-
-               <img 
-               src={currentChat.friend?.image?
-               currentChat.friend?.image:'/images/no-avatar.png'}
-               alt={currentChat.friend?.image?
-               currentChat.friend.image:'no-avatar.png'}/>:
-
-               <img src={currentChat?.image?
-               currentChat?.image:'/images/no-avatarGroup.png'}
-               alt={currentChat?.image?
-               currentChat.image:'no-avatarGroup.png'}/>}
-
+                 {handleImage}               
             </span>
+            
+            <div 
+            className={styles.friendName} 
+            onClick={()=>setIsEditGroup(!isEditGroup)}>
 
-            <div className={styles.friendName}>
               {currentChat?.friend?
               currentChat.friend?.name:
               currentChat.chatName}
+
             </div> 
               {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
               <span className='threeDots'></span>
-         </section>
+              
+         </section>}
 
-         <section className={styles.chatBoxDiv} >  
+         <main className={styles.chatBoxDiv} >  
                  {messages?.length?<Messages messages={messages}/>:null}
                  {isLoading&&
                   <div className={styles.loadingMessages}>
                   <div>Loading messages...</div>
                   <Loader size={20}/>
                   </div>}
-         </section>
+         </main>
 
-         <section className={styles.chatBoxBottom}>
+         <footer className={styles.chatBoxBottom}>
             <div className={styles.inputEmojiWrapper}>
               <InputEmoji
               value={newMessage}
@@ -165,7 +193,7 @@ const handleNewMessage = ()=>{
               arialable='Send message'
               onClick={handleNewMessage}/>
             
-         </section>
+         </footer>
 
        </main>
     </div>
