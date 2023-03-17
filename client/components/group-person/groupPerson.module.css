@@ -1,15 +1,16 @@
 .personMainDiv{
     display: flex;
+    position: relative;
     flex-direction: row;
     width: 100%; 
     height: 4rem;
     text-align: left;
     padding-left: 0.5rem;
     cursor: pointer;
-    border-bottom: 1px lightgray solid;
+    border-bottom: 1px rgb(169, 157, 157) solid;
 } 
 .personMainDiv:hover{
-    background-color: rgb(217, 212, 212);
+    background-color: rgba(231, 224, 224, 0.685);
 }
 
 .userImageWrapper{
@@ -27,9 +28,55 @@
 
 .userNameWrapper{
     position: relative;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
     float: left;
-    width: 40%;
-    margin-top: 5%;
+    width: 70%;
+    margin-top: 1.5rem;
     transition: 0.5s;
 } 
 
+
+
+.threeDotsCostum::after{
+    content: '\2807';
+    display: block;
+    position: absolute;
+    z-index: 10;
+    right: 0;
+    cursor: pointer;
+    margin-top: -0.8rem;
+    font-size: 20px; 
+    transition: 0.5s;
+} 
+
+.threeDotsCostum:hover{
+    color: rgb(70, 69, 69);
+}
+
+.memberOperationMenu{
+position: absolute;
+z-index: 10;
+right: 0;
+margin-top: 2.2rem;
+margin-right: 3.8rem;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ width: 8rem;
+ line-height: 2.5rem;
+ background-color: rgb(235, 243, 243);
+} 
+
+.memberOperationMenu div{
+    width: 100%;
+    font-weight: bold;
+    text-align:left;
+    font-size: small;
+    transition: 0.5s;
+} 
+
+.memberOperationMenu div:hover{
+    background-color: rgb(215, 222, 222);
+}
