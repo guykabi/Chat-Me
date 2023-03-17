@@ -1,0 +1,51 @@
+.mainEditGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 90%;
+}
+
+
+.headerWrapper{
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+    width: 80%;
+    height: 12rem;    
+}
+
+.mainEditGroup h2{
+    margin: 0 auto;
+    text-align: center;
+}
+
+.chatImageWrapper{
+  margin: 0 auto;
+  width: 60%; 
+}  
+
+.chatImageWrapper img{
+    cursor: pointer;
+    width: 50%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.membersOfChat{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: fit-content;
+    min-width:15rem;
+    overflow-y: scroll;
+} 
+
+.membersOfChat::-webkit-scrollbar{
+    display: none;
+}
