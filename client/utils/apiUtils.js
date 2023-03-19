@@ -5,6 +5,7 @@ export const checkUser = async (credentials)=>{
   return data
 } 
 
+
 export const getConversations = async (userId)=>{
   const {data:res} = await Axios('conversation/'+userId)
   return res
@@ -78,10 +79,14 @@ export const removeFriend = async ({currentUserId,friendId})=>{
 
 export const createConversation = async ({userId,friendId}) =>{
   let obj = {participants:[userId,friendId]}
-  const {data:res} = await Axios.post('users',obj)
+  const {data:res} = await Axios.post('conversation',obj)
   return res
 }
 
+export const updateConversation = async ({conId,obj}) =>{
+  const {data:res} = await Axios.patch('conversation/'+conId,obj)
+  return res
+}
 
 export const deleteConversation = async (conversationId)=>{
   const {data:res} = await Axios.delete('conversation/'+conversationId)
