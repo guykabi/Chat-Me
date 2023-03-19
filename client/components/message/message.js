@@ -1,4 +1,5 @@
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState,useContext } from "react";
+import { chatContext } from "../../context/chatContext";
 import styles from "./message.module.css";
 import { getTime } from "../../utils/utils";
 import { useMutation } from "react-query";
@@ -6,7 +7,9 @@ import { seenMessage } from "../../utils/apiUtils";
 import MessageOperations from "./messageOperation/messageOperations";
 
 const Message = ({ message, own }) => {
+  const {currentChat,currentUser} = useContext(chatContext)
   const [openMessageMenu, setOpenMessageMenu] = useState(false);
+  const [memeberName,setMemberName]=useState(null)
   const menuRef = useRef(null);
   const { mutate: switchToSeen } = useMutation(seenMessage);
 
@@ -14,6 +17,10 @@ const Message = ({ message, own }) => {
     //Checks if message is unseen
     if (own && message.seen) return;
     switchToSeen(message._id);
+
+    if(!currentChat.chatName || message.sender === currentUser._id)return 
+     let member = currentChat.participants.find(p=>p._id === message.sender)
+     setMemberName(member.name)
   }, []);
 
   const handleMessageOperation = () => {
@@ -35,17 +42,26 @@ const Message = ({ message, own }) => {
 
   return (
     <>
-      <div className={styles.mainMessageDiv} ref={own ? menuRef : null}>
+      <article className={styles.mainMessageDiv} ref={own ? menuRef : null}>
         <div className={styles.contentWrapper} onClick={handleMessageOperation}>
           <div className={own ? styles.ownMessage : styles.otherMessage}>
+
+            {currentChat.chatName&&
+            <div>
+             <strong>{memeberName}</strong>
+            </div>}
             <div dir="auto" className={styles.messageTextDiv}>
               {message.text}
             </div>
-            <span>{getTime(message.createdAt)}</span>
+            <div className={styles.timeBatch}>
+              {getTime(message.createdAt)}
+            </div>
+            {openMessageMenu && <MessageOperations />}
+            
           </div>
-          {openMessageMenu && <MessageOperations />}
+          
         </div>
-      </div>
+      </article>
     </>
   );
 };
