@@ -36,7 +36,6 @@ const handleUserPick = (e) =>{
   setQuery("")
   if(pickedUsers.find(p=>p._id === e._id)) return
   setPickedUsers(prev=> [...prev,e])
-  
 }   
 
 

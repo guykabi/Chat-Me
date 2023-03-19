@@ -10,7 +10,8 @@ import InputEmoji from "react-input-emoji";
 import Button from '../UI/Button/button'
 import EditGroup from '../chatDetails/chatDetails'
 import Modal from '../Modal/modal'
-import { style } from '@mui/system'
+
+
 
 const Chat = ()=> {
   
@@ -38,7 +39,9 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   onSuccess:({message,data})=>{
     
     if(message !== 'New message just added')return
+    
     Socket.emit('sendMessage',data,room)
+    new Audio('/assets/notifySound.mp3').play()
   }
 }) 
 
@@ -49,6 +52,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
      setNewMessage('')
      setMessages(data) 
     }
+
      setRoom(currentChat._id)
      Socket.emit('join_room',currentChat._id) 
 
@@ -159,13 +163,16 @@ const handleImage = (currentChat?.friend?
               currentChat.chatName}
 
             </div> 
-              {isTyping&&<div className={styles.typingDiv}>{typingText}</div>}
+              {isTyping&&
+              <div className={styles.typingDiv}>{typingText}</div>}
               <span className='threeDots'></span>
               
          </section>}
 
          <main className={styles.chatBoxDiv} >  
-                 {messages?.length?<Messages messages={messages}/>:null}
+                 {messages?.length?
+                 <Messages messages={messages}/>:null}
+
                  {isLoading&&
                   <div className={styles.loadingMessages}>
                   <div>Loading messages...</div>
