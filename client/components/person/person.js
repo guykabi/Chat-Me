@@ -9,7 +9,7 @@ import {
   removeFriend,
   createConversation,
 } from "../../utils/apiUtils";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { useGetUser } from "../../hooks/useUser";
 
 const Person = ({ user, decreaseNotify }) => {
