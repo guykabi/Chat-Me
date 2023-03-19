@@ -1,7 +1,7 @@
 .mainEditGroup{
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 3rem;
     text-align: center;
     align-items: center;
     margin: 0 auto;
@@ -48,4 +48,69 @@
 
 .membersOfChat::-webkit-scrollbar{
     display: none;
+} 
+
+.saveChangesBtn{
+    top: 0;
+    left: 0;
+    width: 20%;
 }
+
+.buttonsWrapper{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 5px;
+}
+
+.pickedUsersWrapper{
+    width: 20rem;
+    height: fit-content;
+    padding: 0.4rem;
+    display: flex;
+    flex-direction: row;
+    overflow-y: scroll;
+}
+
+.pickedUsersWrapper::-webkit-scrollbar{
+    display: none;
+}
+
+
+
+.pickedUserShow{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    gap: 4px;
+}
+
+ .pickedUserShow img{
+    float: left;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+ }
+
+.searchInputWrapper{
+    width: 100%;
+}
+
+
+.xDelete{
+    width: 0.8rem;
+    height:1rem;
+    background-color: snow;
+    border-radius: 40%;
+    font-size: small;
+    float: left;
+    cursor: pointer;
+    transition: 0.2s;
+} 
+
+.xDelete:hover{
+  transform: scale(1.15);
+} 
+
