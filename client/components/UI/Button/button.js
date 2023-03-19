@@ -11,6 +11,7 @@ const Button = (props) => {
     height,
     type,
     onClick,
+    disabled,
     arialable} = props
 
   return (
@@ -18,11 +19,12 @@ const Button = (props) => {
     <button
     className={styles[className]}
     style={{
-    width:`${width}%`,
+    width:`${width}rem`,
     height:`${height}px`}}
     onClick={onClick}
     aria-label={arialable}
     type={type}
+    disabled={disabled}
     >
     {text}
    </button>
