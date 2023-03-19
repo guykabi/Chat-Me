@@ -59,7 +59,10 @@ const updateConversation = async(req,resp,next)=>{
    const {id} = req.params 
    const {body} = req
    try{
-      let updateConversation = await Conversation.findByIdAndUpdate(id,body,{new:true}) 
+      let updateConversation = await Conversation.
+      findByIdAndUpdate(id,body,{new:true}) 
+      .populate({path:'manager',select:excludeFields})
+      .populate({path:'participants',select:excludeFields})
       resp.status(200).json({message:'Update',conversation:updateConversation})
    }catch(err){
       next(err)
