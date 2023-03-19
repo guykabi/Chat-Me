@@ -30,7 +30,7 @@ const modalContent = show ? (
             <Button
             className='primaryBtn'
             text='Close'
-            width='40'
+            width='10'
             height='15'
             arialable='Close'
             onClick={handleClose}/>
