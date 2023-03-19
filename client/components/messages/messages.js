@@ -80,7 +80,7 @@ const Messages = ({ messages }) => {
 
     if (isMoreMessages) return;
     scrollRef.current?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "start",
       inline: "nearest",
     });
@@ -89,10 +89,10 @@ const Messages = ({ messages }) => {
 
 
   useEffect(() => {
-    Socket.removeAllListeners("recieve-message");
+    
     Socket.on("recieve-message", ({ message }) => {
       if (message.conversation._id !== currentChat._id) return;
-
+      
       //In order to avoid messages duplication -
       //increasing the amount of documnets to skip on when new message is added
       setAmountToSkip((prev) => (prev += 1));
@@ -102,6 +102,8 @@ const Messages = ({ messages }) => {
       if (!newChatToDelete) return;
       setNewChatToDelete(null);
     });
+
+    return ()=> Socket.off("recieve-message");
   }, [Socket, newChatToDelete]);
 
 
