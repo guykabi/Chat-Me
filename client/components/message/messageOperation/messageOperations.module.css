@@ -1,21 +1,33 @@
 .messageMenuDiv{
+    display: flex;
+    flex-direction: column;
     position:absolute;
     z-index: 10;
-    right: 50%;
-    top: 0;
+    left:0;
+    bottom: 0;
+    margin-left: 100%;
     width: 8rem;
     height: 4rem;
     background-color: rgb(232, 218, 200);
+    border-radius: 4px;
 } 
 
 .messageMenuDiv div{
     cursor: pointer;
-    width: 98%;
-    height: 1.8rem;
-    padding-top: 0.1rem;
-    padding-left: 0.2rem;
-    text-align: left;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+    height:100%;
     font-size: small;
+    text-align:left;
+    padding-left: 0.2rem;
     font-weight: 500;
     transition: 0.5s;
-  } 
+    transition: 0.5s;
+  }  
+
+  .messageMenuDiv div:hover{
+    background-color: rgb(234, 231, 227);
+  }
