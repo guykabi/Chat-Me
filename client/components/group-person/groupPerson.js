@@ -41,6 +41,7 @@ const handleOpenMenu = () =>{
         {manager&&<span> - Manager</span>}
 
         {currentUser._id===currentChat?.manager?._id&&
+         currentUser._id!==user._id&&
          manager!==undefined&&
         <div 
         className={styles.threeDotsCostum}

@@ -71,6 +71,7 @@ margin-right: 3.8rem;
 
 .memberOperationMenu div{
     width: 100%;
+    padding-left: 0.4rem;
     font-weight: bold;
     text-align:left;
     font-size: small;
@@ -78,5 +79,6 @@ margin-right: 3.8rem;
 } 
 
 .memberOperationMenu div:hover{
+    width: 96%;
     background-color: rgb(215, 222, 222);
 }
