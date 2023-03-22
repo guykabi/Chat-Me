@@ -98,7 +98,7 @@ const handleNewMessage = ()=>{
    messageObj.conversation = currentChat._id
    messageObj.sender = currentUser._id
    messageObj.text = newMessage
-   messageObj.seen = false
+   messageObj.seen = []
    
    sendMessage(messageObj)
    setNewMessage('')
@@ -194,7 +194,7 @@ const handleImage = (currentChat?.friend?
            
               <Button 
               className={'secondaryBtn'}
-              width={10}
+              width={4}
               height={35}
               text='Send'
               arialable='Send message'
