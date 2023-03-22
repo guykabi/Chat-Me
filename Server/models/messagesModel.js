@@ -9,16 +9,17 @@ let createdAt = function(){
     return formattedDate;
 };
 
+const userRef = {type: Schema.Types.ObjectId, ref: 'users' }
 const UserSchema = new Schema({
     name:String,
     lastName:String,
     email:{type: String,unique: true},
     password:String,
     image:String,
-    friends:[{type: Schema.Types.ObjectId, ref: 'users' }],
-    friendsWaitingList:[{type: Schema.Types.ObjectId, ref: 'users'}],
+    friends:[userRef],
+    friendsWaitingList:[userRef],
     notifications:[
-       {sender:{type: Schema.Types.ObjectId, ref: 'users'},
+       {sender:userRef,
        message:String,
        seen:Boolean,
        createdAt:{type:String,default:createdAt}}
@@ -35,9 +36,9 @@ UserSchema.pre('save',async function (){
 
 const MessageSchema = new Schema({
     conversation:{type: Schema.Types.ObjectId, ref: 'conversations' },
-    sender:{type: Schema.Types.ObjectId, ref: 'users' },
+    sender:userRef,
     text:String,
-    seen:Boolean
+    seen:[{user:userRef,createdAt:{type:String,default:createdAt}}]
 },
     {timestamps:true}
 ) 
