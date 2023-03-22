@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
 import styles from './modal.module.css'
-import Button from '../UI/Button/button'
+import {AiOutlineCloseCircle} from 'react-icons/ai'
 
 const Modal = ({show,onClose,children,title}) => {
     const [onMount,setOnMount]=useState(false)
@@ -17,8 +17,15 @@ const handleClose = (e) =>{
 
 const modalContent = show ? (
     <>
-    <artic className={styles.overlay} >
+    <article className={styles.overlay} >
        <section className={styles.mainModal} >
+
+       <div 
+       className={styles.deleteModalSign}
+       role='button'
+       onClick={handleClose}>
+      <AiOutlineCloseCircle/>
+      </div>
            {title?
            <header className={styles.modalHeader}>
                {title}
@@ -26,17 +33,8 @@ const modalContent = show ? (
            <main className={styles.modalContent}>
              {children}
            </main>
-           <div className={styles.btnWrapper}>
-            <Button
-            className='primaryBtn'
-            text='Close'
-            width='10'
-            height='15'
-            arialable='Close'
-            onClick={handleClose}/>
-           </div>
        </section>
-    </artic>
+    </article>
    </>):null
  
 
