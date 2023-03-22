@@ -4,7 +4,7 @@ const userRef = {type:Schema.Types.ObjectId,ref:'users'}
 
 const ConversationSchema = new Schema({
     chatName:String, //For chat group
-    manager:userRef, //For chat group
+    manager:[userRef], //For chat group
     participants:[userRef],
     //Media consider as message that contains image
     media:[{type:Schema.Types.ObjectId,ref:'messages'}],
