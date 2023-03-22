@@ -59,11 +59,12 @@
 .buttonsWrapper{
     display: flex;
     flex-direction: row;
-    width: 100%;
-    gap: 5px;
+    width: 80%;
+    margin-bottom: 1rem;
 }
 
 .pickedUsersWrapper{
+    position: relative;
     width: 20rem;
     height: fit-content;
     padding: 0.4rem;
@@ -78,39 +79,17 @@
 
 
 
-.pickedUserShow{
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    gap: 4px;
-}
-
- .pickedUserShow img{
-    float: left;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    object-fit: cover;
- }
-
 .searchInputWrapper{
     width: 100%;
 }
 
 
-.xDelete{
-    width: 0.8rem;
-    height:1rem;
-    background-color: snow;
-    border-radius: 40%;
-    font-size: small;
-    float: left;
+.sendNewMembersBtn{
+    position: absolute;
+    right: 0;
     cursor: pointer;
-    transition: 0.2s;
-} 
-
-.xDelete:hover{
-  transform: scale(1.15);
-} 
-
+    transition: 0.4s;
+}
+.sendNewMembersBtn:hover{
+transform: scale(1.2);
+}
