@@ -8,6 +8,8 @@
     flex-direction: column; 
   } 
 
+  
+
  
   .messagesDiv::-webkit-scrollbar{
     display: none;
