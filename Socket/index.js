@@ -28,7 +28,7 @@ io.on('connection', socket=>{
         
         let exists = getUser(userId)
         let users = addUsers(userId,socket.id)
-        console.log(users);
+        
 
         //Checking if the socket exists - if not, emit the event!
         if(exists)return
