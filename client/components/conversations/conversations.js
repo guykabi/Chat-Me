@@ -16,6 +16,7 @@ const Conversations = () => {
     useContext(chatContext);
   const [allConversations, setAllConversations] = useState([]);
   const [query, setQuery] = useState("");
+  const [incomingMessage, setIncomingMessage] = useState(null);
 
   const { error, isLoading, refetch } = useQuery(
     "conversations",
@@ -37,6 +38,11 @@ const Conversations = () => {
         (con) => con._id === message.conversation._id
       );
 
+      //For adding to the counter of unseen messages
+      if (message.conversation._id !== currentChat._id) {
+        setIncomingMessage(message.conversation);
+      }
+
       if (message.sender === currentUser._id && latestConversation) {
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
@@ -56,6 +62,7 @@ const Conversations = () => {
       }
     });
 
+
     //When a new chat is created
     Socket.on("arrival-conversation", (conversation) => {
       if (!conversation) {
@@ -65,25 +72,34 @@ const Conversations = () => {
         return;
       }
 
-      if (!conversation.participants.find((p) => p._id === currentUser._id))
-        return;
-
       //Edited conversation arriving - that already exists
       if (allConversations.find((con) => con._id === conversation._id)) {
         let updatedConversations = [...allConversations];
         let index = allConversations.findIndex(
           (con) => con._id === conversation._id
         );
+
+        //If  the user was removed from the group
+        if (!conversation.participants.find((p) => p._id === currentUser._id)) {
+          updatedConversations.splice(index, 1);
+          setAllConversations(updatedConversations);
+          dispatch({ type: "CURRENT_CHAT", payload: null });
+          return;
+        }
+
         updatedConversations.splice(index, 1, conversation);
         setAllConversations(updatedConversations);
         return;
       }
 
+      if (!conversation.participants.find((p) => p._id === currentUser._id))
+        return;
+
       setAllConversations((prev) => [conversation, ...prev]);
 
       if (
         //If the current user is the manager or the creator of the new conversation
-        conversation.manager._id === currentUser._id ||
+        conversation?.manager.find((m) => m._id === currentUser._id) ||
         conversation.participants[0] === currentUser._id
       ) {
         let conPlusFriend;
@@ -103,7 +119,7 @@ const Conversations = () => {
     });
 
     return () => Socket.off("arrival-conversation");
-  }, [Socket, currentUser, allConversations]);
+  }, [Socket, currentUser,currentChat ,allConversations]);
 
   useEffect(() => {
     if (!query.length) return;
@@ -123,7 +139,11 @@ const Conversations = () => {
   );
 
   const memoCons = filteredConversations.map((con) => (
-    <Conversation key={con._id} con={con} />
+    <Conversation
+      key={con._id}
+      con={con}
+      newMessage={incomingMessage === con._id}
+    />
   ));
 
   return (
