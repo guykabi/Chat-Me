@@ -15,12 +15,14 @@ const Message = ({ message, own }) => {
 
   useEffect(() => {
     //Checks if message is unseen
-    if (own && message.seen) return;
-    switchToSeen(message._id);
+    if (!own && !message.seen.some(s=>s.user === currentUser._id)){
+      switchToSeen({messageId:message._id,userId:currentUser._id});
+    }
+
 
     if(!currentChat.chatName || message.sender === currentUser._id)return 
      let member = currentChat.participants.find(p=>p._id === message.sender)
-     setMemberName(member.name)
+     setMemberName(member?.name?member.name:'past-member')
   }, []);
 
   const handleMessageOperation = () => {
