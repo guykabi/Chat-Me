@@ -86,15 +86,38 @@ export const createConversation = async ({userId,friendId}) =>{
 export const updateConversation = async ({conId,obj}) =>{
   const {data:res} = await Axios.patch('conversation/'+conId,obj)
   return res
-}
+} 
+
+
+export const addGroupMember = async ({conId,obj}) =>{
+  const {data:res} = await Axios.patch('conversation/add-member/'+conId,obj)
+  return res
+} 
+
+
+export const removeGroupMember = async ({conId,obj}) =>{
+  const {data:res} = await Axios.patch('conversation/remove-member/'+conId,obj)
+  return res
+} 
+
+export const addManager = async ({conId,obj}) =>{
+  const {data:res} = await Axios.patch('conversation/add-manager/'+conId,obj)
+  return res
+} 
+
+export const removeManager = async ({conId,obj}) =>{
+  const {data:res} = await Axios.patch('conversation/remove-manager/'+conId,obj)
+  return res
+} 
+
 
 export const deleteConversation = async (conversationId)=>{
   const {data:res} = await Axios.delete('conversation/'+conversationId)
   return res
 }
 
-export const seenMessage = async (messageId) =>{
-  const {data:res} = await Axios.patch('messages/seen/'+messageId)
+export const seenMessage = async ({messageId,userId}) =>{
+  const {data:res} = await Axios.patch('messages/seen/'+messageId,{userId})
   return res
 }
 
