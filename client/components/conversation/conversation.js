@@ -3,20 +3,31 @@ import Image from 'next/image'
 import styles from './conversation.module.css' 
 import { chatContext } from '../../context/chatContext'
 
-const Conversation = ({con}) => {
+const Conversation = ({con,newMessage}) => {
   const [friend,setFriend]=useState(null)
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
-
+  const [numsOfUnSeen,setNumOfUnseen]=useState()
  
 useEffect(()=>{
+  setNumOfUnseen(con.unSeen)
   //If not a group chat
   if(con.chatName)return
     let friend = con?.participants?.find(p=>p._id !== currentUser?._id)
-    setFriend(friend)
-
+    setFriend(friend)  
 },[con])
 
 
+useEffect(()=>{
+  if(!newMessage)return
+  setNumOfUnseen(prev=>prev+=1)
+},[newMessage]) 
+
+
+useEffect(()=>{
+  if(currentChat?._id === con._id && numsOfUnSeen){
+    setNumOfUnseen(0)
+  }
+},[currentChat])
 
 const selectedConversation = ()=>{
   let conversation = {...con}
@@ -63,7 +74,11 @@ const selectedConversation = ()=>{
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
-        
+        {numsOfUnSeen?
+        <div className={styles.numOfUnSeen}>
+          {numsOfUnSeen}
+        </div>:
+        null}
     </article>
     </>
   )

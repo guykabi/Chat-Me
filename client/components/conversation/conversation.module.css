@@ -44,5 +44,15 @@
 .conversationName{
     float: left;
     font-weight: bold;
-    width: 40%;
+    width: 30%;
+}
+
+.numOfUnSeen{
+    width: 1rem;
+    border-radius: 50%;
+    background-color: rgb(97, 182, 97);
+    color: white;
+    margin-left: 40%;
+    padding: 0.1rem;
+    align-items: center;
 }
