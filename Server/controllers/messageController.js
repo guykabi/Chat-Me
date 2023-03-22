@@ -49,12 +49,11 @@ const addNewMessage = async(req,resp,next)=>{
 
 const handleSeenMessage =  async(req,resp,next)=>{
   const {id} = req.params 
+  const {userId} = req.body
+  
   try{
-     if(req.body.reason){
-        await Message.updateMany({conversation:id,"seen": false}, {"$set":{"seen": true}})
-        return resp.status(200).json('Handled all unseen messages!')
-      }
-        await Message.findOneAndUpdate({_id:id},{seen:true})
+         
+        await Message.findOneAndUpdate({_id:id},{$push:{"seen": {user:userId}}})
         return resp.status(200).json('Handled unseen message!')
 
    }catch(err){
