@@ -106,16 +106,14 @@ const handleNewMessage = ()=>{
 
 const handleImage = (currentChat?.friend?
     <img 
-    src={currentChat.friend?.image?
-    currentChat.friend?.image:'/images/no-avatar.png'}
-    alt={currentChat.friend?.image?
-    currentChat.friend.image:'no-avatar.png'}
+    src={currentChat.friend?.image?.url?
+    currentChat.friend.image.url:'/images/no-avatar.png'}
+    alt={currentChat.friend.name}
     onClick={()=>setShowModal(true)}/>:
 
-    <img src={currentChat?.image?
-    currentChat?.image:'/images/no-avatarGroup.png'}
-    alt={currentChat?.image?
-    currentChat.image:'no-avatarGroup.png'}
+    <img src={currentChat?.image?.url?
+    currentChat.image.url:'/images/no-avatarGroup.png'}
+    alt={currentChat.chatName}
     onClick={()=>setShowModal(true)}/>)
 
 
@@ -125,7 +123,7 @@ const handleImage = (currentChat?.friend?
       return needToReSign(currentUser.name)
      }
     
-    return onError()
+    return onError('Connection problem')
   } 
   
 
@@ -165,7 +163,7 @@ const handleImage = (currentChat?.friend?
             </div> 
               {isTyping&&
               <div className={styles.typingDiv}>{typingText}</div>}
-              <span className='threeDots'></span>
+              <span className='threeDots' title='Menu'></span>
               
          </section>}
 

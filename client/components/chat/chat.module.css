@@ -28,8 +28,13 @@
      bottom: 0;
    } 
 
+   .modalImageWrapper{
+    align-items: center;
+    text-align: center;
+   }
+
    .modalImageWrapper img{
-    width: 240px;
+    width: 220px;
     height: 220px;
     border-radius: 50%;
     object-fit: cover;
@@ -63,6 +68,13 @@
     animation: fadeInAnimation 0.2s linear; 
   } 
 
+  .loadingMessages{
+    margin: 0 auto;
+    align-items: center;
+    font-size: large;
+    margin-top: 8rem;
+  }
+
 
   @keyframes fadeInAnimation {
     0% {
@@ -80,6 +92,7 @@
   
    
    .imageWrapper img{
+    position: relative;
     margin-left: 0.4rem;
     cursor: pointer;
     float: left;
