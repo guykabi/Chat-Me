@@ -16,12 +16,7 @@
     position: relative;
     margin-right: 20px;
 } 
-.chatOnlineImg{
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-} 
+
 
 .chatOnlineBadge{
     width: 10px;
