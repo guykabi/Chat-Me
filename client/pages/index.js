@@ -2,6 +2,7 @@ import styles from '../styles/IntroductionPage.module.css'
 import { exctractCredentials,onError,needToReSign } from '../utils/utils'; 
 import { tokenValidation } from '../utils/apiUtils';
 import {useMutation} from 'react-query'
+import { Loader } from '../components/UI/clipLoader/clipLoader';
 import {push} from 'next/router'
 import Link from 'next/link'
 import { useEffect } from 'react';
@@ -23,6 +24,7 @@ if(isLoading){
   return(
     <div className='center'>
       <h2>Loading...</h2>
+      <Loader/>
     </div>
   )
 }
