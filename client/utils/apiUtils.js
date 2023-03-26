@@ -18,8 +18,14 @@ export const getUserDetails = async (userId)=>{
 }  
 
 
+export const updateUserDetails =async ({userId,body}) => {
+  const {data:res} = await Axios.post('users/image'+userId,body)
+  return res
+}
+
+
 export const tokenValidation = async ()=>{
-  const {data:res} = await Axios.post('auth/validation',{task:'Auth-tokens'}) 
+  const {data:res} = await Axios.post('auth/validation') 
   return res
 }  
 
