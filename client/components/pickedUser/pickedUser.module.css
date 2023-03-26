@@ -3,16 +3,10 @@
     display: flex;
     flex-direction: row;
     text-align: center;
+    align-items: center;
     gap: 4px;
 }
 
- .pickedUserShow img{
-    float: left;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    object-fit: cover;
- }
 
 
 

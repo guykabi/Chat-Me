@@ -1,23 +1,31 @@
-import React,{memo} from 'react'
-import styles from './pickedUser.module.css'
+import React, { memo } from "react";
+import styles from "./pickedUser.module.css";
+import Image from "next/image";
+import noAvatar from "../../public/images/no-avatar.png";
 
-const PickedUser = ({user,onRemove}) => {
+const PickedUser = ({ user, onRemove }) => {
   return (
     <>
-    <div className={styles.pickedUserShow}>
-      <img src={user?.image ? user.image : "/images/no-avatar.png"}
-           alt={user.name} />
-      <span aria-label="user-image">{user.name}</span>
-      <span
-        className={styles.xDelete}
-        onClick={() => onRemove(user)}
-        role="button"
-      >
-        x
-      </span>
-    </div>
-    </>
-  )
-}
+      <article className={styles.pickedUserShow}>
+        <Image 
+         src={user?.image ? user.image.url : noAvatar}
+         alt={user.name} 
+         width={20}
+         height={20}
+         style={{borderRadius:'50%'}}/>
 
-export default memo(PickedUser)
+        <div aria-label="user-image">{user.name}</div>
+        
+        <span
+          className={styles.xDelete}
+          onClick={() => onRemove(user)}
+          role="button"
+        >
+          x
+        </span>
+      </article>
+    </>
+  );
+};
+
+export default memo(PickedUser);
