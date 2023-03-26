@@ -1,5 +1,7 @@
 import React,{useContext} from 'react'
 import styles from './groupPerson.module.css'
+import noAvatar from '../../public/images/no-avatar.png'
+import Image from 'next/image'
 import { chatContext } from '../../context/chatContext'
 
 const GroupPerson = (props) => {
@@ -14,7 +16,12 @@ const GroupPerson = (props) => {
     onMenu} = props
     const {currentChat,currentUser} = useContext(chatContext)
 
+   const managerOption = (
+    currentChat?.manager.some(m=>m._id === currentUser._id)&&
+    currentUser._id!==user._id&&
+    manager!==undefined) 
 
+    
 const handleOpenMenu = (e) =>{
   e.stopPropagation();
   if(menu===user._id){
@@ -26,6 +33,7 @@ const handleOpenMenu = (e) =>{
 
 const handlePick = (e) =>{
   e.stopPropagation();
+  if(manager)return
   onPick(user)
 } 
 
@@ -69,12 +77,18 @@ const memberOperations = (
   return (
     <>
      <article className={styles.personMainDiv} 
-     onClick={handlePick}>
+     onClick={managerOption?null:handlePick}>
 
      {menu===user._id&&memberOperations}
 
       <div className={styles.userImageWrapper}>
-          <img  src={user?.image?user.image:'/images/no-avatar.png'}/>
+          <Image 
+           width={30}
+           height={30}
+           style={{borderRadius:'50%'}}
+           src={user?.image?user.image.url:noAvatar}
+           alt={user.name}
+          />
       </div>
 
       <div className={styles.userNameWrapper}>
@@ -85,9 +99,7 @@ const memberOperations = (
 
         {manager?<span> - Manager</span>:null}
 
-        {currentChat?.manager.some(m=>m._id === currentUser._id)&&
-         currentUser._id!==user._id&&
-         manager!==undefined&&
+        {managerOption&&
         <div 
         className={styles.threeDotsCostum}
         onClick={handleOpenMenu}
