@@ -8,7 +8,7 @@ const ConversationSchema = new Schema({
     participants:[userRef],
     //Media consider as message that contains image
     media:[{type:Schema.Types.ObjectId,ref:'messages'}],
-    image:String,
+    image:{url:{type:String},cloudinary_id:{type:String}},
     lastActive:Date
 },
     {timestamps:true}

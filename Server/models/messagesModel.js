@@ -15,7 +15,7 @@ const UserSchema = new Schema({
     lastName:String,
     email:{type: String,unique: true},
     password:String,
-    image:String,
+    image:{url:{type:String},cloudinary_id:{type:String}},
     friends:[userRef],
     friendsWaitingList:[userRef],
     notifications:[
