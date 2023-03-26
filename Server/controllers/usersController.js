@@ -1,6 +1,9 @@
 const { User } = require("../models/messagesModel");
 const { hash, genSalt } = require("bcryptjs");
 const { approveFriend } = require("../utils/utils");
+const {uploadToCloudinary,removeFromCloudinary} = require('../services/cloudinary')
+
+
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -__v";
 
@@ -42,6 +45,9 @@ const addUser = async (req, resp, next) => {
     next(err);
   }
 };
+
+
+
 
 const searchUser = async (req, resp, next) => {
   const body = req.body;
@@ -220,6 +226,36 @@ const resetPassword = async (req, resp, next) => {
   }
 };
 
+
+const updateUser = async(req,resp,next) => {
+  const {id} = req.params
+  const body = req.body
+  
+try{
+
+  if(req?.file?.path){
+    const data = await uploadToCloudinary(req.file.path,'user-images')
+    const newBody = {...body} 
+    newBody.image = data
+
+    if (body.removeImage) {
+      await removeFromCloudinary(body.removeImage);
+    }
+    
+    let editUser = await User.findByIdAndUpdate(id,newBody,{new:true})
+    resp.status(200).json({message:'Updated successfully',editUser}) 
+
+  }
+  
+  const result = await User.findByIdAndUpdate(id,body,{new:true})
+  resp.status(200).json('Updated successfully')
+
+}catch(error){
+  next(error)
+ }
+}
+
+
 const deleteUser = async (req, resp, next) => {
   const { id } = req.params;
   try {
@@ -235,6 +271,7 @@ module.exports = {
   getUser,
   searchUser,
   addUser,
+  updateUser,
   friendShipRequest,
   friendApproval,
   removeFriend,
