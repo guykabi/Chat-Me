@@ -1,10 +1,10 @@
 import {ClipLoader} from 'react-spinners' 
 
-export const Loader = ()=>{
+export const Loader = ({size=25})=>{
 
    return( <ClipLoader
         color='gray'
-        size={25}
+        size={size}
         aria-label="Loading Spinner"
         data-testid="loader"
     />)
