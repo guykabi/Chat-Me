@@ -1,0 +1,36 @@
+.groupMainDiv{
+    margin: 0 auto;
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    width: 100%; 
+    min-height:70px;
+    padding: 0.4rem;
+    gap: 2rem;
+    cursor: pointer;
+    border-bottom: 1px rgb(169, 157, 157) solid;
+} 
+
+.groupMainDiv:hover{
+    background-color: rgba(231, 224, 224, 0.685);
+}
+
+.groupImageWrapper{
+    width: 4rem;
+    float: left;
+}
+
+.groupNameWrapper{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    float: left;
+    width: 70%;
+    transition: 0.5s;
+    font-weight: bold;
+} 
+
+
+
