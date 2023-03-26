@@ -2,6 +2,7 @@
     display: flex;
     position: relative;
     flex-direction: row;
+    align-items: center;
     width: 100%; 
     height: 4rem;
     text-align: left;
@@ -16,15 +17,9 @@
 .userImageWrapper{
     width: 18%;
     float: left;
-    margin-top: 3%;
 }
 
-.userImageWrapper img{
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+
 
 .userNameWrapper{
     position: relative;
@@ -33,7 +28,6 @@
     text-align: center;
     float: left;
     width: 70%;
-    margin-top: 1.5rem;
     transition: 0.5s;
 } 
 
@@ -59,14 +53,14 @@
 position: absolute;
 z-index: 10;
 right: 0;
-margin-top: 2.2rem;
-margin-right: 3.8rem;
- display: flex;
- flex-direction: column;
- align-items: center;
- width: 8rem;
- line-height: 2.5rem;
- background-color: rgb(235, 243, 243);
+margin-top: 15%;
+margin-right: 18%;
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 8rem;
+line-height: 2.5rem;
+background-color: rgb(235, 243, 243);
 } 
 
 .memberOperationMenu div{
