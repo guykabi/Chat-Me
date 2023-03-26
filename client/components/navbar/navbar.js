@@ -1,5 +1,7 @@
 import React, { useState, useContext, useMemo, useEffect } from "react";
 import styles from "./navbar.module.css";
+import Image from "next/image";
+import noAvatar from '../../public/images/no-avatar.png'
 import { push } from "next/router";
 import { logOut, searchUser } from "../../utils/apiUtils";
 import { useQuery, useMutation } from "react-query";
@@ -204,11 +206,13 @@ const Navbar = () => {
         {isSearching && (
           <div className={styles.foundPersons}>
             {noUserFound ? (
-              <div className={styles.userSearchErrorMsg}>User not found...</div>
+              <div className={styles.userSearchErrorMsg}>
+              User not found...
+              </div>
             ) : isLoading ? (
               <div className={styles.userSearchErrorMsg}>
-                Searching... <br />
-                <Loader size={15} />
+              Searching... <br />
+              <Loader size={15} />
               </div>
             ) : (
               memoUsers
@@ -230,13 +234,15 @@ const Navbar = () => {
       </div>
 
       <div className={styles.userImage} role="button" onClick={handleSideMenu}>
-        <img
+        <Image
           src={
-            currentUser?.image ? currentUser?.image : "/images/no-avatar.png"
+            currentUser?.image?.url ? currentUser.image.url :noAvatar
           }
           alt={
-            currentUser?.image ? currentUser?.image : "/images/no-avatar.png"
+            currentUser.name 
           }
+          width={35}
+          height={35}
         />
       </div>
 
