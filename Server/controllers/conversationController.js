@@ -1,5 +1,8 @@
 const { Conversation } = require("../models/conversationModel");
 const { Message } = require("../models/messagesModel");
+const {
+  uploadToCloudinary,
+  removeFromCloudinary,} = require("../services/cloudinary");
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -__v";
 
@@ -18,7 +21,7 @@ const getAllConversations = async (req, resp, next) => {
         let newCon = { ...con._doc };
         let temp = await Message.count({
           conversation: con._id,
-          "sender":{$ne: id},
+          sender: { $ne: id },
           "seen.user": { $ne: id },
         });
         newCon.unSeen = temp;
@@ -27,7 +30,6 @@ const getAllConversations = async (req, resp, next) => {
     );
 
     return resp.status(200).json(all);
-    
   } catch (err) {
     next(err);
   }
@@ -67,19 +69,50 @@ const addNewConversation = async (req, resp, next) => {
 const updateConversation = async (req, resp, next) => {
   const { id } = req.params;
   const { body } = req;
+
   try {
-    let updateConversation = await Conversation.findByIdAndUpdate(id, body, {
-      new: true,
-    })
+    if (req?.file?.path) {
+      const data = await uploadToCloudinary(req.file.path, "group-images");
+  
+      const newBody = {...body}
+      newBody.chatName = body.chatName
+      newBody.image = data
+
+      if (body.removeImage) {
+        await removeFromCloudinary(body.removeImage);
+      }
+
+      let editConversation = await Conversation.findByIdAndUpdate(
+        id,
+        newBody,
+        { new: true }
+      )
+        .populate({ path: "manager", select: excludeFields })
+        .populate({ path: "participants", select: excludeFields });
+       
+        return resp
+        .status(200)
+        .json({ message: "Update", conversation: editConversation });
+    }
+
+    let editConversation = await Conversation.findByIdAndUpdate(
+      id,
+      { chatName: body.chatName },
+      { new: true }
+    )
       .populate({ path: "manager", select: excludeFields })
       .populate({ path: "participants", select: excludeFields });
-    resp
+
+      resp
       .status(200)
-      .json({ message: "Update", conversation: updateConversation });
+      .json({ message: "Update", conversation: editConversation });
+
   } catch (err) {
     next(err);
   }
 };
+
+
 
 const addManager = async (req, resp, next) => {
   const { conId } = req.params;
