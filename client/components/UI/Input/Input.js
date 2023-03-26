@@ -1,7 +1,7 @@
-import React from 'react' 
+import React,{forwardRef} from 'react' 
 import styles from './Input.module.css'
 
-const Input = (props) => {
+const Input = forwardRef((props,ref) => {
 
 const {
   placeholder,
@@ -34,6 +34,7 @@ const {
           required={require}
           disabled={disabled}
           name={name}
+          ref={ref}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
@@ -41,6 +42,6 @@ const {
           
     </>
   )
-}
+})
 
 export default Input

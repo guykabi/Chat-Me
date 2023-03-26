@@ -20,4 +20,9 @@
     outline:none;
     border-bottom: 1px lightgray solid;
     background-color: rgba(0, 255, 255, 0);
+} 
+
+.invisibleFileInput{
+  display: none;
+  color: transparent;
 }
