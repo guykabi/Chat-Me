@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState, memo } from "react";
 import styles from "./person.module.css";
+import Image from "next/image";
+import noAvatar from '../../public/images/no-avatar.png'
 import { chatContext } from "../../context/chatContext";
 import { setUserStatus, excludeFieldsUserData } from "../../utils/utils";
 import {
@@ -187,15 +189,18 @@ const Person = ({ user, decreaseNotify }) => {
 
   return (
     <>
-      <div
+      <section
         className={styles.personWrapper}
         onMouseDown={(e) => e.preventDefault()}
         onClick={addConversation}
       >
         <div className={styles.personImageWrapper}>
-          <img
-            src={user?.image ? user.image : "/images/no-avatar.png"}
-            alt={user?.image ? user.image : "no-avatar.png"}
+          <Image
+            src={user?.image ? user.image.url : noAvatar}
+            alt={user.name}
+            style={{borderRadius:'50%',alignItems:'center'}}
+            width={30}
+            height={30}
           />
         </div>
 
@@ -209,6 +214,7 @@ const Person = ({ user, decreaseNotify }) => {
               className={styles.declineRequestDiv}
               onClick={unapproveRequest}
               role="button"
+              aria-label="Decline request"
               onMouseDown={(e) => e.preventDefault()}
             >
               Decline
@@ -217,13 +223,14 @@ const Person = ({ user, decreaseNotify }) => {
           <div
             className={styles.personActionSign}
             role="button"
+            aria-label={`${personStatus}`}
             onClick={handlePersonStatusChange}
             onMouseDown={(e) => e.preventDefault()}
           >
             {personStatus}
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 };
