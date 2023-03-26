@@ -1,10 +1,13 @@
 const express = require('express') 
 const router = express.Router() 
 const {Auth} = require('../middleware/auth')
+const upload = require('../middleware/upload')
+
 
 const {
       getAllUsers,
       addUser,
+      updateUser,
       searchUser,
       getUser,friendShipRequest,
       friendApproval,
@@ -23,6 +26,7 @@ router
 
 router
 .post('/search-user',Auth,searchUser)
+.post('/image/:id',Auth,upload.single("userImage"),updateUser)
 .patch('/friendship-request/:id',Auth,friendShipRequest)
 .patch('/add-friend/:id',Auth,friendApproval)
 .patch('/remove-friend/:id',Auth,removeFriend)

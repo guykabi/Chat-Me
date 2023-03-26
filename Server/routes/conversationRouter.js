@@ -1,6 +1,8 @@
 const express = require('express') 
 const router = express.Router() 
 const {Auth} = require('../middleware/auth')
+const upload = require('../middleware/upload')
+
 
 const {
       getAllConversations,
@@ -15,7 +17,7 @@ const {
 router
 .get('/:id',Auth,getAllConversations)
 .post('/',Auth,addNewConversation)
-.patch('/:id',Auth,updateConversation)
+.patch('/:id',Auth,upload.single("userImage"),updateConversation)
 .patch('/add-member/:conId',Auth,addMember)
 .patch('/remove-member/:conId',Auth,removeMember)
 .patch('/add-manager/:conId',Auth,addManager)
