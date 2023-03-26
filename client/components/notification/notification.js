@@ -1,5 +1,7 @@
 import React,{useContext, useEffect, useState} from 'react'
 import styles from './notification.module.css'
+import Image from 'next/image'
+import noAvatar from '../../public/images/no-avatar.png'
 import { chatContext } from '../../context/chatContext'
 import { useMutation } from 'react-query'
 import {excludeFieldsUserData} from '../../utils/utils'
@@ -70,15 +72,16 @@ const Notification = ({notification,decreaseNotify}) => {
     <div className={styles.notificationMainDiv}>
 
       <div className={styles.notifyPersonImgWrapper}>
-        <img
-         className={styles.notifyPersonImg} 
+        <Image
+         style={{borderRadius:'50%'}} 
          src={notification.sender.image?
          notification.sender.image:
-         '/images/no-avatar.png'}
+         noAvatar}
          
-         alt={notification.sender.image?
-         notification.sender.image:
-         'no-avatar.png'}/>
+         alt={notification.sender.name}
+         width={35}
+         height={35}/>
+         
       </div>
      
         {notification.sender.name} {notification.message}

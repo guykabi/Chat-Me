@@ -17,12 +17,6 @@
   width: 20%;
 }
 
-.notifyPersonImg{
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
 
 .notificationButtonsDiv{
     margin: 0 auto;
