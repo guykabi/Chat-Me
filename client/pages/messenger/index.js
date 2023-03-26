@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import Head from 'next/head'
+import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { chatContext } from "../../context/chatContext";
 import styles from "./messenger.module.css";
 import Chat from "../../components/chat/chat";
@@ -14,7 +15,7 @@ import ReturnIcon from "../../components/UI/returnIcon/returnIcon";
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
     useContext(chatContext);
-  const { data, error , isLoading } = useGetUser(user._id);
+  const { data,error,isLoading } = useGetUser(user._id);
 
   const [openMenu, setOpenMenu] = useState(false);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -42,6 +43,7 @@ const Messenger = ({ hasError, user }) => {
     return(
       <div className='center'>
         <h2>Loading...</h2>
+        <Loader/>
       </div>
     )
   }
@@ -72,6 +74,7 @@ const Messenger = ({ hasError, user }) => {
               :<span
                 className="threeDots"
                 role="button"
+                title="Menu"
                 onClick={() => setOpenMenu(!openMenu)}
               ></span>}
 
