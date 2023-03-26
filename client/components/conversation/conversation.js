@@ -1,5 +1,7 @@
 import React,{useEffect, useState,useContext,memo} from 'react'
 import Image from 'next/image'
+import noAvatar from '../../public/images/no-avatar.png'
+import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import styles from './conversation.module.css' 
 import { chatContext } from '../../context/chatContext'
 
@@ -52,22 +54,24 @@ const selectedConversation = ()=>{
          onClick={selectedConversation}>
 
         <div className={styles.conversationImage}> 
-          {friend?<Image src={friend?.image
-          ?friend.image
-          :'/images/no-avatar.png'}
-          alt={friend?.name?friend.name:'no-avatar.png'}
+          {friend?
+          <Image 
           width={35}
           height={35}
-          loading='lazy'
+          style={{borderRadius:'50%'}}
+          src={friend?.image?.url
+          ?friend.image.url
+          :noAvatar}
+          alt={friend.name}
           />:
           <Image
-          src={con?.image
-            ?con.image
-            :'/images/no-avatarGroup.png'}
-            alt={con?.chatName?con.chatName:'no-avatarGroup.png'}
-            width={35}
-            height={35}
-            loading='lazy'
+          width={35}
+          height={35}
+          style={{borderRadius:'50%'}}
+          src={con?.image?.url
+            ?con.image.url
+            :noAvatarGroup}
+            alt={con.chatName}
           />}
         </div> 
 
