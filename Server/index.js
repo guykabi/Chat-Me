@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')  
+require('dotenv').config()
 const userRouter = require('./routes/usersRouter')
 const messagesRouter = require('./routes/messageRouter')
 const conversationRouter = require('./routes/conversationRouter')
@@ -7,9 +8,7 @@ const authRouter = require('./routes/authRouter')
 const errorHandler = require('./middleware/errorHandler')
 const cookieParser = require('cookie-parser')
 
-
-
-require('dotenv').config() 
+ 
 const port = process.env.PORT || 8000  
 
 const app = express() 
