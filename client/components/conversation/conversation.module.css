@@ -34,12 +34,7 @@
     float: left;
     width: 15%;
 }  
-.conversationImage img{
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+
 
 .conversationName{
     float: left;
