@@ -38,6 +38,10 @@ const MessageSchema = new Schema({
     conversation:{type: Schema.Types.ObjectId, ref: 'conversations' },
     sender:userRef,
     text:String,
+    image:{
+         url:{type:String},
+         cloudinary_id:{type:String},
+         base64:{type:String}},
     seen:[{user:userRef,createdAt:{type:String,default:createdAt}}]
 },
     {timestamps:true}
