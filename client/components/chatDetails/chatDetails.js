@@ -9,7 +9,7 @@ import Input from "../UI/Input/Input";
 import GroupPerson from "../group-person/groupPerson";
 import Group from "../group/group";
 import Button from "../UI/Button/button";
-import { useMutation, useQuery, QueryClient } from "react-query";
+import { useMutation, useQuery} from "react-query";
 import Modal from "../Modal/modal";
 import PickedUser from "../pickedUser/pickedUser";
 import { BiSend } from "react-icons/bi";
@@ -251,9 +251,9 @@ const ChatDetails = ({ onReturn }) => {
     () =>
       conversations
         .filter(
-          (j) =>
-            j.chatName &&
-            j.participants.some((p) => p._id === currentChat?.friend?._id)
+          (c) =>
+            c.chatName &&
+            c.participants.some((p) => p._id === currentChat?.friend?._id)
         )
         .map((con) => <Group key={con._id} group={con} />),
 
@@ -337,7 +337,7 @@ const ChatDetails = ({ onReturn }) => {
                   <BsFillCameraFill onClick={handleInputFileClick} />
                   <Input
                     type="file"
-                    name="userImage"
+                    name="groupImage"
                     onChange={handleChatDetailChange}
                     className="invisibleFileInput"
                     width={0}
