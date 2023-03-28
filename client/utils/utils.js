@@ -2,6 +2,7 @@ import * as cookie from "cookie";
 import { push, useRouter } from "next/router";
 import Modal from "../components/Modal/modal";
 import Button from "../components/UI/Button/button";
+import moment from 'moment'
 
 export const getTime = (date) => {
   const formatter = new Intl.DateTimeFormat("en-GB", {
@@ -12,15 +13,25 @@ export const getTime = (date) => {
   return formatter.format(Date.parse(date));
 };
 
-export const getCurrentTime = () => {
-  let dateWithouthSecond = new Date();
-  let timer = dateWithouthSecond.toLocaleTimeString(navigator.language, {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
-  return timer;
-};
+
+export const handleMessageTime = (date) =>{
+  let d1 = date;
+  let d2 = moment().format();
+  let diff = moment(d2).diff(d1, 'days')
+ if(diff >= 7){
+  return moment(date).calendar()
+ }
+ else{
+  let time =  moment(date).calendar()
+  if(time.includes('Yesterday'))return 'Yesterday'
+  if(time.includes('Today'))return time.split('Today at')
+  return time
+ }
+  
+}
+
+
 
 export const exctractCredentials = (req) => {
   let Cookie = cookie.parse(req.headers?.cookie);
