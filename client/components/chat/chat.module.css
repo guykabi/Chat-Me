@@ -150,8 +150,21 @@
    }
   
    .inputEmojiWrapper{
-    width: 80%;
+    width: 75%;
    } 
+
+
+   .fileUploadWrapper{
+    margin: 0 auto;
+    width: 2rem;
+    cursor: pointer;
+    font-size: x-large;
+    color: rgb(113, 110, 110);
+    transition: 0.5s;
+   }
+   .fileUploadWrapper:hover{
+     color: rgb(41, 40, 40);
+   }
 
    
    
