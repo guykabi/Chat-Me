@@ -4,12 +4,15 @@ import noAvatar from '../../public/images/no-avatar.png'
 import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import styles from './conversation.module.css' 
 import { chatContext } from '../../context/chatContext'
+import { handleMessageTime } from '../../utils/utils'
+
 
 const Conversation = ({con,newMessage}) => {
   const [friend,setFriend]=useState(null)
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
   const [numsOfUnSeen,setNumOfUnseen]=useState()
- 
+  const [isCurrentOne,setIsCurrentOne]=useState(false)
+  
 useEffect(()=>{
   setNumOfUnseen(con.unSeen)
   //If not a group chat
@@ -26,8 +29,10 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-  if(currentChat?._id === con._id && numsOfUnSeen){
-    setNumOfUnseen(0)
+  setIsCurrentOne(false)
+  if(currentChat?._id === con._id){
+    setIsCurrentOne(true)
+    if(numsOfUnSeen)setNumOfUnseen(0)
   }
 },[currentChat])
 
@@ -78,6 +83,11 @@ const selectedConversation = ()=>{
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
+        {!isCurrentOne?<div 
+        className={styles.lastActiveDate}
+        role='timer'>
+          {handleMessageTime(con.lastActive)}
+        </div>:null}
         {numsOfUnSeen?
         <div className={styles.numOfUnSeen}>
           {numsOfUnSeen}

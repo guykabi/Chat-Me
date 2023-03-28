@@ -1,4 +1,5 @@
 .conversationDiv{
+    position: relative;
     text-align: center;
     margin: 0 auto;
     width: 100%;
@@ -16,6 +17,7 @@
 }  
 
 .currentConversationDiv{
+    position: relative;
     text-align: center;
     margin: 0 auto;
     width: 100%;
@@ -50,4 +52,18 @@
     margin-left: 40%;
     padding: 0.1rem;
     align-items: center;
+} 
+
+.lastActiveDate{
+    position: absolute;
+    z-index: 10;
+    margin-top: 0.2rem;
+    margin-right: 0.4rem;
+    text-align: right;
+    top: 0;
+    right: 0;
+    width: 8rem;
+    font-weight: bold;
+    color: rgb(95, 89, 89);
+    font-size: x-small;
 }
