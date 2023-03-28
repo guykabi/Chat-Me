@@ -1,5 +1,5 @@
 import styles from './chat.module.css'
-import { useEffect, useState,useContext} from 'react'
+import { useEffect, useState,useContext,useRef} from 'react'
 import { needToReSign,onError } from '../../utils/utils'
 import { chatContext} from '../../context/chatContext'
 import {useQuery,useMutation} from 'react-query'
@@ -10,7 +10,9 @@ import InputEmoji from "react-input-emoji";
 import Button from '../UI/Button/button'
 import EditGroup from '../chatDetails/chatDetails'
 import Modal from '../Modal/modal'
-
+import FileForm from './fileForm/fileForm'
+import Input from '../UI/Input/Input'
+import {FiCamera} from 'react-icons/fi'
 
 
 const Chat = ()=> {
@@ -18,11 +20,13 @@ const Chat = ()=> {
   const {currentChat,currentUser,Socket} = useContext(chatContext)
   const [showModal,setShowModal]=useState(false)
   const [newMessage,setNewMessage]=useState('')
+  const [file,setFile]=useState(null)
   const [messages,setMessages]= useState([])
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
   const [typingText,setTypingText]=useState(null)
   const [isEditGroup,setIsEditGroup]=useState(false)
+  const fileRef = useRef(null)
 
  const {data,error,isLoading} = useQuery(['messages',currentChat],()=>(
     getMessages(currentChat?._id)),
@@ -39,6 +43,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   onSuccess:({message,data})=>{
     
     if(message !== 'New message just added')return
+    if(file)setFile(null)
     
     Socket.emit('sendMessage',data,room)
     new Audio('/assets/notifySound.mp3').play()
@@ -90,17 +95,30 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   },[Socket,currentChat,currentUser])
 
 
-  
-const handleNewMessage = ()=>{
-  if(!newMessage || newMessage.trim().length === 0)return
+const handleInputFileClick = (e) => {
+    fileRef.current.click();
+}; 
+
+const handleInputFileChange = (e) =>{
+   setFile(e.target.files[0])
+}
+
+ 
+const handleNewMessage = (fileObj=null)=>{
+  if(!newMessage && newMessage.trim().length === 0 && !file)return
+ 
+   //If there is file/image
+   if(fileObj.message){
+    sendMessage(fileObj)
+    return
+   }
 
    let messageObj = {} 
    messageObj.conversation = currentChat._id
    messageObj.sender = currentUser._id
-   messageObj.text = newMessage
-   messageObj.seen = []
-   
+   messageObj.text = newMessage&&newMessage
    sendMessage(messageObj)
+
    setNewMessage('')
   }  
 
@@ -161,10 +179,10 @@ const handleImage = (currentChat?.friend?
               currentChat.chatName}
 
             </div> 
+
               {isTyping&&
               <div className={styles.typingDiv}>{typingText}</div>}
-              <span className='threeDots' title='Menu'></span>
-              
+            
          </section>}
 
          <main className={styles.chatBoxDiv} >  
@@ -187,6 +205,22 @@ const handleImage = (currentChat?.friend?
               height={15}
               placeholder="Type a message..."
               borderRadius={10}
+              />
+            </div> 
+            <Modal show={file} onClose={()=>setFile(null)}>
+              <FileForm file={file} onFile={handleNewMessage}/>
+            </Modal>
+            <div className={styles.fileUploadWrapper}>
+              <FiCamera
+              onClick={handleInputFileClick}/>
+              <Input
+              type="file"
+              name="messageImage"
+              onChange={handleInputFileChange}
+              className="invisibleFileInput"
+              width={0}
+              height={0}
+              ref={fileRef}
               />
             </div>
            
