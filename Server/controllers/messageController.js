@@ -1,5 +1,10 @@
 const { Message } = require("../models/messagesModel");
 const { Conversation } = require("../models/conversationModel");
+const {uploadToCloudinary} = require("../services/cloudinary");
+const {getPlaiceholder} = require('plaiceholder')
+
+const excludeFields =
+  "-password -friends -friendsWaitingList -notifications -__v";
 
 const getMessageByConId = async (req, resp, next) => {
   const { conversation } = req.params;
@@ -8,13 +13,15 @@ const getMessageByConId = async (req, resp, next) => {
   const amount = req.headers["load-more"];
 
   try {
-    let messages = await Message.find({ conversation })
+    const messages = await Message.find({ conversation })
       .sort({ createdAt: -1 })
       .limit(30)
       .skip(amount)
-      .select("-__v");
+      .select("-__v")
+      .populate({ path: "seen", select: excludeFields })
 
     resp.status(200).json(messages);
+
   } catch (err) {
     next(err);
   }
@@ -22,9 +29,26 @@ const getMessageByConId = async (req, resp, next) => {
 
 
 const addNewMessage = async (req, resp, next) => {
-  const newMessage = new Message(req.body);
+  let newMessage = null
+  const {body} = req
 
   try {
+
+    if(req?.file?.path){
+       const data = await uploadToCloudinary(req.file.path, "chat-images");
+       const {base64} = await getPlaiceholder(data.url)
+       const newBody = {...body}
+       
+       data.base64 = base64
+       newBody.image = data
+       
+       newMessage = new Message(newBody)
+
+    }
+    else{
+      newMessage = new Message(body);
+    }
+       
     await newMessage.save(); 
 
     let savedMessage = await newMessage.populate({
@@ -39,8 +63,9 @@ const addNewMessage = async (req, resp, next) => {
     );
 
     resp
-      .status(200)
-      .json({ message: "New message just added", data: savedMessage });
+    .status(200)
+    .json({ message: "New message just added", data: savedMessage });
+
   } catch (err) {
     next(err);
   }
@@ -52,8 +77,8 @@ const handleSeenMessage = async (req, resp, next) => {
 
   try {
     await Message.findOneAndUpdate(
-      { _id: id },
-      { $push: { seen: { user: userId } } }
+      { _id: id , 'seen.user':{$ne:userId}},
+      { $push: { 'seen': {user:userId} }}
     );
     return resp.status(200).json("Handled unseen message!");
   } catch (err) {
