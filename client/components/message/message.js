@@ -5,6 +5,7 @@ import { getTime } from "../../utils/utils";
 import { useMutation } from "react-query";
 import { seenMessage } from "../../utils/apiUtils";
 import MessageOperations from "./messageOperation/messageOperations";
+import Image from "next/image";
 
 const Message = ({ message, own }) => {
   const {currentChat,currentUser} = useContext(chatContext)
@@ -52,9 +53,21 @@ const Message = ({ message, own }) => {
             <div>
              <strong>{memeberName}</strong>
             </div>}
+            {message.image?
+            <div className={styles.messageImageWrapper}>
+              <Image
+              fill
+              style={{objectFit:'cover'}}
+              placeholder='blur'
+              blurDataURL={message.image.base64}
+              src={message.image.url}
+              alt={message.text?message.text:'img'}
+              />
+            </div>:null}
+            {message.text&&
             <div dir="auto" className={styles.messageTextDiv}>
               {message.text}
-            </div>
+            </div>}
             <div className={styles.timeBatch}>
               {getTime(message.createdAt)}
             </div>

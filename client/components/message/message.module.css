@@ -67,9 +67,16 @@
   }
   
 
-  .messageMenuDiv div:hover{
+.messageMenuDiv div:hover{
     background-color: rgb(218, 199, 199);
-  } 
+} 
+
+.messageImageWrapper{
+  position: relative;
+  width: 12rem;
+  height: 11rem;
+}
+
 
   .messageTextDiv{
     margin-right: 1.4rem;
