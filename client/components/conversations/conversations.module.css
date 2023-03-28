@@ -28,3 +28,23 @@
 .allConversationsWrapper::-webkit-scrollbar{
     display: none;
 }
+
+
+.conversationsDiv {
+    animation: conversationsDiv 0.4s forwards;
+    -webkit-animation: conversationsDiv 0.4s forwards;
+} 
+
+.conversationsDiv{
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+} 
+
+@keyframes conversationsDiv {
+    0%{opacity: 0;}
+    100% { transform: translateX(0%); opacity: 1; }
+}
+
+@-webkit-keyframes conversationsDiv  {
+    100% { -webkit-transform: translateX(0%); }
+}  
