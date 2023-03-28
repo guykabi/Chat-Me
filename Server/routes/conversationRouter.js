@@ -17,7 +17,7 @@ const {
 router
 .get('/:id',Auth,getAllConversations)
 .post('/',Auth,addNewConversation)
-.patch('/:id',Auth,upload.single("userImage"),updateConversation)
+.patch('/:id',Auth,upload.single("groupImage"),updateConversation)
 .patch('/add-member/:conId',Auth,addMember)
 .patch('/remove-member/:conId',Auth,removeMember)
 .patch('/add-manager/:conId',Auth,addManager)
