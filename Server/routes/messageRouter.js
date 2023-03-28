@@ -1,6 +1,7 @@
 const express = require('express') 
 const router = express.Router() 
 const {Auth} = require('../middleware/auth')
+const upload = require('../middleware/upload')
 
 const {
      getMessageByConId,
@@ -9,7 +10,7 @@ const {
 
 router
 .get('/:conversation',Auth,getMessageByConId)  
-.post('/',Auth,addNewMessage)
+.post('/',Auth,upload.single('messageImage'),addNewMessage)
 .patch('/seen/:id',handleSeenMessage)
 
 
