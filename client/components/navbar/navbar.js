@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useEffect } from "react";
+import React, { useState, useContext, useMemo, useEffect, useCallback } from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import noAvatar from '../../public/images/no-avatar.png'
@@ -145,7 +145,7 @@ const Navbar = () => {
     if (isMenu && !openNotifications) setIsMenu(false);
   };
 
-  const decreaseNotify = () => {
+  const decreaseNotify = useCallback(() => {
     let filteredNotifications = notifications.filter(
       (noti) => noti.sender === data.sender
     );
@@ -153,8 +153,10 @@ const Navbar = () => {
 
     if (numOfNotifications < 1) return;
     setNumOfNotifications((prev) => (prev -= 1));
-  };
 
+  },[notifications,numOfNotifications]);
+
+  
   const handleSideMenu = () => {
     setIsMenu(!isMenu);
 

@@ -1,7 +1,6 @@
 import React,{useContext,useEffect,useState} from 'react'
 import styles from './fileForm.module.css'
 import { chatContext } from '../../../context/chatContext'
-import Input from '../../UI/Input/Input'
 import Image from 'next/image'
 import Button from '../../UI/Button/button'
 import InputEmoji from "react-input-emoji";

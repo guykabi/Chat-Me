@@ -1,5 +1,5 @@
 import styles from './chat.module.css'
-import { useEffect, useState,useContext,useRef} from 'react'
+import { useEffect, useState,useContext,useRef, useCallback} from 'react'
 import { needToReSign,onError } from '../../utils/utils'
 import { chatContext} from '../../context/chatContext'
 import {useQuery,useMutation} from 'react-query'
@@ -95,16 +95,16 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   },[Socket,currentChat,currentUser])
 
 
-const handleInputFileClick = (e) => {
+const handleInputFileClick = useCallback((e) => {
     fileRef.current.click();
-}; 
+},[fileRef]); 
 
 const handleInputFileChange = (e) =>{
    setFile(e.target.files[0])
 }
 
  
-const handleNewMessage = (fileObj=null)=>{
+const handleNewMessage = useCallback((fileObj=null)=>{
   if(!newMessage && newMessage.trim().length === 0 && !file)return
  
    //If there is file/image
@@ -120,7 +120,9 @@ const handleNewMessage = (fileObj=null)=>{
    sendMessage(messageObj)
 
    setNewMessage('')
-  }  
+
+  },[newMessage,file]) 
+
 
 const handleImage = (currentChat?.friend?
     <img 

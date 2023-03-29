@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useContext, useMemo, useCallback } from "react";
 import styles from "./createGroup.module.css";
 import { useMutation, useQuery } from "react-query";
 import { getAllusers, createGroup } from "../../utils/apiUtils";
@@ -30,15 +30,15 @@ const CreateGroup = ({ onSwitch }) => {
     },
   });
 
-  const handleUserPick = (e) => {
+  const handleUserPick = useCallback((e) => {
     setQuery("");
     if (pickedUsers.find((p) => p._id === e._id)) return;
     setPickedUsers((prev) => [...prev, e]);
-  };
+  },[pickedUsers]);
 
-  const removePickedUser = (pickedUser) => {
+  const removePickedUser =useCallback((pickedUser) => {
     setPickedUsers((prev) => prev.filter((u) => u._id !== pickedUser._id));
-  };
+  },[pickedUsers]);
 
   const handleGroupSubmit = (e) => {
     e.preventDefault();

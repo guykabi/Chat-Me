@@ -1,4 +1,10 @@
-import React, { useContext, useState, useMemo, useEffect, useRef } from "react";
+import React, { 
+  useContext, 
+  useState, 
+  useMemo,
+  useCallback, 
+  useEffect, 
+  useRef } from "react";
 import styles from "./chatDetails.module.css";
 import Image from "next/image";
 import noAvatar from "../../public/images/no-avatar.png";
@@ -155,27 +161,27 @@ const ChatDetails = ({ onReturn }) => {
     setGroupChangedDetails({ ...groupChangedDetails, [name]: value });
   };
 
-  const handleUserPick = (e) => {
+  const handleUserPick = useCallback((e) => {
     if (pickedUsersToAdd.find((p) => p._id === e._id)) return;
     setPickedUsersToAdd((prev) => [...prev, e]);
-  };
+  },[pickedUsersToAdd]);
 
-  const removePickedUser = (pickedUser) => {
+  const removePickedUser = useCallback((pickedUser) => {
     setPickedUsersToAdd((prev) => prev.filter((u) => u._id !== pickedUser._id));
-  };
+  },[pickedUsersToAdd]);
 
   const handleModalClose = () => {
     setShowModal(false);
     setPickedUsersToAdd([]);
   };
 
-  const handleMemberAdding = () => {
+  const handleMemberAdding = useCallback(() => {
     if (!pickedUsersToAdd.length) return;
     let obj = { participants: pickedUsersToAdd.map((p) => p._id) };
     addMember({ conId: currentChat._id, obj });
-  };
+  },[currentChat]);
 
-  const handleMemberRemoval = (e) => {
+  const handleMemberRemoval = useCallback((e) => {
     let obj;
 
     if (typeof e !== "string") {
@@ -199,17 +205,19 @@ const ChatDetails = ({ onReturn }) => {
 
     obj = { participants: e };
     removeMember({ conId: currentChat._id, obj });
-  };
 
-  const handleManagerAdding = (e) => {
+  },[currentChat]);
+
+
+  const handleManagerAdding = useCallback((e) => {
     let obj = { manager: e };
     setManager({ conId: currentChat._id, obj });
-  };
+  },[currentChat]);
 
-  const handleManagerRemoval = (e) => {
+  const handleManagerRemoval =useCallback((e) => {
     let obj = { manager: e };
     managerRemoval({ conId: currentChat._id, obj });
-  };
+  },[currentChat]);
 
   const submitChatDetailChange = (e) => {
     e.preventDefault();

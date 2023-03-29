@@ -1,4 +1,4 @@
-import React,{useContext} from 'react'
+import React,{useContext,memo} from 'react'
 import styles from './groupPerson.module.css'
 import noAvatar from '../../public/images/no-avatar.png'
 import Image from 'next/image'
@@ -113,4 +113,4 @@ const memberOperations = (
   )
 } 
 
-export default GroupPerson
+export default memo(GroupPerson)

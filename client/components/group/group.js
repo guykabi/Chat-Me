@@ -1,4 +1,4 @@
-import React,{useContext} from 'react'
+import React,{useContext,memo} from 'react'
 import styles from './group.module.css'
 import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import Image from 'next/image'
@@ -42,4 +42,4 @@ const handlePick = (e) =>{
   )
 } 
 
-export default Group
+export default memo(Group)
