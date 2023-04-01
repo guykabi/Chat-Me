@@ -1,5 +1,5 @@
 const {verify} = require('jsonwebtoken')
-const {generateTokens} = require('../Utils/utils')
+const {generateTokens} = require('../utils/utils')
 
 const Auth = async (req,resp,next) =>{
   
@@ -12,7 +12,7 @@ const Auth = async (req,resp,next) =>{
      
       verify(accessToken, process.env.ACCESS_SECRET_TOKEN,async (err)  => {
       if(err) {
-       
+
             verify(refreshToken, process.env.REFRESH_TOKEN,async (err)  => {
             if(err) {
               
