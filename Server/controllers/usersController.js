@@ -9,7 +9,7 @@ const excludeFields =
 
 const getAllUsers = async (req, resp, next) => {
   try {
-    let users = await User.find().select(excludeFields);
+    let users = await User.find({}).select(excludeFields);
     return resp.status(200).json(users);
   } catch (err) {
     return next(err);
@@ -45,7 +45,6 @@ const addUser = async (req, resp, next) => {
     next(err);
   }
 };
-
 
 
 
