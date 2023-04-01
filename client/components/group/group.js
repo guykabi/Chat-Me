@@ -4,9 +4,9 @@ import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import Image from 'next/image'
 import { chatContext } from '../../context/chatContext'
 
-const Group = ({group,onPick}) => {
+const Group = ({group}) => {
    
-const {currentChat,currentUser,dispatch} = useContext(chatContext)
+const {dispatch} = useContext(chatContext)
 
 
 const handlePick = (e) =>{
