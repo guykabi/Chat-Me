@@ -42,6 +42,7 @@ const MessageSchema = new Schema({
          url:{type:String},
          cloudinary_id:{type:String},
          base64:{type:String}},
+    likes:[userRef],   
     seen:[{user:userRef,createdAt:{type:String,default:createdAt}}]
 },
     {timestamps:true}
