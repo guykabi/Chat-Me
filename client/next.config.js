@@ -6,11 +6,11 @@ const nextConfig = {
   reactStrictMode: true,
   i18n: {
     locales: ["he","en"],
-    defaultLocale: "he",
+    defaultLocale: "en",
 },
 images:{
     domains:['res.cloudinary.com']
-}
+ }
 }
 
 module.exports = nextConfig
