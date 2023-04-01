@@ -11,7 +11,7 @@ const {
 router
 .get('/logout',logOut)
 .post('/validation',Auth,checkValidity)  
-.post('/',Auth,checkUserCredentials)
+.post('/',checkUserCredentials)
 
    
   module.exports = router
