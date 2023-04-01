@@ -3,8 +3,6 @@ const { Conversation } = require("../models/conversationModel");
 const {uploadToCloudinary} = require("../services/cloudinary");
 const {getPlaiceholder} = require('plaiceholder')
 
-const excludeFields =
-  "-password -friends -friendsWaitingList -notifications -__v";
 
 const getMessageByConId = async (req, resp, next) => {
   const { conversation } = req.params;
@@ -18,7 +16,6 @@ const getMessageByConId = async (req, resp, next) => {
       .limit(30)
       .skip(amount)
       .select("-__v")
-      .populate({ path: "seen", select: excludeFields })
 
     resp.status(200).json(messages);
 
@@ -50,10 +47,10 @@ const addNewMessage = async (req, resp, next) => {
     }
        
     await newMessage.save(); 
-
+   
     let savedMessage = await newMessage.populate({
       path: "conversation",
-      select: "-media -__v",
+      select: "participants",
     });
 
     //Updating last time conversation was active
@@ -71,11 +68,47 @@ const addNewMessage = async (req, resp, next) => {
   }
 };
 
+
+const likeMessage = async (req, resp, next) =>{
+  const {id} = req.params 
+  const {userId} = req.body
+  
+  try{
+      let isLiked = await Message.find({_id:id,likes:userId})
+      
+      if(isLiked.length){
+          let unLikedMessage = await Message.findByIdAndUpdate(
+          { _id:id},
+          { $pull: { likes: userId } },{new:true}).populate({
+            path: "conversation",
+            select: "participants",
+          }) 
+          
+          return resp.status(200).json({message:'Like removed',editMsg:unLikedMessage})
+      }
+
+      let likedMessage = await Message.findByIdAndUpdate(
+      { _id:id},
+      { $addToSet: { likes: userId } },{new:true}).populate({
+        path: "conversation",
+        select: "_id",
+      })
+
+      resp.status(200).json({message:'Like has done',editMsg:likedMessage})
+
+  }catch(err){
+   next(err)
+ }
+}
+
+
+
 const handleSeenMessage = async (req, resp, next) => {
   const { id } = req.params;
   const { userId } = req.body;
 
-  try {
+  try { 
+
     await Message.findOneAndUpdate(
       { _id: id , 'seen.user':{$ne:userId}},
       { $push: { 'seen': {user:userId} }}
@@ -86,4 +119,19 @@ const handleSeenMessage = async (req, resp, next) => {
   }
 };
 
-module.exports = { getMessageByConId, addNewMessage, handleSeenMessage };
+
+const deleteMessage = async (req, resp, next) =>{
+  const {id} = req.params
+  try{
+     let deleted = await Message.findByIdAndDelete(id).populate({
+        path: "conversation",
+        select: "_id",
+     })
+     resp.status(200).json({message:'Deleted',deleted})
+  }catch(err){
+   next(err)
+ }
+}
+
+module.exports = { getMessageByConId, addNewMessage, 
+                   handleSeenMessage, likeMessage, deleteMessage };
