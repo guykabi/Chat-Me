@@ -11,7 +11,8 @@ import {
   handleFilterCons,
 } from "../../utils/utils";
 
-const Conversations = () => {
+
+const Conversations = ({sortBy}) => {
   const { currentUser, currentChat, dispatch, Socket } =
     useContext(chatContext);
   const [allConversations, setAllConversations] = useState([]);
@@ -32,8 +33,10 @@ const Conversations = () => {
   useEffect(() => {
     Socket.removeAllListeners("background-message");
     Socket?.on("background-message", (message) => {
+     
       if (!allConversations.length) return;
-
+      
+      //Check if there is already such conversation
       let latestConversation = allConversations?.find(
         (con) => con._id === message.conversation._id
       );
@@ -43,7 +46,9 @@ const Conversations = () => {
         setIncomingMessage(message.conversation);
       }
 
+
       if (message.sender === currentUser._id && latestConversation) {
+
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
         tempArr.splice(index, 1), tempArr.unshift(latestConversation);
@@ -56,10 +61,12 @@ const Conversations = () => {
       }
 
       //Fetching new conversations when a message from a new chat is recieved
-      if (message.conversation.participants.includes(currentUser._id)) {
+      if (message.conversation.participants.includes(currentUser._id) 
+          && message.sender !== currentUser._id) {
         //Only the user who isn't the sender will get this refetch of conversations
         refetch();
       }
+
     });
 
 
@@ -121,10 +128,26 @@ const Conversations = () => {
     return () => Socket.off("arrival-conversation");
   }, [Socket, currentUser,currentChat ,allConversations]);
 
+
   useEffect(() => {
     if (!query.length) return;
     setQuery("");
   }, [currentChat]);
+
+
+useEffect(()=>{
+ //Sorting conversations by the amount of unseen messages
+ if(sortBy === false){ 
+   let sortCons = [...allConversations]
+   sortCons.sort((a,b)=> b.unSeen - a.unSeen) 
+   setAllConversations(sortCons)
+   return
+ } 
+ //Return to sort by date/last active
+ refetch()
+ 
+},[sortBy])
+
 
   if (error) {
     if (error?.response?.status === 401) {
