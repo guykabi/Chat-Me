@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import styles from './modal.module.css'
 import {AiOutlineCloseCircle} from 'react-icons/ai'
 
-const Modal = ({show,onClose,children,title,isError}) => {
+const Modal = ({show,onClose,children,title,isError,isFileMessage}) => {
     const [onMount,setOnMount]=useState(false)
 
 useEffect(()=>{
@@ -17,10 +17,17 @@ const handleClose = (e) =>{
 
 const modalContent = show ? (
     <>
-    <article className={styles.overlay} >
-       <section className={styles.mainModal} >
+    <article className={styles.overlay} > 
 
-       {!isError?<div 
+       <section className={styles.mainModal} >
+       
+       {isFileMessage?<div 
+        className={styles.deleteSign}
+        onClick={handleClose}>
+       <AiOutlineCloseCircle/>
+       </div>:null}
+
+       {!isError||!isFileMessage?<div 
        className={styles.deleteModalSign}
        role='button'
        onClick={handleClose}>
