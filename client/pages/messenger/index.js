@@ -8,9 +8,11 @@ import Conversations from "../../components/conversations/conversations";
 import Navbar from "../../components/navbar/navbar";
 import OnlineList from "../../components/onlineList/online";
 import { exctractCredentials, onError } from "../../utils/utils";
+import {getAllusers} from '../../utils/apiUtils'
 import { useGetUser } from "../../hooks/useUser";
 import CreateGroup from "../../components/createGroup/createGroup";
 import ReturnIcon from "../../components/UI/returnIcon/returnIcon";
+import { useQuery } from "react-query";
 
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
@@ -19,6 +21,13 @@ const Messenger = ({ hasError, user }) => {
 
   const [openMenu, setOpenMenu] = useState(false);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
+  const [isSorted,setIsSorted]=useState(true) 
+ 
+  const {refetch} = useQuery('users',getAllusers,{
+    //For later use - example - identify user that left group
+    //Only fetching once 
+    staleTime:Infinity
+  })
 
   useEffect(() => {
     if (!currentUser && data) {
@@ -27,8 +36,11 @@ const Messenger = ({ hasError, user }) => {
 
     if (!currentUser) return;
     Socket?.emit("addUser", user._id);
-  }, [data, currentUser]);
+    refetch()
+  }, [data, currentUser]); 
 
+ 
+  
   const handleOpenCreateGroup = () => {
     setOpenCreateGroup(true);
     setOpenMenu(false);
@@ -83,8 +95,8 @@ const Messenger = ({ hasError, user }) => {
                   <div onClick={handleOpenCreateGroup} role="button">
                     Create group
                   </div>
-                  <div role="button">
-                    Sort by:
+                  <div onClick={()=>setIsSorted(!isSorted)} role="button">
+                    {isSorted?'Sort by unseen':'Sort by latest' }
                   </div>
                 </div>
               )}
@@ -97,7 +109,7 @@ const Messenger = ({ hasError, user }) => {
                 <article>
                   <h2>Conversations</h2>
                   <br />
-                  <Conversations />
+                  <Conversations sortBy={isSorted} />
                 </article>
               )}
             </div>
