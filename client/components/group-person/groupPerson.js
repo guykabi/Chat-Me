@@ -3,6 +3,9 @@ import styles from './groupPerson.module.css'
 import noAvatar from '../../public/images/no-avatar.png'
 import Image from 'next/image'
 import { chatContext } from '../../context/chatContext'
+import { handleSeenTime } from '../../utils/utils'
+import { FcLike } from "react-icons/fc";
+
 
 const GroupPerson = (props) => {
    const {
@@ -13,7 +16,9 @@ const GroupPerson = (props) => {
     onRemoveManager,
     manager,
     menu,
-    onMenu} = props
+    onMenu,
+    isLike,
+    time} = props
     const {currentChat,currentUser} = useContext(chatContext)
 
    const managerOption = (
@@ -22,6 +27,7 @@ const GroupPerson = (props) => {
     manager!==undefined) 
 
     
+
 const handleOpenMenu = (e) =>{
   e.stopPropagation();
   if(menu===user._id){
@@ -33,7 +39,7 @@ const handleOpenMenu = (e) =>{
 
 const handlePick = (e) =>{
   e.stopPropagation();
-  if(manager)return
+  if(manager)return 
   onPick(user)
 } 
 
@@ -77,7 +83,7 @@ const memberOperations = (
   return (
     <>
      <article className={styles.personMainDiv} 
-     onClick={managerOption?null:handlePick}>
+     onClick={onPick?handlePick:null}>
 
      {menu===user._id&&memberOperations}
 
@@ -98,7 +104,12 @@ const memberOperations = (
         </section>&nbsp;
 
         {manager?<span> - Manager</span>:null}
-
+        {time?<div className={styles.seenTime}>
+        {handleSeenTime(time.createdAt)}
+        </div>:null}
+        {isLike?<div className={styles.likeSign}>
+        <FcLike/>
+        </div>:null}
         {managerOption&&
         <div 
         className={styles.threeDotsCostum}

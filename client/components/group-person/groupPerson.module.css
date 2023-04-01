@@ -75,4 +75,21 @@ background-color: rgb(235, 243, 243);
 .memberOperationMenu div:hover{
     width: 96%;
     background-color: rgb(215, 222, 222);
+} 
+
+.seenTime{
+    position: absolute;
+    float: right;
+    text-align: right;
+    right: 0;
+    font-size: small;
+    color: gray;
+} 
+
+.likeSign{
+    position: absolute;
+    float: right;
+    text-align: right;
+    right: 0;
+    font-size: medium;
 }
