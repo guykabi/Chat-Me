@@ -6,11 +6,10 @@
     overflow-y: scroll;
     display: flex;
     flex-direction: column; 
+    gap: 0.2rem;
   } 
 
-  
-
- 
+   
   .messagesDiv::-webkit-scrollbar{
     display: none;
   } 
