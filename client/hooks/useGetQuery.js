@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 
 
-export const useGetFetchQuery = (key) => {
-    const {data} = useQuery(key);
-    return data
+export const useGetCacheQuery = (key) => {
+  const { data } = useQuery(key);
+  return data;
 };
