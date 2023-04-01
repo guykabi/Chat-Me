@@ -140,3 +140,15 @@ export const createGroup =async (group) =>{
 }
 
 
+export const handleLikeMessage = async ({messageId,userId}) =>{
+    const {data:res} = await Axios.patch('messages/like-message/'+messageId,{userId})
+    return res
+} 
+
+
+export const handleDeleteMessage = async (messageId) =>{
+  const {data:res} = await Axios.delete('messages/delete-message/'+messageId)
+  return res
+}
+
+
