@@ -26,7 +26,24 @@ export const handleMessageTime = (date) =>{
   let time =  moment(date).calendar()
   if(time.includes('Yesterday'))return 'Yesterday'
   if(time.includes('Today'))return time.split('Today at')
-  return time
+  return time.split('Last')
+ }
+  
+} 
+
+
+export const handleSeenTime = (date) =>{
+  let d1 = date;
+  let d2 = moment().format();
+  let diff = moment(d2).diff(d1, 'days')
+ if(diff >= 7){
+  return moment(date).calendar()
+ }
+ else{
+  let time =  moment(date).calendar()
+  //if(time.includes('Yesterday'))return 'Yesterday'
+  if(time.includes('Today'))return time.split('Today at')
+  return time.split('Last')
  }
   
 }
@@ -110,6 +127,7 @@ export const handleChatFriendField = (conversation, userId) => {
 };
 
 export const handleFilterCons = (allConversations, query) => {
+ 
   return allConversations?.filter((con) => {
     return (
       con.chatName?.toLowerCase().includes(query?.trim().toLowerCase()) ||
@@ -122,4 +140,11 @@ export const handleFilterCons = (allConversations, query) => {
             .includes(query?.trim().toLowerCase())))
     );
   });
-};
+}; 
+
+
+
+export const searchPastMember = (userId,data) =>{
+    let pastMember = data.find(u=>u._id === userId)
+    return pastMember.name
+}
