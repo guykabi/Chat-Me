@@ -13,14 +13,17 @@ import { chatContext } from "../../context/chatContext";
 import { useMutation, useQuery } from "react-query";
 import { getMessages, deleteConversation } from "../../utils/apiUtils";
 
+
 const Messages = ({ messages }) => {
+
   const { currentUser, currentChat, Socket } = useContext(chatContext);
   const scrollRef = useRef();
   const [allMessages, setAllMessages] = useState([]);
   const [amountToSkip, setAmountToSkip] = useState(30);
   const [isMoreMessages, setIsMoreMessages] = useState(false);
   const [newChatToDelete, setNewChatToDelete] = useState(null);
-
+  const [isScrollable,setIsScrollable]=useState(true)
+  
   const { refetch: loadMore, error } = useQuery(
     "more-messages",
     () => getMessages(currentChat?._id, amountToSkip),
@@ -28,10 +31,10 @@ const Messages = ({ messages }) => {
       onSuccess: (data) => {
         if (data.length) {
           let reverseMessages = [...data].reverse();
-          setAllMessages(prev => [...reverseMessages, ...prev]);
+          setAllMessages((prev) => [...reverseMessages, ...prev]);
 
           if (data.length === 30) {
-            setAmountToSkip(prev => (prev += 30));
+            setAmountToSkip((prev) => (prev += 30));
           }
 
           if (data.length < 30) {
@@ -43,6 +46,7 @@ const Messages = ({ messages }) => {
     }
   );
 
+
   const { mutate: removeConversation } = useMutation(deleteConversation, {
     onSuccess: (data) => {
       if (data !== "Conversation deleted!") return;
@@ -51,8 +55,6 @@ const Messages = ({ messages }) => {
       Socket.emit("new-conversation", currentUser._id);
     },
   });
-
-
 
   useEffect(() => {
     //Only on chat switching - or new chat creation
@@ -63,9 +65,9 @@ const Messages = ({ messages }) => {
 
     //Reset the amount when switching chats
     if (!(amountToSkip > 30)) return;
-    setAmountToSkip(30);
-  }, [messages]);
+    setAmountToSkip(30); 
 
+  }, [messages]);
 
 
   useEffect(() => {
@@ -78,37 +80,67 @@ const Messages = ({ messages }) => {
 
     setNewChatToDelete(null);
 
-    if (isMoreMessages) return;
+
+    //Extra condition - scrolling down only on start or new message
+    if(!isScrollable) return;
     scrollRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
-      inline: "nearest",
+      inline: "end",
     });
 
-  }, [allMessages]);
+  }, [allMessages]); 
+
+
+
 
 
   useEffect(() => {
-    
     Socket.on("recieve-message", ({ message }) => {
-
-      if (message.conversation._id !== currentChat._id) return;
+       
+      if (message?.conversation?._id !== currentChat._id) return;
       
+      if (allMessages.some((m) => m._id === message._id)) { 
+        setIsScrollable(false)
+        //When user deleted a message
+        if(message?.event === 'Deleted'){
+          let index = allMessages.findIndex((m) => m._id === message._id);
+          let newMessages = [...allMessages];
+          newMessages.splice(index, 1);
+          setAllMessages(newMessages);
+          return;
+        }
+        
+        //When user liked a message
+        let index = allMessages.findIndex((m) => m._id === message._id);
+        let newMessages = [...allMessages];
+        newMessages.splice(index, 1, message);
+        setAllMessages(newMessages);
+        return;
+      }
+
+     
+      setAllMessages((prev) => [...prev, message]);
+      if(!isScrollable) setIsScrollable(true)
+      new Audio('/assets/notifySound.mp3').play()
+
       //In order to avoid messages duplication -
-      //increasing the amount of documnets to skip on when new message is added
-      if( allMessages.length >= 30){
+      //increasing the amount of documnets that need  to skip 
+      //on when new message is added
+      if (allMessages.length >= 30) {
         setAmountToSkip((prev) => (prev += 1));
       }
-      
-      setAllMessages((prev) => [...prev, message]);
+
 
       //If at least one message was sent - there is no need to delete new chat
       if (!newChatToDelete) return;
       setNewChatToDelete(null);
+
     });
 
-    return ()=> Socket.off("recieve-message");
-  }, [Socket,currentChat,newChatToDelete]);
+    return () => Socket.off("recieve-message");
+
+  }, [Socket, currentChat, newChatToDelete, allMessages]);
 
 
   useEffect(() => {
@@ -118,13 +150,11 @@ const Messages = ({ messages }) => {
     removeConversation(newChatToDelete);
   }, [currentChat]);
 
-
   const handleMoreLoading = (e) => {
     if (e.target.scrollTop === 0 && isMoreMessages) {
       loadMore();
     }
   };
-
 
   if (error) {
     if (error?.response?.status === 401) {
@@ -133,19 +163,18 @@ const Messages = ({ messages }) => {
     return onError();
   }
 
-  
   const memoMessages = useMemo(() => allMessages, [allMessages]);
 
   return (
     <>
       <section className={styles.messagesDiv} onScroll={handleMoreLoading}>
-        {memoMessages?.map(message => (
-          <div key={message._id} ref={scrollRef}>
-            <Message
-              message={message}
-              own={message.sender === currentUser._id}
-            />
-          </div>
+        {memoMessages?.map((message) => (
+          <Message
+            key={message._id}
+            ref={scrollRef}
+            message={message}
+            own={message.sender === currentUser._id}
+          />
         ))}
       </section>
     </>
