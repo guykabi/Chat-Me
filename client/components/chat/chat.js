@@ -46,13 +46,12 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
     if(file)setFile(null)
     
     Socket.emit('sendMessage',data,room)
-    new Audio('/assets/notifySound.mp3').play()
   }
 }) 
 
 
   useEffect(()=>{
-
+    
     if(newMessage || messages?.length ) {
      setNewMessage('')
      setMessages(data) 
@@ -121,7 +120,7 @@ const handleNewMessage = useCallback((fileObj=null)=>{
 
    setNewMessage('')
 
-  },[newMessage,file]) 
+  },[newMessage,currentChat,file]) 
 
 
 const handleImage = (currentChat?.friend?
