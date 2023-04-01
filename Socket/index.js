@@ -52,17 +52,25 @@ io.on('connection', socket=>{
     }) 
 
     socket.on('new-conversation',(conversation=undefined)=>{    
-            io.local.emit('arrival-conversation',conversation)      
+            io.local.emit('arrival-conversation',conversation)     
     }) 
 
 
-    socket.on('sendMessage',(message,room)=>{
-              io.in(room).emit('recieve-message',{message})
+    socket.on('sendMessage',(message,room,trigger=null)=>{
+              
+              if(message.message === 'Deleted'){ 
+                 message.deleted.event = 'Deleted'
+                 io.in(room).emit('recieve-message',{message:message.deleted})
+               }
+
+                io.in(room).emit('recieve-message',{message})
 
               //To inform the user about another in coming message
+              if(trigger !== 'Not trigger'){
               io.local.emit('background-message',message)
               
               console.log(`Private room message ${message.text}`);
+              }
     })  
 
     socket.on('typing',(sender,userTyping,room)=>{
