@@ -63,7 +63,6 @@ io.on('connection', socket=>{
                  io.to(room).emit('recieve-message',{message:message.deleted})
                  return
                }
-                console.log('What>>',room);
                 io.to(room).emit('recieve-message',{message})
 
               //To inform the user about another in coming message
