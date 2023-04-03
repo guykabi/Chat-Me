@@ -42,7 +42,7 @@ const Conversations = ({sortBy}) => {
       );
 
       //For adding to the counter of unseen messages
-      if (message.conversation._id !== currentChat._id) {
+      if (message.conversation._id !== currentChat?._id) {
         setIncomingMessage(message.conversation);
       }
 
@@ -57,7 +57,6 @@ const Conversations = ({sortBy}) => {
         //Only the reciever will hear the new message's sound
         if (message.sender === currentUser._id) return;
         new Audio("/assets/notifySound.mp3").play();
-        return;
       }
 
       //Fetching new conversations when a message from a new chat is recieved
@@ -72,13 +71,18 @@ const Conversations = ({sortBy}) => {
 
     //When a new chat is created
     Socket.on("arrival-conversation", (conversation) => {
-      if (!conversation) {
-        //When a new conversation with no messages was deleted -
-        //fetching updated conversations
-        refetch();
+
+      if (conversation.message === 'Conversation deleted!') {
+        //When a new conversation with no messages was deleted
+        let updatedConversations = [...allConversations];
+        let index = allConversations.findIndex(
+          (con) => con._id === conversation.conId
+        );
+        updatedConversations.splice(index, 1);
+        setAllConversations(updatedConversations);
         return;
       }
-
+     
       //Edited conversation arriving - that already exists
       if (allConversations.find((con) => con._id === conversation._id)) {
         let updatedConversations = [...allConversations];
@@ -93,22 +97,23 @@ const Conversations = ({sortBy}) => {
           dispatch({ type: "CURRENT_CHAT", payload: null });
           return;
         }
-
+        
+        //If conversation was edited
         updatedConversations.splice(index, 1, conversation);
         setAllConversations(updatedConversations);
         return;
       }
 
-      if (!conversation.participants.find((p) => p._id === currentUser._id))
-        return;
+      if (!conversation.participants.find((p) => p._id === currentUser._id))return;
 
       setAllConversations((prev) => [conversation, ...prev]);
 
       if (
         //If the current user is the manager or the creator of the new conversation
         conversation?.manager.find((m) => m._id === currentUser._id) ||
-        conversation.participants[0] === currentUser._id
+        conversation.participants[0]._id === currentUser._id
       ) {
+       
         let conPlusFriend;
         if (!conversation.chatName) {
           //Adding a friend field to conversation
@@ -117,11 +122,12 @@ const Conversations = ({sortBy}) => {
           );
           conPlusFriend = handleChatFriendField(conversation, friend);
         }
-
+        
         dispatch({
           type: "CURRENT_CHAT",
           payload: conPlusFriend ? conPlusFriend : conversation,
         });
+        
       }
     });
 
@@ -161,7 +167,7 @@ useEffect(()=>{
     [allConversations, query]
   );
 
-  const memoCons = filteredConversations.map((con) => (
+  const memoCons = filteredConversations?.map((con) => (
     <Conversation
       key={con._id}
       con={con}
@@ -186,7 +192,7 @@ useEffect(()=>{
           </title>
         ) : (
           <section className={styles.allConversationsWrapper}>
-            {memoCons}
+            {memoCons?memoCons:<h3>No conversations yet!</h3>}
           </section>
         )}
       </div>
