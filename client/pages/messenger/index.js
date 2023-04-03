@@ -24,7 +24,7 @@ const Messenger = ({ hasError, user }) => {
   const [isSorted,setIsSorted]=useState(true) 
  
   const {refetch} = useQuery('users',getAllusers,{
-    //For later use - example - identify user that left group
+    //For later use - example => identify user that left group
     //Only fetching once 
     staleTime:Infinity
   })
