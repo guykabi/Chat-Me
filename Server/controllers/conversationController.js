@@ -1,12 +1,12 @@
-const { Conversation } = require("../models/conversationModel");
-const { Message } = require("../models/messagesModel");
-const {
-  uploadToCloudinary,
-  removeFromCloudinary,} = require("../services/cloudinary");
+import {Conversation} from '../models/conversationModel.js'
+import {Message} from '../models/messagesModel.js'
+import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
+import {getPlaiceholder} from 'plaiceholder'
+
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -__v";
 
-const getAllConversations = async (req, resp, next) => {
+  export const getAllConversations = async (req, resp, next) => {
   const { id } = req.params;
   try {
     let allConversations = await Conversation.find({
@@ -35,19 +35,23 @@ const getAllConversations = async (req, resp, next) => {
   }
 };
 
-const addNewConversation = async (req, resp, next) => {
+export const addNewConversation = async (req, resp, next) => {
   const { participants } = req.body;
   const newConversation = new Conversation(req.body);
-
+  
   try {
     let isAlreadyConversation;
 
     //Only non group chats are not allowed to duplicate
     if (!req.body?.chatName) {
       isAlreadyConversation = await Conversation.find({
-        participants: { $all: participants },
+        $or:[{
+         chatName:{$exists:false},
+         participants: { $all: participants }
+        }]
       });
-    }
+    } 
+    
 
     if (isAlreadyConversation?.length)
       return resp.status(200).json("Conversation already exist");
@@ -60,28 +64,30 @@ const addNewConversation = async (req, resp, next) => {
       .populate({ path: "manager", select: excludeFields })
       .populate({ path: "participants", select: excludeFields });
 
-    resp.status(200).json({ message: "New conversation made", conversation });
+    return resp.status(200).json({ message: "New conversation made", conversation });
   } catch (err) {
     next(err);
   }
 };
 
-const updateConversation = async (req, resp, next) => {
+export const updateConversation = async (req, resp, next) => {
   const { id } = req.params;
   const { body } = req;
 
   try {
     if (req?.file?.path) {
       const data = await uploadToCloudinary(req.file.path, "group-images");
-  
+      const {base64} = await getPlaiceholder(data.url)
+      
       const newBody = {...body}
       newBody.chatName = body.chatName
+      data.base64 = base64
       newBody.image = data
 
       if (body.removeImage) {
         await removeFromCloudinary(body.removeImage);
       }
-
+      
       let editConversation = await Conversation.findByIdAndUpdate(
         id,
         newBody,
@@ -114,7 +120,7 @@ const updateConversation = async (req, resp, next) => {
 
 
 
-const addManager = async (req, resp, next) => {
+export const addManager = async (req, resp, next) => {
   const { conId } = req.params;
   const { manager } = req.body;
 
@@ -135,7 +141,7 @@ const addManager = async (req, resp, next) => {
   }
 };
 
-const removeManager = async (req, resp, next) => {
+export const removeManager = async (req, resp, next) => {
   const { conId } = req.params;
   const { manager } = req.body;
 
@@ -156,7 +162,7 @@ const removeManager = async (req, resp, next) => {
   }
 };
 
-const addMember = async (req, resp, next) => {
+export const addMember = async (req, resp, next) => {
   const { conId } = req.params;
   const { participants } = req.body;
 
@@ -177,7 +183,7 @@ const addMember = async (req, resp, next) => {
   }
 };
 
-const removeMember = async (req, resp, next) => {
+export const removeMember = async (req, resp, next) => {
   const { conId } = req.params;
   const { participants } = req.body;
 
@@ -198,26 +204,16 @@ const removeMember = async (req, resp, next) => {
   }
 };
 
-const deleteConversation = async (req, resp, next) => {
+export const deleteConversation = async (req, resp, next) => {
   const { id } = req.params;
   try {
     let isDeleted = await Conversation.findByIdAndDelete(id);
     if (isDeleted) {
       await Message.deleteMany({ conversation: id });
     }
-    resp.status(200).json("Conversation deleted!");
+    resp.status(200).json({message:"Conversation deleted!",conId:id});
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = {
-  getAllConversations,
-  addNewConversation,
-  updateConversation,
-  addMember,
-  removeMember,
-  addManager,
-  removeManager,
-  deleteConversation,
-};
