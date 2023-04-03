@@ -16,14 +16,15 @@ export const getTime = (date) => {
 
 
 export const handleMessageTime = (date) =>{
-  let d1 = date;
+  let d1 = new Date(date);
   let d2 = moment().format();
   let diff = moment(d2).diff(d1, 'days')
  if(diff >= 7){
   return moment(date).calendar()
  }
  else{
-  let time =  moment(date).calendar()
+  let d = new Date(date);
+  let time =  moment(d).calendar()
   if(time.includes('Yesterday'))return 'Yesterday'
   if(time.includes('Today'))return time.split('Today at')
   return time.split('Last')
