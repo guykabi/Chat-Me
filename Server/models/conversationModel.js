@@ -1,20 +1,18 @@
-const {Schema,model} = require('mongoose') 
+import {Schema,model} from 'mongoose'
 
 const userRef = {type:Schema.Types.ObjectId,ref:'users'}
 
-const ConversationSchema = new Schema({
+export const ConversationSchema = new Schema({
     chatName:String, //For chat group
     manager:[userRef], //For chat group
     participants:[userRef],
     //Media consider as message that contains image
     media:[{type:Schema.Types.ObjectId,ref:'messages'}],
-    image:{url:{type:String},cloudinary_id:{type:String}},
+    image:{url:{type:String},cloudinary_id:{type:String},base64:{type:String}},
     lastActive:Date
 },
     {timestamps:true}
 )
 
-const Conversation = model('conversations',ConversationSchema)
+export const Conversation = model('conversations',ConversationSchema)
 
-//Also for the ref(populate) of messageModel
-module.exports = {Conversation,ConversationSchema}
