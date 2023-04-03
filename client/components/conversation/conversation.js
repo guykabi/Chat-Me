@@ -73,6 +73,8 @@ const selectedConversation = ()=>{
           width={35}
           height={35}
           style={{borderRadius:'50%'}}
+          placeholder="blur"
+          blurDataURL={con?.image?.base64}
           src={con?.image?.url
             ?con.image.url
             :noAvatarGroup}
@@ -83,7 +85,7 @@ const selectedConversation = ()=>{
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
-        {!isCurrentOne?<div 
+        {!isCurrentOne&&con.lastActive?<div 
         className={styles.lastActiveDate}
         role='timer'>
           {handleMessageTime(con.lastActive)}
