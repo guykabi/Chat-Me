@@ -1,8 +1,8 @@
-const {User} =require('../models/messagesModel')
-const {generateInitialToken} = require('../Utils/utils')
+import {User} from '../models/messagesModel.js'
+import {generateInitialToken} from '../utils/utils.js'
 
 
-const logOut = async(req,resp)=>{
+export const logOut = async(req,resp)=>{
     resp.cookie('token', 'none', {
         expires: new Date(Date.now() + 5 * 1000),
         httpOnly: true,
@@ -17,7 +17,7 @@ const logOut = async(req,resp)=>{
   }
   
   
-  const checkValidity = async(req,resp,next)=>{
+  export const checkValidity = async(req,resp,next)=>{
     try{
       resp.status(200)
       .json({ success: true, message: 'New access token' })  
@@ -28,7 +28,7 @@ const logOut = async(req,resp)=>{
   
   
 
-  const checkUserCredentials = async(req,resp,next)=>{ 
+  export const checkUserCredentials = async(req,resp,next)=>{ 
        const {email,password} = req.body
        
        try{
@@ -57,4 +57,3 @@ const logOut = async(req,resp)=>{
   }
   
   
-  module.exports = {logOut,checkValidity,checkUserCredentials}

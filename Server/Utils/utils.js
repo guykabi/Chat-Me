@@ -1,11 +1,14 @@
-const {compare} = require('bcryptjs')
-const {sign} = require('jsonwebtoken')
-const {User} =require('../models/messagesModel')
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import {User} from '../models/messagesModel.js'
+const {compare} = bcrypt
+const {sign} = jwt
+
 const excludeFields = '-password -friends -friendsWaitingList -notifications -__v'
 
 
 
-const generateInitialToken = async (data,password)=>{
+export const generateInitialToken = async (data,password)=>{
 
    //Compares the password that the client typed with the encryped one on the DB
     const isMatch = await compare(password,data.password)
@@ -29,7 +32,7 @@ const generateInitialToken = async (data,password)=>{
 } 
 
 
-const generateTokens = ()=>{
+export const generateTokens = ()=>{
    const accessToken = sign(
       {id:Math.floor(Math.random() * 38248)},
       process.env.ACCESS_SECRET_TOKEN,
@@ -45,11 +48,11 @@ const generateTokens = ()=>{
 } 
 
 
-const approveFriend =async (id,friendId,next) =>{
+export const approveFriend =async (id,friendId,next) =>{
   
       try{   
             //Delete the pending friendship request + notification
-            let user = await User.findOneAndUpdate(                //Identifies notification via frindId              
+            let user = await User.findOneAndUpdate(                            
             { _id: id }, { $pull: { friendsWaitingList: friendId , notifications:{sender:friendId} }},{new: true})
             .select('-password')
             .populate({path:'friends',select:excludeFields})
@@ -69,4 +72,3 @@ const approveFriend =async (id,friendId,next) =>{
       }
 }
 
-module.exports = {generateInitialToken,generateTokens,approveFriend}
