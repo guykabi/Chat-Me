@@ -1,10 +1,11 @@
-import React, { 
-  useContext, 
-  useState, 
+import React, {
+  useContext,
+  useState,
   useMemo,
-  useCallback, 
-  useEffect, 
-  useRef } from "react";
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import styles from "./chatDetails.module.css";
 import Image from "next/image";
 import noAvatar from "../../public/images/no-avatar.png";
@@ -15,21 +16,19 @@ import Input from "../UI/Input/Input";
 import GroupPerson from "../group-person/groupPerson";
 import Group from "../group/group";
 import Button from "../UI/Button/button";
-import { useMutation, useQuery} from "react-query";
+import { useMutation, useQuery } from "react-query";
 import Modal from "../Modal/modal";
 import PickedUser from "../pickedUser/pickedUser";
 import { BiSend } from "react-icons/bi";
 import { BsFillCameraFill } from "react-icons/bs";
-import { useGetFetchQuery } from "../../hooks/useGetQuery";
+import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import {
   updateConversation,
-  getAllusers,
   addGroupMember,
   removeGroupMember,
   addManager,
   removeManager,
 } from "../../utils/apiUtils";
-
 
 const ChatDetails = ({ onReturn }) => {
   const { currentChat, currentUser, Socket, dispatch } =
@@ -43,20 +42,17 @@ const ChatDetails = ({ onReturn }) => {
   const [isMenu, setIsMenu] = useState(null);
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
-  const conversations = useGetFetchQuery("conversations");
+  const conversations = useGetCacheQuery("conversations");
   const fileRef = useRef(null);
+  const users = useGetCacheQuery("users");
+
+  const handleAllUsersList = () => {
+    let chatMembersIds = currentChat.participants.map((p) => p._id);
+    let filteredData = users.filter((u) => !chatMembersIds.includes(u._id));
+    setAllUsers(filteredData);
+  };
 
   ////////////API calls - reactQuery/////////////
-
-  const { refetch } = useQuery("users", getAllusers, {
-    onSuccess: (data) => {
-      //Filter only unmembers of the group
-      let chatMembersIds = currentChat.participants.map((p) => p._id);
-      let filteredData = data.filter((u) => !chatMembersIds.includes(u._id));
-      setAllUsers(filteredData);
-    },
-    enabled: false,
-  });
 
   const { mutate: update } = useMutation(updateConversation, {
     onSuccess: (data) => {
@@ -133,7 +129,7 @@ const ChatDetails = ({ onReturn }) => {
     },
   });
 
-  ////////////---------/////////////
+  //------------------------------------------------------//
 
   useEffect(() => {
     if (!currentChat.chatName) return;
@@ -142,7 +138,7 @@ const ChatDetails = ({ onReturn }) => {
 
   const handleOpenModal = () => {
     setShowModal(true);
-    refetch();
+    handleAllUsersList();
   };
 
   const handleChatDetailChange = (e) => {
@@ -161,14 +157,22 @@ const ChatDetails = ({ onReturn }) => {
     setGroupChangedDetails({ ...groupChangedDetails, [name]: value });
   };
 
-  const handleUserPick = useCallback((e) => {
-    if (pickedUsersToAdd.find((p) => p._id === e._id)) return;
-    setPickedUsersToAdd((prev) => [...prev, e]);
-  },[pickedUsersToAdd]);
+  const handleUserPick = useCallback(
+    (e) => {
+      if (pickedUsersToAdd.some((p) => p._id === e._id)) return;
+      setPickedUsersToAdd((prev) => [...prev, e]);
+    },
+    [pickedUsersToAdd]
+  );
 
-  const removePickedUser = useCallback((pickedUser) => {
-    setPickedUsersToAdd((prev) => prev.filter((u) => u._id !== pickedUser._id));
-  },[pickedUsersToAdd]);
+  const removePickedUser = useCallback(
+    (pickedUser) => {
+      setPickedUsersToAdd((prev) =>
+        prev.filter((u) => u._id !== pickedUser._id)
+      );
+    },
+    [pickedUsersToAdd]
+  );
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -179,45 +183,52 @@ const ChatDetails = ({ onReturn }) => {
     if (!pickedUsersToAdd.length) return;
     let obj = { participants: pickedUsersToAdd.map((p) => p._id) };
     addMember({ conId: currentChat._id, obj });
-  },[currentChat]);
+  }, [currentChat, pickedUsersToAdd]);
 
-  const handleMemberRemoval = useCallback((e) => {
-    let obj;
+  const handleMemberRemoval = useCallback(
+    (e) => {
+      let obj;
 
-    if (typeof e !== "string") {
-      //When the only manager wants to leave the group -
-      //Sets a random member of the group as manager
-      if (
-        currentChat.manager.length === 1 &&
-        currentChat.manager[0]._id === currentUser._id
-      ) {
-        let setAsManager = currentChat.participants.find(
-          (p) => p._id !== currentUser._id
-        );
-        let obj = { manager: setAsManager._id };
-        setManager({ conId: currentChat._id, obj });
+      if (typeof e !== "string") {
+        //When the only manager wants to leave the group -
+        //Sets a random member of the group as manager
+        if (
+          currentChat.manager.length === 1 &&
+          currentChat.manager[0]._id === currentUser._id
+        ) {
+          let setAsManager = currentChat.participants.find(
+            (p) => p._id !== currentUser._id
+          );
+          let obj = { manager: setAsManager._id };
+          setManager({ conId: currentChat._id, obj });
+        }
+
+        let obj = { participants: currentUser._id };
+        removeMember({ conId: currentChat._id, obj });
+        return;
       }
 
-      let obj = { participants: currentUser._id };
+      obj = { participants: e };
       removeMember({ conId: currentChat._id, obj });
-      return;
-    }
+    },
+    [currentChat]
+  );
 
-    obj = { participants: e };
-    removeMember({ conId: currentChat._id, obj });
+  const handleManagerAdding = useCallback(
+    (e) => {
+      let obj = { manager: e };
+      setManager({ conId: currentChat._id, obj });
+    },
+    [currentChat]
+  );
 
-  },[currentChat]);
-
-
-  const handleManagerAdding = useCallback((e) => {
-    let obj = { manager: e };
-    setManager({ conId: currentChat._id, obj });
-  },[currentChat]);
-
-  const handleManagerRemoval =useCallback((e) => {
-    let obj = { manager: e };
-    managerRemoval({ conId: currentChat._id, obj });
-  },[currentChat]);
+  const handleManagerRemoval = useCallback(
+    (e) => {
+      let obj = { manager: e };
+      managerRemoval({ conId: currentChat._id, obj });
+    },
+    [currentChat]
+  );
 
   const submitChatDetailChange = (e) => {
     e.preventDefault();
@@ -331,6 +342,8 @@ const ChatDetails = ({ onReturn }) => {
                         ? currentChat.image.url
                         : noAvatarGroup
                     }
+                    placeholder="blur"
+                    blurDataURL={currentChat?.image?.base64}
                     width={150}
                     height={140}
                     style={{
@@ -439,7 +452,7 @@ const ChatDetails = ({ onReturn }) => {
           </section>
         ) : null}
 
-        <section>
+        <section className={styles.usersListToPick}>
           {allUsers.length ? allUsersToPick : <h3>No Users</h3>}
         </section>
       </Modal>

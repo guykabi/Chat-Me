@@ -111,6 +111,11 @@
     width: 100%;
 }
 
+.usersListToPick{
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+}
 
 .sendNewMembersBtn{
     position: absolute;
@@ -119,5 +124,5 @@
     transition: 0.4s;
 }
 .sendNewMembersBtn:hover{
-transform: scale(1.2);
+  transform: scale(1.2);
 }
