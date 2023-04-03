@@ -1,7 +1,8 @@
-const {verify} = require('jsonwebtoken')
-const {generateTokens} = require('../utils/utils')
+import jwt from 'jsonwebtoken'
+import {generateTokens} from '../utils/utils.js'
+const {verify} = jwt
 
-const Auth = async (req,resp,next) =>{
+export const Auth = async (req,resp,next) =>{
   
     const accessToken = req.cookies['token']?.accessToken
     const refreshToken = req.cookies['token']?.refreshToken
@@ -31,4 +32,3 @@ const Auth = async (req,resp,next) =>{
     })
 } 
 
-module.exports = {Auth}

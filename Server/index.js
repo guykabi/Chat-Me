@@ -1,13 +1,12 @@
-const express = require('express')
-const cors = require('cors')  
-require('dotenv').config()
-const userRouter = require('./routes/usersRouter')
-const messagesRouter = require('./routes/messageRouter')
-const conversationRouter = require('./routes/conversationRouter')
-const authRouter = require('./routes/authRouter')
-const errorHandler = require('./middleware/errorHandler')
-const cookieParser = require('cookie-parser')
-
+import {} from 'dotenv/config';
+import cors from 'cors'
+import express from 'express'
+import usersRouter from './routes/usersRouter.js'
+import messagesRouter from './routes/messageRouter.js'
+import conversationRouter from './routes/conversationRouter.js'
+import authRouter from './routes/authRouter.js'
+import {errorHandler} from './middleware/errorHandler.js'
+import cookieParser from 'cookie-parser'
  
 const port = process.env.PORT || 8000  
 
@@ -19,10 +18,10 @@ app.use(cors({
 })) 
 app.use(express.json());  
 
-require('./database/database')    
+import './database/database.js'
 
 
-app.use('/users',userRouter) 
+app.use('/users',usersRouter) 
 app.use('/messages',messagesRouter)
 app.use('/conversation',conversationRouter)
 app.use('/auth',authRouter)
