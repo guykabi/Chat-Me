@@ -1,10 +1,10 @@
-const { Message } = require("../models/messagesModel");
-const { Conversation } = require("../models/conversationModel");
-const {uploadToCloudinary} = require("../services/cloudinary");
-const {getPlaiceholder} = require('plaiceholder')
+import {Message} from '../models/messagesModel.js'
+import {Conversation} from '../models/conversationModel.js'
+import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
+import {getPlaiceholder} from 'plaiceholder'
 
 
-const getMessageByConId = async (req, resp, next) => {
+export const getMessageByConId = async (req, resp, next) => {
   const { conversation } = req.params;
 
   //The amount of documents to skip
@@ -16,7 +16,8 @@ const getMessageByConId = async (req, resp, next) => {
       .limit(30)
       .skip(amount)
       .select("-__v")
-
+    
+    //console.log(messages);
     resp.status(200).json(messages);
 
   } catch (err) {
@@ -25,7 +26,7 @@ const getMessageByConId = async (req, resp, next) => {
 };
 
 
-const addNewMessage = async (req, resp, next) => {
+export const addNewMessage = async (req, resp, next) => {
   let newMessage = null
   const {body} = req
 
@@ -69,7 +70,7 @@ const addNewMessage = async (req, resp, next) => {
 };
 
 
-const likeMessage = async (req, resp, next) =>{
+export const likeMessage = async (req, resp, next) =>{
   const {id} = req.params 
   const {userId} = req.body
   
@@ -103,7 +104,7 @@ const likeMessage = async (req, resp, next) =>{
 
 
 
-const handleSeenMessage = async (req, resp, next) => {
+export const handleSeenMessage = async (req, resp, next) => {
   const { id } = req.params;
   const { userId } = req.body;
 
@@ -120,18 +121,22 @@ const handleSeenMessage = async (req, resp, next) => {
 };
 
 
-const deleteMessage = async (req, resp, next) =>{
+export const deleteMessage = async (req, resp, next) =>{
   const {id} = req.params
   try{
-     let deleted = await Message.findByIdAndDelete(id).populate({
+        let deleted = await Message.findByIdAndDelete(id).populate({
         path: "conversation",
         select: "_id",
-     })
+       })
+
+       if(deleted?.image?.url){
+        await removeFromCloudinary(deleted.image.cloudinary_id)
+       }
+
      resp.status(200).json({message:'Deleted',deleted})
+     
   }catch(err){
    next(err)
  }
 }
 
-module.exports = { getMessageByConId, addNewMessage, 
-                   handleSeenMessage, likeMessage, deleteMessage };
