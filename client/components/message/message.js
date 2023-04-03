@@ -45,7 +45,7 @@ const Message = forwardRef(({ message, own }, ref) => {
     );
   }, []);
 
-  const handleMessageOperationMenu = (e) => {
+  const handleMessageOperationMenu = () => {
     setIsVisible(!isVisible);
   };
 
@@ -153,6 +153,15 @@ const Message = forwardRef(({ message, own }, ref) => {
               </header>
             )}
 
+            {!currentChat.chatName&&
+            <header className={styles.topOfMessage}>
+                <div
+                className={styles.dropMenuSign}
+                onClick={handleMessageOperationMenu}
+                >
+                <AiOutlineDown />
+                </div>
+            </header>}
             {message.image ? (
               <div className={styles.messageImageWrapper} onClick={openImage}>
                 {image}
