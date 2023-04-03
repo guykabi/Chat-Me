@@ -1,12 +1,13 @@
-const express = require('express') 
+import express from 'express'
+import {Auth} from '../middleware/auth.js'
 const router = express.Router() 
-const {Auth} = require('../middleware/auth')
 
-const {
+
+import {
      logOut,
      checkValidity,
      checkUserCredentials
-     } = require('../controllers/authController') 
+     }  from '../controllers/authController.js'
 
 router
 .get('/logout',logOut)
@@ -14,4 +15,4 @@ router
 .post('/',checkUserCredentials)
 
    
-  module.exports = router
+  export default  router

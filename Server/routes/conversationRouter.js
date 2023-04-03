@@ -1,10 +1,10 @@
-const express = require('express') 
+import {Auth} from '../middleware/auth.js'
+import express from 'express'
+import {upload} from '../middleware/upload.js'
 const router = express.Router() 
-const {Auth} = require('../middleware/auth')
-const upload = require('../middleware/upload')
 
 
-const {
+import {
       getAllConversations,
       addNewConversation,
       updateConversation,
@@ -12,7 +12,7 @@ const {
       removeMember,
       addManager,
       removeManager,
-      deleteConversation} = require('../controllers/conversationController')
+      deleteConversation} from '../controllers/conversationController.js'
 
 router
 .get('/:id',Auth,getAllConversations)
@@ -24,4 +24,4 @@ router
 .patch('/remove-manager/:conId',Auth,removeManager)
 .delete('/:id',Auth,deleteConversation)
 
-module.exports = router;
+export default  router
