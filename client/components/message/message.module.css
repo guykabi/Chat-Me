@@ -124,11 +124,13 @@
 
 
 .modalImageMessage{
+  position: relative;
   margin: 0 auto;
   text-align: center;
   align-items: center;
   width: 35rem;
-  height: 22rem;
+  height: 28rem;
+  margin: 0.2rem;
   align-items: center;
 }
 
