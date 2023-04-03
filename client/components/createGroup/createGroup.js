@@ -14,7 +14,7 @@ const CreateGroup = ({ onSwitch }) => {
   const [groupName, setGroupName] = useState(null);
   const [pickedUsers, setPickedUsers] = useState([]);
 
-  const { error } = useQuery("users", getAllusers, {
+  useQuery("users", getAllusers, {
     onSuccess: (data) => {
       let filteredUsers = data.filter((u) => u._id !== currentUser._id);
       setAllUsers(filteredUsers);
@@ -23,6 +23,7 @@ const CreateGroup = ({ onSwitch }) => {
 
   const { mutate: addGroup } = useMutation(createGroup, {
     onSuccess: (data) => {
+      if(data.message !== 'New conversation made')return
       setGroupName(null);
       setPickedUsers([]);
       Socket.emit("new-conversation", data.conversation);
