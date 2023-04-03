@@ -102,9 +102,7 @@ const Person = ({ user, decreaseNotify }) => {
 
   const { mutate: newConversation } = useMutation(createConversation, {
     onSuccess: (data) => {
-      console.log(data);
       if (data === "Conversation already exist") return;
-      console.log(data);
       Socket.emit("new-conversation", data.conversation);
     },
   });
