@@ -21,7 +21,7 @@ const Chat = ()=> {
   const [showModal,setShowModal]=useState(false)
   const [newMessage,setNewMessage]=useState('')
   const [file,setFile]=useState(null)
-  const [messages,setMessages]= useState([])
+  const [messages,setMessages]= useState(null)
   const [room,setRoom]=useState(currentChat._id)
   const [isTyping,setIsTyping]=useState(false) 
   const [typingText,setTypingText]=useState(null)
@@ -32,6 +32,7 @@ const Chat = ()=> {
     getMessages(currentChat?._id)),
   {
     onSuccess:(data)=>{
+      if(!data.length) setMessages([])
       setMessages(data.reverse())
     }, 
     staleTime:2000,
@@ -51,12 +52,9 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
 
 
   useEffect(()=>{
-    
-    if(newMessage || messages?.length ) {
      setNewMessage('')
      setMessages(data) 
-    }
-
+    
      setRoom(currentChat._id)
      Socket.emit('join_room',currentChat._id) 
 
@@ -94,7 +92,7 @@ const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
   },[Socket,currentChat,currentUser])
 
 
-const handleInputFileClick = useCallback((e) => {
+const handleInputFileClick = useCallback(() => {
     fileRef.current.click();
 },[fileRef]); 
 
@@ -187,7 +185,7 @@ const handleImage = (currentChat?.friend?
          </section>}
 
          <main className={styles.chatBoxDiv} >  
-                 {messages?.length?
+                 {messages?
                  <Messages messages={messages}/>:null}
 
                  {isLoading&&
