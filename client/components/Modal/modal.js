@@ -27,7 +27,7 @@ const modalContent = show ? (
        <AiOutlineCloseCircle/>
        </div>:null}
 
-       {!isError||!isFileMessage?<div 
+       {!isError&&!isFileMessage?<div 
        className={styles.deleteModalSign}
        role='button'
        onClick={handleClose}>
