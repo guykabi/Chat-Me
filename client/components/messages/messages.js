@@ -18,7 +18,7 @@ const Messages = ({ messages }) => {
 
   const { currentUser, currentChat, Socket } = useContext(chatContext);
   const scrollRef = useRef();
-  const [allMessages, setAllMessages] = useState([]);
+  const [allMessages, setAllMessages] = useState(null);
   const [amountToSkip, setAmountToSkip] = useState(30);
   const [isMoreMessages, setIsMoreMessages] = useState(false);
   const [newChatToDelete, setNewChatToDelete] = useState(null);
@@ -29,7 +29,7 @@ const Messages = ({ messages }) => {
     () => getMessages(currentChat?._id, amountToSkip),
     {
       onSuccess: (data) => {
-        if (data.length) {
+        if (!data.length)return
           let reverseMessages = [...data].reverse();
           setAllMessages((prev) => [...reverseMessages, ...prev]);
 
@@ -40,7 +40,7 @@ const Messages = ({ messages }) => {
           if (data.length < 30) {
             setIsMoreMessages(false);
           }
-        }
+        
       },
       enabled: false,
     }
@@ -49,16 +49,16 @@ const Messages = ({ messages }) => {
 
   const { mutate: removeConversation } = useMutation(deleteConversation, {
     onSuccess: (data) => {
-      if (data !== "Conversation deleted!") return;
-
-      //Emit event to trigger the conversations-component to fetch updated conversations
-      Socket.emit("new-conversation", currentUser._id);
+      if (data.message !== "Conversation deleted!") return;
+      const {conId,message} = data
+      Socket.emit("new-conversation",{message,conId}); 
     },
   });
 
   useEffect(() => {
     //Only on chat switching - or new chat creation
-    if (!messages.length) return;
+    if (!messages.length)return setAllMessages([])
+    
     setAllMessages(messages);
 
     if (messages.length === 30) setIsMoreMessages(true);
@@ -72,14 +72,14 @@ const Messages = ({ messages }) => {
 
   useEffect(() => {
     //Detecting if it's a new chat without messages
-    if (!messages.length && !allMessages.length) {
+    if (!messages.length && !allMessages?.length && !currentChat?.chatName) {
       //Sets the new chat in advance to delete - if no message will be send
       setNewChatToDelete(currentChat._id);
       return;
     }
-
-    setNewChatToDelete(null);
-
+     console.log('previouseOne:',newChatToDelete);
+    if(newChatToDelete)setNewChatToDelete(null);
+  
 
     //Extra condition - scrolling down only on start or new message
     if(!isScrollable) return;
@@ -91,17 +91,18 @@ const Messages = ({ messages }) => {
 
   }, [allMessages]); 
 
-
-
+//console.log('This is messages:',messages);
+//console.log(newChatToDelete);
 
 
   useEffect(() => {
     Socket.on("recieve-message", ({ message }) => {
-       
+        
       if (message?.conversation?._id !== currentChat._id) return;
       
       if (allMessages.some((m) => m._id === message._id)) { 
         setIsScrollable(false)
+
         //When user deleted a message
         if(message?.event === 'Deleted'){
           let index = allMessages.findIndex((m) => m._id === message._id);
@@ -144,11 +145,12 @@ const Messages = ({ messages }) => {
 
 
   useEffect(() => {
-    //If no message was sent in the new chat - delete it
-    if (!newChatToDelete) return;
-    setNewChatToDelete(null);
+    //If no message was sent in the new chat (private one only) - delete it
+    if (!newChatToDelete)return
+    console.log('When switch chat');
     removeConversation(newChatToDelete);
-  }, [currentChat]);
+    setNewChatToDelete(null);
+  },[currentChat]);
 
   const handleMoreLoading = (e) => {
     if (e.target.scrollTop === 0 && isMoreMessages) {
