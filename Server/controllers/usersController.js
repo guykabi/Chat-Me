@@ -1,13 +1,14 @@
-const { User } = require("../models/messagesModel");
-const { hash, genSalt } = require("bcryptjs");
-const { approveFriend } = require("../utils/utils");
-const {uploadToCloudinary,removeFromCloudinary} = require('../services/cloudinary')
+import {User} from '../models/messagesModel.js'
+import bcrypt from 'bcryptjs'
+import {approveFriend} from '../utils/utils.js'
+import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
+const {hash,genSalt} = bcrypt
 
 
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -__v";
 
-const getAllUsers = async (req, resp, next) => {
+export const getAllUsers = async (req, resp, next) => {
   try {
     let users = await User.find({}).select(excludeFields);
     return resp.status(200).json(users);
@@ -16,7 +17,7 @@ const getAllUsers = async (req, resp, next) => {
   }
 };
 
-const getUser = async (req, resp, next) => {
+export const getUser = async (req, resp, next) => {
   const { id } = req.params;
 
   try {
@@ -36,7 +37,7 @@ const getUser = async (req, resp, next) => {
   }
 };
 
-const addUser = async (req, resp, next) => {
+export const addUser = async (req, resp, next) => {
   const newUser = new User(req.body);
   try {
     await newUser.save();
@@ -48,7 +49,7 @@ const addUser = async (req, resp, next) => {
 
 
 
-const searchUser = async (req, resp, next) => {
+export const searchUser = async (req, resp, next) => {
   const body = req.body;
 
   try {
@@ -63,7 +64,7 @@ const searchUser = async (req, resp, next) => {
   }
 };
 
-const friendShipRequest = async (req, resp, next) => {
+export const friendShipRequest = async (req, resp, next) => {
   const { id } = req.params;
   const { friendId, message } = req.body;
   let pull = {
@@ -95,7 +96,7 @@ const friendShipRequest = async (req, resp, next) => {
   }
 };
 
-const friendApproval = async (req, resp, next) => {
+export const friendApproval = async (req, resp, next) => {
   const { id } = req.params;
   const { friendId, message } = req.body;
 
@@ -117,7 +118,7 @@ const friendApproval = async (req, resp, next) => {
   }
 };
 
-const removeFriend = async (req, resp, next) => {
+export const removeFriend = async (req, resp, next) => {
   const { id } = req.params;
   const { friendId } = req.body;
 
@@ -146,7 +147,7 @@ const removeFriend = async (req, resp, next) => {
   }
 };
 
-const unapproveFriend = async (req, resp, next) => {
+export const unapproveFriend = async (req, resp, next) => {
   const { id } = req.params;
   const { friendId } = req.body;
   let pull = {
@@ -175,7 +176,7 @@ const unapproveFriend = async (req, resp, next) => {
   }
 };
 
-const handleSeenNotification = async (req, resp, next) => {
+export const handleSeenNotification = async (req, resp, next) => {
   const { id } = req.params;
 
   let update = { $set: { "notifications.$[elem].seen": true } };
@@ -208,7 +209,7 @@ const handleSeenNotification = async (req, resp, next) => {
   }
 };
 
-const resetPassword = async (req, resp, next) => {
+export const resetPassword = async (req, resp, next) => {
   //Crypt the changed password
   const salt = await genSalt(12);
   const passwordHash = await hash(req.body.password, salt);
@@ -226,7 +227,7 @@ const resetPassword = async (req, resp, next) => {
 };
 
 
-const updateUser = async(req,resp,next) => {
+export const updateUser = async(req,resp,next) => {
   const {id} = req.params
   const body = req.body
   
@@ -255,7 +256,7 @@ try{
 }
 
 
-const deleteUser = async (req, resp, next) => {
+export const deleteUser = async (req, resp, next) => {
   const { id } = req.params;
   try {
     await User.findByIdAndDelete(id);
@@ -265,17 +266,3 @@ const deleteUser = async (req, resp, next) => {
   }
 };
 
-module.exports = {
-  getAllUsers,
-  getUser,
-  searchUser,
-  addUser,
-  updateUser,
-  friendShipRequest,
-  friendApproval,
-  removeFriend,
-  unapproveFriend,
-  resetPassword,
-  deleteUser,
-  handleSeenNotification,
-};
