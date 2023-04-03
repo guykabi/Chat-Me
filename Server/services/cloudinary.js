@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary').v2
+import cloudinary from 'cloudinary'
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -7,10 +7,10 @@ cloudinary.config({
 }) 
 
 
-const uploadToCloudinary = async(path,folder,next) =>{
+export const uploadToCloudinary = async(path,folder,next) =>{
   try{
     
-    const data = await cloudinary.uploader.upload(path,{folder})    
+    const data = await cloudinary.v2.uploader.upload(path,{folder})    
     return {url:data.url ,cloudinary_id:data.public_id}
   }catch(err){
     next(err)
@@ -19,11 +19,10 @@ const uploadToCloudinary = async(path,folder,next) =>{
 }  
 
 
-const removeFromCloudinary =async (public_id) =>{
-    await cloudinary.uploader.destroy(public_id, (error,result)=>{
+export const removeFromCloudinary =async (public_id) =>{
+    await cloudinary.v2.uploader.destroy(public_id, (error,result)=>{
         return 'Removed successfully'
     })
 }
 
 
-module.exports = {uploadToCloudinary,removeFromCloudinary}

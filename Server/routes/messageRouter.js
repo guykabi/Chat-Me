@@ -1,14 +1,15 @@
-const express = require('express') 
+import {Auth} from '../middleware/auth.js'
+import express from 'express'
+import {upload} from '../middleware/upload.js'
 const router = express.Router() 
-const {Auth} = require('../middleware/auth')
-const upload = require('../middleware/upload')
 
-const {
+
+import {
      getMessageByConId,
      addNewMessage,
      handleSeenMessage,
      likeMessage,
-     deleteMessage} = require('../controllers/messageController') 
+     deleteMessage}  from '../controllers/messageController.js'
 
 router
 .get('/:conversation',Auth,getMessageByConId)  
@@ -18,4 +19,4 @@ router
 .delete('/delete-message/:id',Auth,deleteMessage)
 
 
-module.exports = router;
+export default router;

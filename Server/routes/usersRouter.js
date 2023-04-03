@@ -1,10 +1,11 @@
-const express = require('express') 
+import {Auth} from '../middleware/auth.js'
+import express from 'express'
+import {upload} from '../middleware/upload.js'
 const router = express.Router() 
-const {Auth} = require('../middleware/auth')
-const upload = require('../middleware/upload')
 
 
-const {
+
+import {
       getAllUsers,
       addUser,
       updateUser,
@@ -14,7 +15,7 @@ const {
       removeFriend,
       unapproveFriend,
       resetPassword,
-      deleteUser} = require('../controllers/usersController')
+      deleteUser} from '../controllers/usersController.js'
 
 router
 .get('/', Auth, getAllUsers)
@@ -34,5 +35,4 @@ router
 .patch('/reset-pass/:id',resetPassword) 
 
 
-module.exports = router
-
+export default router
