@@ -60,10 +60,11 @@ io.on('connection', socket=>{
               
               if(message.message === 'Deleted'){ 
                  message.deleted.event = 'Deleted'
-                 io.in(room).emit('recieve-message',{message:message.deleted})
+                 io.to(room).emit('recieve-message',{message:message.deleted})
+                 return
                }
-
-                io.in(room).emit('recieve-message',{message})
+                console.log('What>>',room);
+                io.to(room).emit('recieve-message',{message})
 
               //To inform the user about another in coming message
               if(trigger !== 'Not trigger'){
