@@ -1,4 +1,4 @@
-const errorHnadler = (err,req,resp,next)=>{
+export const errorHandler = (err,req,resp,next)=>{
     const status = err.status || 500
     const message = err.message || 'Something went wrong'
     
@@ -16,4 +16,3 @@ const errorHnadler = (err,req,resp,next)=>{
     })
  }
  
- module.exports = errorHnadler

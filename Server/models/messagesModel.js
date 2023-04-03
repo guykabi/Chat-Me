@@ -1,7 +1,8 @@
-const {Schema,model} = require('mongoose') 
-const {ConversationSchema} = require('../models/conversationModel')
-const {hash} = require('bcryptjs/dist/bcrypt')
-const moment = require('moment');
+import {Schema,model} from 'mongoose'
+import {ConversationSchema} from '../models/conversationModel.js'
+import bcrypt from 'bcryptjs'
+import moment from 'moment'
+const {hash} = bcrypt
 
 let createdAt = function(){
     let d = new Date();
@@ -10,7 +11,7 @@ let createdAt = function(){
 };
 
 const userRef = {type: Schema.Types.ObjectId, ref: 'users' }
-const UserSchema = new Schema({
+export const UserSchema = new Schema({
     name:String,
     lastName:String,
     email:{type: String,unique: true},
@@ -34,7 +35,7 @@ UserSchema.pre('save',async function (){
 })
   
 
-const MessageSchema = new Schema({
+export const MessageSchema = new Schema({
     conversation:{type: Schema.Types.ObjectId, ref: 'conversations' },
     sender:userRef,
     text:String,
@@ -49,8 +50,7 @@ const MessageSchema = new Schema({
 ) 
 
 
-const User = model('users',UserSchema)
-const Message = model('messages',MessageSchema) 
+export const User = model('users',UserSchema)
+export const Message = model('messages',MessageSchema) 
 model('conversations',ConversationSchema)
 
-module.exports = {User,Message}
