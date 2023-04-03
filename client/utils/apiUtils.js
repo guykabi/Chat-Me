@@ -150,5 +150,3 @@ export const handleDeleteMessage = async (messageId) =>{
   const {data:res} = await Axios.delete('messages/delete-message/'+messageId)
   return res
 }
-
-
