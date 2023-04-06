@@ -1,11 +1,12 @@
-import React, { useState, useContext, useMemo, useCallback } from "react";
+import React, { useState, useContext, useMemo, useCallback, useEffect } from "react";
 import styles from "./createGroup.module.css";
 import { useMutation, useQuery } from "react-query";
-import { getAllusers, createGroup } from "../../utils/apiUtils";
+import { createGroup } from "../../utils/apiUtils";
 import { chatContext } from "../../context/chatContext";
 import GroupPerson from "../group-person/groupPerson";
 import Button from "../UI/Button/button";
 import PickedUser from "../pickedUser/pickedUser";
+import {useGetCacheQuery} from '../../hooks/useGetQuery'
 
 const CreateGroup = ({ onSwitch }) => {
   const { currentUser, Socket } = useContext(chatContext);
@@ -13,14 +14,9 @@ const CreateGroup = ({ onSwitch }) => {
   const [query, setQuery] = useState("");
   const [groupName, setGroupName] = useState(null);
   const [pickedUsers, setPickedUsers] = useState([]);
+  const users = useGetCacheQuery('users')
 
-  useQuery("users", getAllusers, {
-    onSuccess: (data) => {
-      let filteredUsers = data.filter((u) => u._id !== currentUser._id);
-      setAllUsers(filteredUsers);
-    },
-  });
-
+  
   const { mutate: addGroup } = useMutation(createGroup, {
     onSuccess: (data) => {
       if(data.message !== 'New conversation made')return
@@ -29,7 +25,13 @@ const CreateGroup = ({ onSwitch }) => {
       Socket.emit("new-conversation", data.conversation);
       onSwitch();
     },
-  });
+  }); 
+
+  useEffect(()=>{
+    let filteredUsers = users.
+    filter((u) => u._id !== currentUser._id);
+    setAllUsers(filteredUsers);
+},[])
 
   const handleUserPick = useCallback((e) => {
     setQuery("");
@@ -53,6 +55,8 @@ const CreateGroup = ({ onSwitch }) => {
 
     addGroup(group);
   };
+
+
 
   const filteredItems = useMemo(() => {
     return allUsers?.filter((item) =>
