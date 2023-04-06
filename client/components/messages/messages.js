@@ -6,7 +6,7 @@ import React, {
   useState,
   useMemo,
 } from "react";
-import { needToReSign, onError } from "../../utils/utils";
+import { needToReSign, onError,handleUnSeenMessages } from "../../utils/utils";
 import styles from "./messages.module.css";
 import Message from "../message/message";
 import { chatContext } from "../../context/chatContext";
@@ -22,18 +22,27 @@ const Messages = ({ messages }) => {
   const [amountToSkip, setAmountToSkip] = useState(30);
   const [isMoreMessages, setIsMoreMessages] = useState(false);
   const [newChatToDelete, setNewChatToDelete] = useState(null);
+  const [isUnseenMessages,setIsUnSeenMessages]=useState(false)
+  const [isOverTwentyUnSeen,setIsOverTwentyUnSeen]=useState(false)
   const [isScrollable,setIsScrollable]=useState(true)
+
   
   const { refetch: loadMore, error } = useQuery(
-    "more-messages",
+    ["more-messages"],
     () => getMessages(currentChat?._id, amountToSkip),
     {
       onSuccess: (data) => {
         if (!data.length)return
+        
           let reverseMessages = [...data].reverse();
+          if(isOverTwentyUnSeen){
+            //Only onmount, if chat has more than 20 unseen messages 
+            reverseMessages = handleUnSeenMessages(reverseMessages,currentChat.unSeen) 
+            setIsOverTwentyUnSeen(false)
+          }
           setAllMessages((prev) => [...reverseMessages, ...prev]);
 
-          if (data.length === 30) {
+          if (data.length >= 30) {
             setAmountToSkip((prev) => (prev += 30));
           }
 
@@ -58,10 +67,25 @@ const Messages = ({ messages }) => {
   useEffect(() => {
     //Only on chat switching - or new chat creation
     if (!messages.length)return setAllMessages([])
-    
-    setAllMessages(messages);
+
+    if(isUnseenMessages)setIsUnSeenMessages(false)
+
+    if(currentChat?.unSeen < 1)setAllMessages(messages);
 
     if (messages.length === 30) setIsMoreMessages(true);
+
+    if(currentChat?.unSeen > 0 && currentChat?.unSeen <= 20){
+      setIsUnSeenMessages(true)
+      //Place the line of unseen on the correct index
+      let result = handleUnSeenMessages(messages,currentChat.unSeen)
+      setAllMessages(result)
+   }
+
+    if(currentChat?.unSeen > 20){
+      setAmountToSkip(prev => prev += currentChat.unSeen)
+      setIsOverTwentyUnSeen(true)
+      loadMore()
+    }
 
     //Reset the amount when switching chats
     if (!(amountToSkip > 30)) return;
@@ -73,11 +97,11 @@ const Messages = ({ messages }) => {
   useEffect(() => {
     //Detecting if it's a new chat without messages
     if (!messages.length && !allMessages?.length && !currentChat?.chatName) {
-      //Sets the new chat in advance to delete - if no message will be send
-      setNewChatToDelete(currentChat._id);
-      return;
+       //Sets the new chat in advance to delete - if no message will be send
+       setNewChatToDelete(currentChat._id);
+       return;
     }
-     console.log('previouseOne:',newChatToDelete);
+     
     if(newChatToDelete)setNewChatToDelete(null);
   
 
@@ -90,9 +114,6 @@ const Messages = ({ messages }) => {
     });
 
   }, [allMessages]); 
-
-//console.log('This is messages:',messages);
-//console.log(newChatToDelete);
 
 
   useEffect(() => {
@@ -119,9 +140,21 @@ const Messages = ({ messages }) => {
         setAllMessages(newMessages);
         return;
       }
+      
+      //When new message arrive, remove the unseen messages's marked line
+      if(isUnseenMessages || isOverTwentyUnSeen){
+        let newMessages = [...allMessages]
+        newMessages.splice((messages.length) - currentChat.unSeen,1)
+        newMessages.push(message)
+        setAllMessages(newMessages)
 
-     
-      setAllMessages((prev) => [...prev, message]);
+        if(isUnseenMessages)setIsUnSeenMessages(false)
+        if(isOverTwentyUnSeen)setIsOverTwentyUnSeen(false)
+      }
+      else{
+        setAllMessages((prev) => [...prev, message]);
+      }
+      
       if(!isScrollable) setIsScrollable(true)
       new Audio('/assets/notifySound.mp3').play()
 
@@ -147,7 +180,6 @@ const Messages = ({ messages }) => {
   useEffect(() => {
     //If no message was sent in the new chat (private one only) - delete it
     if (!newChatToDelete)return
-    console.log('When switch chat');
     removeConversation(newChatToDelete);
     setNewChatToDelete(null);
   },[currentChat]);
@@ -175,7 +207,7 @@ const Messages = ({ messages }) => {
             key={message._id}
             ref={scrollRef}
             message={message}
-            own={message.sender === currentUser._id}
+            own={message?.sender === currentUser._id}
           />
         ))}
       </section>
