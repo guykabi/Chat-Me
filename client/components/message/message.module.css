@@ -236,4 +236,24 @@
 
   .mainContentDetails::-webkit-scrollbar{
     display: none;
+  } 
+
+
+  .bannerUnSeen{
+    width: 90%;
+    height: 2rem;
+    color: black;
+    text-align: center;
+    margin: 0 auto;
+    cursor: none;
+    align-items: center;
+  } 
+
+  .bannerContentWrapper{
+   width: 100%;
+   margin: 0.4rem;
+   border-radius: 8px;
+   padding: 0.2rem;
+   text-align: center;
+   background-color: rgba(153, 201, 168, 0.483);
   }

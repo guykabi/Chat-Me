@@ -9,7 +9,7 @@ import React, {
 import { chatContext } from "../../context/chatContext";
 import styles from "./message.module.css";
 import { getTime, searchPastMember } from "../../utils/utils";
-import useClickOutSide from "../../hooks/useClickOutSide";
+import useClickOutSide from '../../hooks/useClickOutside'
 import { useMutation } from "react-query";
 import { seenMessage } from "../../utils/apiUtils";
 import MessageOperations from "./messageOperation/messageOperations";
@@ -34,6 +34,7 @@ const Message = forwardRef(({ message, own }, ref) => {
   
   useEffect(() => {
     //Checks if message is unseen
+    if(message?.banner)return
     if (!own && !message.seen.some((s) => s.user === currentUser._id)) {
       switchToSeen({ messageId: message._id, userId: currentUser._id });
     }
@@ -90,7 +91,7 @@ const Message = forwardRef(({ message, own }, ref) => {
         {toggleDetailsMenu ? (
           <div>
             {currentChat.participants
-              .filter((p) => message.seen.find((m) => m.user === p._id))
+              .filter((p) => message?.seen?.find((m) => m.user === p._id))
               .map((member) => (
                 <GroupPerson
                   key={member._id}
@@ -125,6 +126,7 @@ const Message = forwardRef(({ message, own }, ref) => {
 
   return (
     <>
+      {!message.banner?
       <article className={styles.mainMessageDiv} ref={ref}>
         <main
           className={styles.contentWrapper}
@@ -208,7 +210,12 @@ const Message = forwardRef(({ message, own }, ref) => {
           >
             <div className={styles.modalImageMessage}>{image}</div>
           </Modal>
-      </article>
+      </article>:
+      <article className={styles.bannerUnSeen}>
+        <div className={styles.bannerContentWrapper}>
+        {message.banner}
+        </div>
+      </article>}
     </>
   );
 });
