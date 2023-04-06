@@ -1,8 +1,10 @@
-import {Message} from '../models/messagesModel.js'
-import {Conversation} from '../models/conversationModel.js'
-import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
-import {getPlaiceholder} from 'plaiceholder'
-
+import { Message } from "../models/messagesModel.js";
+import { Conversation } from "../models/conversationModel.js";
+import {
+  uploadToCloudinary,
+  removeFromCloudinary,
+} from "../services/cloudinary.js";
+import { getPlaiceholder } from "plaiceholder";
 
 export const getMessageByConId = async (req, resp, next) => {
   const { conversation } = req.params;
@@ -13,47 +15,51 @@ export const getMessageByConId = async (req, resp, next) => {
   try {
     const messages = await Message.find({ conversation })
       .sort({ createdAt: -1 })
-      .limit(30)
-      .skip(amount)
-      .select("-__v")
-    
-    //console.log(messages);
-    resp.status(200).json(messages);
+      .limit(amount > 30 ? amount : 30)
+      .skip(amount > 30 ? 0 : amount)
+      .select("-__v");
 
+    resp.status(200).json(messages);
   } catch (err) {
     next(err);
   }
 };
 
-
 export const addNewMessage = async (req, resp, next) => {
-  let newMessage = null
-  const {body} = req
+  let newMessage = null;
+  const { body } = req;
 
   try {
+    if (req?.file?.path) {
+      const data = await uploadToCloudinary(req.file.path, "chat-images");
+      const { base64 } = await getPlaiceholder(data.url);
+      const newBody = { ...body };
 
-    if(req?.file?.path){
-       const data = await uploadToCloudinary(req.file.path, "chat-images");
-       const {base64} = await getPlaiceholder(data.url)
-       const newBody = {...body}
-       
-       data.base64 = base64
-       newBody.image = data
-       
-       newMessage = new Message(newBody)
+      data.base64 = base64;
+      newBody.image = data;
 
-    }
-    else{
+      newMessage = new Message(newBody);
+    } else {
       newMessage = new Message(body);
     }
-       
-    await newMessage.save(); 
-   
+
+    await newMessage.save();
+
     let savedMessage = await newMessage.populate({
       path: "conversation",
       select: "participants",
     });
 
+    if (req?.file?.path) {
+      //If message is an image, add to the conversation's media
+      await Conversation.updateOne(newMessage.conversation, {
+        $set: { lastActive: new Date() },
+        $push: { media: savedMessage._id },
+      });
+      return resp
+        .status(200)
+        .json({ message: "New message just added", data: savedMessage });
+    }
     //Updating last time conversation was active
     await Conversation.updateOne(
       { _id: newMessage.conversation },
@@ -61,58 +67,58 @@ export const addNewMessage = async (req, resp, next) => {
     );
 
     resp
-    .status(200)
-    .json({ message: "New message just added", data: savedMessage });
-
+      .status(200)
+      .json({ message: "New message just added", data: savedMessage });
   } catch (err) {
     next(err);
   }
 };
 
+export const likeMessage = async (req, resp, next) => {
+  const { id } = req.params;
+  const { userId } = req.body;
 
-export const likeMessage = async (req, resp, next) =>{
-  const {id} = req.params 
-  const {userId} = req.body
-  
-  try{
-      let isLiked = await Message.find({_id:id,likes:userId})
-      
-      if(isLiked.length){
-          let unLikedMessage = await Message.findByIdAndUpdate(
-          { _id:id},
-          { $pull: { likes: userId } },{new:true}).populate({
-            path: "conversation",
-            select: "participants",
-          }) 
-          
-          return resp.status(200).json({message:'Like removed',editMsg:unLikedMessage})
-      }
+  try {
+    let isLiked = await Message.find({ _id: id, likes: userId });
 
-      let likedMessage = await Message.findByIdAndUpdate(
-      { _id:id},
-      { $addToSet: { likes: userId } },{new:true}).populate({
+    if (isLiked.length) {
+      let unLikedMessage = await Message.findByIdAndUpdate(
+        { _id: id },
+        { $pull: { likes: userId } },
+        { new: true }
+      ).populate({
         path: "conversation",
-        select: "_id",
-      })
+        select: "participants",
+      });
 
-      resp.status(200).json({message:'Like has done',editMsg:likedMessage})
+      return resp
+        .status(200)
+        .json({ message: "Like removed", editMsg: unLikedMessage });
+    }
 
-  }catch(err){
-   next(err)
- }
-}
+    let likedMessage = await Message.findByIdAndUpdate(
+      { _id: id },
+      { $addToSet: { likes: userId } },
+      { new: true }
+    ).populate({
+      path: "conversation",
+      select: "_id",
+    });
 
-
+    resp.status(200).json({ message: "Like has done", editMsg: likedMessage });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const handleSeenMessage = async (req, resp, next) => {
   const { id } = req.params;
   const { userId } = req.body;
 
-  try { 
-
+  try {
     await Message.findOneAndUpdate(
-      { _id: id , 'seen.user':{$ne:userId}},
-      { $push: { 'seen': {user:userId} }}
+      { _id: id, "seen.user": { $ne: userId } },
+      { $push: { seen: { user: userId } } }
     );
     return resp.status(200).json("Handled unseen message!");
   } catch (err) {
@@ -120,23 +126,20 @@ export const handleSeenMessage = async (req, resp, next) => {
   }
 };
 
+export const deleteMessage = async (req, resp, next) => {
+  const { id } = req.params;
+  try {
+    let deleted = await Message.findByIdAndDelete(id).populate({
+      path: "conversation",
+      select: "_id",
+    });
 
-export const deleteMessage = async (req, resp, next) =>{
-  const {id} = req.params
-  try{
-        let deleted = await Message.findByIdAndDelete(id).populate({
-        path: "conversation",
-        select: "_id",
-       })
+    if (deleted?.image?.url) {
+      await removeFromCloudinary(deleted.image.cloudinary_id);
+    }
 
-       if(deleted?.image?.url){
-        await removeFromCloudinary(deleted.image.cloudinary_id)
-       }
-
-     resp.status(200).json({message:'Deleted',deleted})
-     
-  }catch(err){
-   next(err)
- }
-}
-
+    resp.status(200).json({ message: "Deleted", deleted });
+  } catch (err) {
+    next(err);
+  }
+};
