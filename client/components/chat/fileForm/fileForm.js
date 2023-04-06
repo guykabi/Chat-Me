@@ -6,7 +6,7 @@ import Button from '../../UI/Button/button'
 import InputEmoji from "react-input-emoji";
 
 
-const FileForm = ({file,onFile}) => {
+const FileForm = ({file,onFile,loading}) => {
 
 const {currentChat,currentUser} = useContext(chatContext)
 const [fileMessage,setFileMessage]=useState('')
@@ -30,7 +30,6 @@ const handleFileForm = (e) =>{
        data.append([key], value);
      }
     data.append('messageImage',file)
-    
     onFile({message:'File',data})
    } 
 }
@@ -65,7 +64,7 @@ const handleFileForm = (e) =>{
             <div className={styles.submitBtnWrapper}>
             <Button
             className='secondaryBtn'
-            text='Send'
+            text={loading?'Loading...':'Send'}
             type='submit'
             width={8}
             height={10}
