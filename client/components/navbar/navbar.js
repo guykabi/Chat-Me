@@ -4,6 +4,7 @@ import Image from "next/image";
 import noAvatar from '../../public/images/no-avatar.png'
 import { push } from "next/router";
 import { logOut, searchUser } from "../../utils/apiUtils";
+import useClickOutSide from '../../hooks/useClickOutside'
 import { useQuery, useMutation } from "react-query";
 import { chatContext } from "../../context/chatContext";
 import Person from "../person/person";
@@ -14,7 +15,7 @@ import { useGetUser } from "../../hooks/useUser";
 
 const Navbar = () => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
-  const [isMenu, setIsMenu] = useState(false);
+  const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchedUser, setSearchedUser] = useState();
   const [allUsers, setAllUsers] = useState(null);
@@ -49,7 +50,7 @@ const Navbar = () => {
     onSuccess
   );
 
-  const { isError, refetch } = useQuery("logout", logOut, {
+  const { isError, refetch } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
       if (data.message === "User logged out successfully") {
         dispatch({ type: "CURRENT_USER", payload: null }), 
@@ -142,7 +143,6 @@ const Navbar = () => {
       setNotifications(unSavedNotifications);
     }
 
-    if (isMenu && !openNotifications) setIsMenu(false);
   };
 
   const decreaseNotify = useCallback(() => {
@@ -158,8 +158,8 @@ const Navbar = () => {
 
   
   const handleSideMenu = () => {
-    setIsMenu(!isMenu);
-
+    //setIsMenu(!isMenu);
+    setIsVisible(!isVisible)
     if (!openNotifications) return;
 
     let unSavedNotifications = notifications.filter(
@@ -228,6 +228,7 @@ const Navbar = () => {
         onClick={handleNotification}
         onBlur={() => setOpenNotifications(false)}
         onMouseDown={(e) => e.preventDefault()}
+        aria-label="notifications"
       >
         <NotificationIcon count={numOfNotifications} />
         {openNotifications && (
@@ -248,8 +249,8 @@ const Navbar = () => {
         />
       </div>
 
-      {isMenu && (
-        <div className={styles.isMenuDiv}>
+      {isVisible && (
+        <div className={styles.isMenuDiv} ref={visibleRef}>
           <div role="link" onClick={() => push("messenger/userPage")}>
             Private
           </div>
