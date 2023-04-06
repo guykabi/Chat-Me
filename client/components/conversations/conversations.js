@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState, useContext,memo } from "react";
 import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
@@ -19,21 +19,23 @@ const Conversations = ({sortBy}) => {
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
 
+
   const { error, isLoading, refetch } = useQuery(
-    "conversations",
+    ["conversations"],
     () => getConversations(currentUser._id),
     {
       onSuccess: (data) => {
         setAllConversations(data);
       },
-      staleTime: 2000,
+      staleTime: 2000
     }
-  );
+  ); 
 
+  
   useEffect(() => {
     Socket.removeAllListeners("background-message");
     Socket?.on("background-message", (message) => {
-     
+       
       if (!allConversations.length) return;
       
       //Check if there is already such conversation
@@ -47,15 +49,16 @@ const Conversations = ({sortBy}) => {
       }
 
 
-      if (message.sender === currentUser._id && latestConversation) {
+      if (message.sender === currentUser._id || latestConversation) {
 
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
         tempArr.splice(index, 1), tempArr.unshift(latestConversation);
         setAllConversations(tempArr);
-
+       
         //Only the reciever will hear the new message's sound
         if (message.sender === currentUser._id) return;
+        
         new Audio("/assets/notifySound.mp3").play();
       }
 
@@ -162,13 +165,14 @@ useEffect(()=>{
     return onError("Connection error...");
   }
 
+
   const filteredConversations = useMemo(
     () => handleFilterCons(allConversations, query),
     [allConversations, query]
   );
 
   const memoCons = filteredConversations?.map((con) => (
-    <Conversation
+     <Conversation
       key={con._id}
       con={con}
       newMessage={incomingMessage === con._id}
@@ -200,4 +204,4 @@ useEffect(()=>{
   );
 };
 
-export default Conversations;
+export default memo(Conversations);
