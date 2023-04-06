@@ -4,50 +4,37 @@ import Modal from "../components/Modal/modal";
 import Button from "../components/UI/Button/button";
 import moment from 'moment'
 
+
 export const getTime = (date) => {
   const formatter = new Intl.DateTimeFormat("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
   });
-
+  if(!date)return null
   return formatter.format(Date.parse(date));
 };
 
 
 
-export const handleMessageTime = (date) =>{
-  let d1 = new Date(date);
+export const handleSeenTime = (date) =>{
+  let d = new Date(date).toISOString()
   let d2 = moment().format();
-  let diff = moment(d2).diff(d1, 'days')
- if(diff >= 7){
-  return moment(date).calendar()
- }
- else{
-  let d = new Date(date);
-  let time =  moment(d).calendar()
-  if(time.includes('Yesterday'))return 'Yesterday'
-  if(time.includes('Today'))return time.split('Today at')
-  return time.split('Last')
+  let diff = moment(d2).diff(d, 'days')
+
+  if(diff >= 7){
+   return moment(date).calendar()
+  }
+  else{
+   let d = new Date(date).toISOString()
+   let time = moment(d).calendar()
+   if(time.includes('Yesterday'))return 'Yesterday'
+   if(time.includes('Today'))return time.split('Today at')
+   return time.split('Last')
  }
   
 } 
 
 
-export const handleSeenTime = (date) =>{
-  let d1 = date;
-  let d2 = moment().format();
-  let diff = moment(d2).diff(d1, 'days')
- if(diff >= 7){
-  return moment(date).calendar()
- }
- else{
-  let time =  moment(date).calendar()
-  //if(time.includes('Yesterday'))return 'Yesterday'
-  if(time.includes('Today'))return time.split('Today at')
-  return time.split('Last')
- }
-  
-}
 
 
 
@@ -141,11 +128,23 @@ export const handleFilterCons = (allConversations, query) => {
             .includes(query?.trim().toLowerCase())))
     );
   });
-}; 
+};  
 
 
 
 export const searchPastMember = (userId,data) =>{
     let pastMember = data.find(u=>u._id === userId)
     return pastMember.name
+} 
+
+
+
+//Inserting demy message to indicate to mark the position of unseen messages
+export const handleUnSeenMessages = (messages,index) =>{
+      let messagesWithUnSeen = [...messages]
+      let unSeenLine = {} 
+      unSeenLine.banner = `${index} unseen messages`
+      unSeenLine._id = Math.random()
+      messagesWithUnSeen.splice((messages.length) - index,0,unSeenLine)
+      return messagesWithUnSeen
 }
