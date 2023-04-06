@@ -184,7 +184,6 @@ const Person = ({ user, decreaseNotify }) => {
   };
 
   const addConversation = () => {
-    console.log('Here');
     newConversation({ userId: currentUser._id, friendId: user._id });
   };
 
