@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import Head from 'next/head'
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
+import useClickOutside from '../../hooks/useClickOutside'
 import { chatContext } from "../../context/chatContext";
 import styles from "./messenger.module.css";
 import Chat from "../../components/chat/chat";
@@ -18,12 +19,11 @@ const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
     useContext(chatContext);
   const { data,error,isLoading } = useGetUser(user._id);
-
-  const [openMenu, setOpenMenu] = useState(false);
+  const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [isSorted,setIsSorted]=useState(true) 
  
-  const {refetch} = useQuery('users',getAllusers,{
+  const {refetch} = useQuery(['users'],getAllusers,{
     //For later use - example => identify user that left group
     //Only fetching once 
     staleTime:Infinity
@@ -43,12 +43,12 @@ const Messenger = ({ hasError, user }) => {
   
   const handleOpenCreateGroup = () => {
     setOpenCreateGroup(true);
-    setOpenMenu(false);
+    setIsVisible(false);
   };
 
   const handleCloseCreateGroup = () => {
     setOpenCreateGroup(false);
-    setOpenMenu(false);
+    setIsVisible(false);
   }; 
 
   if(isLoading){
@@ -87,11 +87,11 @@ const Messenger = ({ hasError, user }) => {
                 className="threeDots"
                 role="button"
                 title="Menu"
-                onClick={() => setOpenMenu(!openMenu)}
+                onClick={() => setIsVisible(!isVisible)}
               ></span>}
 
-              {openMenu && (
-                <div className={styles.popupMenuConversations}>
+              {isVisible && (
+                <div className={styles.popupMenuConversations} ref={visibleRef}>
                   <div onClick={handleOpenCreateGroup} role="button">
                     Create group
                   </div>
