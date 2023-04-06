@@ -16,7 +16,7 @@ import Input from "../UI/Input/Input";
 import GroupPerson from "../group-person/groupPerson";
 import Group from "../group/group";
 import Button from "../UI/Button/button";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import Modal from "../Modal/modal";
 import PickedUser from "../pickedUser/pickedUser";
 import { BiSend } from "react-icons/bi";
@@ -39,11 +39,10 @@ const ChatDetails = ({ onReturn }) => {
   const [query, setQuery] = useState("");
   const [pickedUsersToAdd, setPickedUsersToAdd] = useState([]);
   const [groupChangedDetails, setGroupChangedDetails] = useState({});
-  const [isMenu, setIsMenu] = useState(null);
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
-  const conversations = useGetCacheQuery("conversations");
   const fileRef = useRef(null);
+  const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
 
   const handleAllUsersList = () => {
@@ -249,46 +248,44 @@ const ChatDetails = ({ onReturn }) => {
     fileRef.current.click();
   };
 
-  const memoGroupMembers = useMemo(
-    () =>
-      currentChat.participants.map((user) => (
+const memoGroupMembers = useMemo(()=>currentChat.participants,[currentChat])
+
+const groupMembers = (
+      memoGroupMembers.map((user) => (
         <GroupPerson
           key={user._id}
           user={user}
           onRemove={handleMemberRemoval}
           onAddManager={handleManagerAdding}
           onRemoveManager={handleManagerRemoval}
-          onMenu={(e) => setIsMenu(e)}
-          menu={isMenu}
           manager={currentChat?.manager.some((m) => m._id === user._id)}
         />
-      )),
-    [isMenu]
-  );
+      ))
+   
+  ); 
 
-  const jointGroups = useMemo(
-    () =>
-      conversations
+  const memoConversations = useMemo(()=>conversations,[conversations])
+
+  const jointGroups = (
+      memoConversations
         .filter(
           (c) =>
             c.chatName &&
             c.participants.some((p) => p._id === currentChat?.friend?._id)
         )
-        .map((con) => <Group key={con._id} group={con} />),
-
-    [conversations]
+        .map((con) => <Group key={con._id} group={con} />)
   );
 
-  const allUsersToPick = useMemo(
+  const memoUsers = useMemo(()=>allUsers,[allUsers])
+  const allUsersToPick = (
     () =>
-      allUsers
+      memoUsers
         ?.filter((u) =>
           u.name.toLowerCase().includes(query.trim().toLowerCase())
         )
         .map((user) => (
           <GroupPerson key={user._id} user={user} onPick={handleUserPick} />
-        )),
-    [allUsers, query, pickedUsersToAdd]
+        ))
   );
 
   const pickedNewUsers = pickedUsersToAdd.map((user) => (
@@ -395,7 +392,7 @@ const ChatDetails = ({ onReturn }) => {
       )}
 
       {isGroup ? (
-        <section className={styles.groupMembers}>{memoGroupMembers}</section>
+        <section className={styles.groupMembers}>{groupMembers}</section>
       ) : (
         <section className={styles.jointGroupsWrapper}>{jointGroups}</section>
       )}
