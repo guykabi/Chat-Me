@@ -1,6 +1,7 @@
 import React,{useContext,memo} from 'react'
 import styles from './groupPerson.module.css'
 import noAvatar from '../../public/images/no-avatar.png'
+import useClickOutSide from '../../hooks/useClickOutside'
 import Image from 'next/image'
 import { chatContext } from '../../context/chatContext'
 import { handleSeenTime } from '../../utils/utils'
@@ -15,11 +16,10 @@ const GroupPerson = (props) => {
     onAddManager,
     onRemoveManager,
     manager,
-    menu,
-    onMenu,
     isLike,
     time} = props
     const {currentChat,currentUser} = useContext(chatContext)
+    const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
 
    const managerOption = (
     currentChat?.manager.some(m=>m._id === currentUser._id)&&
@@ -27,15 +27,6 @@ const GroupPerson = (props) => {
     manager!==undefined) 
 
     
-
-const handleOpenMenu = (e) =>{
-  e.stopPropagation();
-  if(menu===user._id){
-    onMenu(null)
-    return
-  }
-  onMenu(user._id)
-} 
 
 const handlePick = (e) =>{
   e.stopPropagation();
@@ -60,7 +51,7 @@ const handleRemoveManager = (e) =>{
 }
 
 const memberOperations = (
-  <section className={styles.memberOperationMenu}>
+  <section className={styles.memberOperationMenu} ref={visibleRef}>
 
     {manager?
     <div 
@@ -85,7 +76,7 @@ const memberOperations = (
      <article className={styles.personMainDiv} 
      onClick={onPick?handlePick:null}>
 
-     {menu===user._id&&memberOperations}
+     {isVisible&&memberOperations}
 
       <div className={styles.userImageWrapper}>
           <Image 
@@ -113,7 +104,7 @@ const memberOperations = (
         {managerOption&&
         <div 
         className={styles.threeDotsCostum}
-        onClick={handleOpenMenu}
+        onClick={()=>setIsVisible(!isVisible)}
         role='button'>
         </div>}
 
