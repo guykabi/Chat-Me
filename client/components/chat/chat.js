@@ -40,7 +40,7 @@ const Chat = ()=> {
  }) 
  
 
-const {mutate:sendMessage,isError} = useMutation(sendNewMessage,{
+const {mutate:sendMessage,isError,isLoading:messageLoad} = useMutation(sendNewMessage,{
   onSuccess:({message,data})=>{
     
     if(message !== 'New message just added')return
@@ -106,7 +106,7 @@ const handleNewMessage = useCallback((fileObj=null)=>{
  
    //If there is file/image
    if(fileObj.message){
-    sendMessage(fileObj)
+    sendMessage(fileObj.data)
     return
    }
 
@@ -207,7 +207,7 @@ const handleImage = (currentChat?.friend?
               />
             </div> 
             <Modal show={file} onClose={()=>setFile(null)}>
-              <FileForm file={file} onFile={handleNewMessage}/>
+              <FileForm file={file} onFile={handleNewMessage} loading={messageLoad}/>
             </Modal>
             <div className={styles.fileUploadWrapper}>
               <FiCamera
