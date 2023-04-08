@@ -7,6 +7,7 @@ const router = express.Router()
 import {
      getMessageByConId,
      addNewMessage,
+     forwardMessage,
      handleSeenMessage,
      likeMessage,
      deleteMessage}  from '../controllers/messageController.js'
@@ -14,6 +15,7 @@ import {
 router
 .get('/:conversation',Auth,getMessageByConId)  
 .post('/',Auth,upload.single('messageImage'),addNewMessage)
+.post('/forward-message',Auth,forwardMessage)
 .patch('/seen/:id',handleSeenMessage)
 .patch('/like-message/:id',Auth,likeMessage)
 .delete('/delete-message/:id',Auth,deleteMessage)
