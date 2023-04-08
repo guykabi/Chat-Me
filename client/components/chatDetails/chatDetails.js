@@ -18,10 +18,9 @@ import Group from "../group/group";
 import Button from "../UI/Button/button";
 import { useMutation } from "react-query";
 import Modal from "../Modal/modal";
-import PickedUser from "../pickedUser/pickedUser";
-import { BiSend } from "react-icons/bi";
 import { BsFillCameraFill } from "react-icons/bs";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
+import Picker from "../picker/picker";
 import {
   updateConversation,
   addGroupMember,
@@ -36,20 +35,12 @@ const ChatDetails = ({ onReturn }) => {
   const [showModal, setShowModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isGroup, setIsGroup] = useState(false);
-  const [query, setQuery] = useState("");
-  const [pickedUsersToAdd, setPickedUsersToAdd] = useState([]);
   const [groupChangedDetails, setGroupChangedDetails] = useState({});
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
   const fileRef = useRef(null);
   const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
-
-  const handleAllUsersList = () => {
-    let chatMembersIds = currentChat.participants.map((p) => p._id);
-    let filteredData = users.filter((u) => !chatMembersIds.includes(u._id));
-    setAllUsers(filteredData);
-  };
 
   ////////////API calls - reactQuery/////////////
 
@@ -131,13 +122,17 @@ const ChatDetails = ({ onReturn }) => {
   //------------------------------------------------------//
 
   useEffect(() => {
-    if (!currentChat.chatName) return;
+    if (!currentChat.chatName || isGroup) return;
     setIsGroup(true);
   }, []);
 
   const handleOpenModal = () => {
+    if (allUsers.length) return setShowModal(true);
+
+    let chatMembersIds = currentChat.participants.map((p) => p._id);
+    let filteredData = users.filter((u) => !chatMembersIds.includes(u._id));
+    setAllUsers(filteredData);
     setShowModal(true);
-    handleAllUsersList();
   };
 
   const handleChatDetailChange = (e) => {
@@ -156,33 +151,17 @@ const ChatDetails = ({ onReturn }) => {
     setGroupChangedDetails({ ...groupChangedDetails, [name]: value });
   };
 
-  const handleUserPick = useCallback(
-    (e) => {
-      if (pickedUsersToAdd.some((p) => p._id === e._id)) return;
-      setPickedUsersToAdd((prev) => [...prev, e]);
-    },
-    [pickedUsersToAdd]
-  );
-
-  const removePickedUser = useCallback(
-    (pickedUser) => {
-      setPickedUsersToAdd((prev) =>
-        prev.filter((u) => u._id !== pickedUser._id)
-      );
-    },
-    [pickedUsersToAdd]
-  );
-
   const handleModalClose = () => {
     setShowModal(false);
-    setPickedUsersToAdd([]);
   };
 
-  const handleMemberAdding = useCallback(() => {
-    if (!pickedUsersToAdd.length) return;
-    let obj = { participants: pickedUsersToAdd.map((p) => p._id) };
-    addMember({ conId: currentChat._id, obj });
-  }, [currentChat, pickedUsersToAdd]);
+  const handleMemberAdding = useCallback(
+    (e) => {
+      let obj = { participants: e };
+      addMember({ conId: currentChat._id, obj });
+    },
+    [currentChat]
+  );
 
   const handleMemberRemoval = useCallback(
     (e) => {
@@ -248,49 +227,35 @@ const ChatDetails = ({ onReturn }) => {
     fileRef.current.click();
   };
 
-const memoGroupMembers = useMemo(()=>currentChat.participants,[currentChat])
+  let groupMembers;
+  if (currentChat?.chatName) {
+    const memoGroupMembers = useMemo(
+      () => currentChat.participants,
+      [currentChat]
+    );
+    groupMembers = memoGroupMembers.map((user) => (
+      <GroupPerson
+        key={user._id}
+        user={user}
+        onRemove={handleMemberRemoval}
+        onAddManager={handleManagerAdding}
+        onRemoveManager={handleManagerRemoval}
+        manager={currentChat?.manager.some((m) => m._id === user._id)}
+      />
+    ));
+  }
 
-const groupMembers = (
-      memoGroupMembers.map((user) => (
-        <GroupPerson
-          key={user._id}
-          user={user}
-          onRemove={handleMemberRemoval}
-          onAddManager={handleManagerAdding}
-          onRemoveManager={handleManagerRemoval}
-          manager={currentChat?.manager.some((m) => m._id === user._id)}
-        />
-      ))
-   
-  ); 
-
-  const memoConversations = useMemo(()=>conversations,[conversations])
-
-  const jointGroups = (
-      memoConversations
-        .filter(
-          (c) =>
-            c.chatName &&
-            c.participants.some((p) => p._id === currentChat?.friend?._id)
-        )
-        .map((con) => <Group key={con._id} group={con} />)
-  );
-
-  const memoUsers = useMemo(()=>allUsers,[allUsers])
-  const allUsersToPick = (
-    () =>
-      memoUsers
-        ?.filter((u) =>
-          u.name.toLowerCase().includes(query.trim().toLowerCase())
-        )
-        .map((user) => (
-          <GroupPerson key={user._id} user={user} onPick={handleUserPick} />
-        ))
-  );
-
-  const pickedNewUsers = pickedUsersToAdd.map((user) => (
-    <PickedUser key={user._id} user={user} onRemove={removePickedUser} />
-  ));
+  let jointGroups;
+  if (!currentChat?.chatName) {
+    const memoConversations = useMemo(() => conversations, [conversations]);
+    jointGroups = memoConversations
+      .filter(
+        (c) =>
+          c.chatName &&
+          c.participants.some((p) => p._id === currentChat?.friend?._id)
+      )
+      .map((con) => <Group key={con._id} group={con} />);
+  }
 
   return (
     <main className={styles.mainEditGroup}>
@@ -387,7 +352,7 @@ const groupMembers = (
 
       {!isGroup && (
         <h2>
-          {`Joint Groups with ${currentChat?.friend?.name} - (${jointGroups.length})`}
+          {`Joint Groups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
         </h2>
       )}
 
@@ -420,38 +385,16 @@ const groupMembers = (
         </section>
       )}
 
-      <Modal show={showModal} onClose={handleModalClose}>
-        <header>
-          {addMemberErrorText ? addMemberErrorText : "Choose user"}
-        </header>
-        {pickedUsersToAdd.length ? (
-          <section className={styles.pickedUsersWrapper}>
-            {pickedNewUsers}
-            <span
-              className={styles.sendNewMembersBtn}
-              role="button"
-              aria-label="Add picked users"
-              onClick={handleMemberAdding}
-            >
-              <BiSend />
-            </span>
-          </section>
-        ) : null}
-
-        {allUsers.length ? (
-          <section className={styles.searchInputWrapper}>
-            <Input
-              width="50"
-              height="30"
-              placeholder="Search user to add"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </section>
-        ) : null}
-
-        <section className={styles.usersListToPick}>
-          {allUsers.length ? allUsersToPick : <h3>No Users</h3>}
-        </section>
+      <Modal
+        show={showModal}
+        onClose={handleModalClose}
+        isError={addMemberErrorText}
+      >
+        <Picker
+          items={allUsers}
+          type="users"
+          onFinalPick={handleMemberAdding}
+        />
       </Modal>
     </main>
   );

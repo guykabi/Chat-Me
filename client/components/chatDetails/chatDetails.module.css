@@ -91,38 +91,3 @@
     margin-bottom:1rem;
 }
 
-.pickedUsersWrapper{
-    position: relative;
-    width: 20rem;
-    height: fit-content;
-    padding: 0.4rem;
-    display: flex;
-    flex-direction: row;
-    overflow-y: scroll;
-}
-
-.pickedUsersWrapper::-webkit-scrollbar{
-    display: none;
-}
-
-
-
-.searchInputWrapper{
-    width: 100%;
-}
-
-.usersListToPick{
-    width: 90%;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.sendNewMembersBtn{
-    position: absolute;
-    right: 0;
-    cursor: pointer;
-    transition: 0.4s;
-}
-.sendNewMembersBtn:hover{
-  transform: scale(1.2);
-}
