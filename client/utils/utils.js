@@ -134,6 +134,7 @@ export const handleFilterCons = (allConversations, query) => {
 
 export const searchPastMember = (userId,data) =>{
     let pastMember = data.find(u=>u._id === userId)
+    if(!pastMember)return null
     return pastMember.name
 } 
 
