@@ -149,4 +149,9 @@ export const handleLikeMessage = async ({messageId,userId}) =>{
 export const handleDeleteMessage = async (messageId) =>{
   const {data:res} = await Axios.delete('messages/delete-message/'+messageId)
   return res
-}
+} 
+
+export const handleForwardMessage = async ({receivers,fixedMessage}) =>{
+   const {data:res} = await Axios.post('messages/forward-message',{receivers,message:fixedMessage})
+   return res
+} 
