@@ -118,7 +118,9 @@ const handleNewMessage = useCallback((fileObj=null)=>{
 
    setNewMessage('')
 
-  },[newMessage,currentChat,file]) 
+  },[newMessage,currentChat,file])  
+
+
 
 
 const handleImage = (currentChat?.friend?
@@ -171,7 +173,7 @@ const handleImage = (currentChat?.friend?
             
             <div 
             className={styles.friendName} 
-            onClick={()=>setIsEditGroup(!isEditGroup)}>
+            onClick={()=>setIsEditGroup(prev => !prev)}>
 
               {currentChat?.friend?
               currentChat.friend?.name:
