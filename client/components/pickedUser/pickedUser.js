@@ -14,7 +14,7 @@ const PickedUser = ({ user, onRemove }) => {
          height={20}
          style={{borderRadius:'50%'}}/>
 
-        <div aria-label="user-image">{user.name}</div>
+        <div aria-label="user-name">{user.name}</div>
         
         <span
           className={styles.xDelete}
