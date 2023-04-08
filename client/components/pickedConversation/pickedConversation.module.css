@@ -1,0 +1,24 @@
+.pickedConShow{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    gap: 8px;
+} 
+
+
+.xDelete{
+    width: 0.8rem;
+    height:1rem;
+    background-color: snow;
+    border-radius: 40%;
+    font-size: small;
+    float: left;
+    cursor: pointer;
+    transition: 0.2s;
+} 
+
+.xDelete:hover{
+  transform: scale(1.15);
+} 
