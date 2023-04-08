@@ -35,7 +35,7 @@ const {
           disabled={disabled}
           name={name}
           ref={ref}
-          accept={type==='file'&&"image/*"}
+          accept={type==='file'?"image/*":null}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
