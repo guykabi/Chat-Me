@@ -1,6 +1,6 @@
 let users = []
 
- const addUsers = (userId,socketId)=>
+export const addUsers = (userId,socketId)=>
 {    
     if(!userId) return
     //Checking if user is already exists/connect
@@ -9,20 +9,19 @@ let users = []
     return users
 }  
 
- const removeUser = (socketId)=>{
+export const removeUser = (socketId)=>{
     users = users.filter(user=>user.socketId !==socketId)
     return users
 }  
 
-const getUser = (id) =>{
+export const getUser = (id) =>{
    let foundUser = users.find(u=>u.userId === id)  
    return foundUser
 } 
 
-const getAllUsers = () =>{
+export const getAllUsers = () =>{
     return users
 }
 
  
 
-module.exports = {addUsers,removeUser,getUser,getAllUsers}
