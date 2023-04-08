@@ -10,7 +10,12 @@ import { handleLikeMessage, handleDeleteMessage } from "../../../utils/apiUtils"
 import { useMutation } from "react-query";
 
 
-const MessageOperations = ({ own, messageId, onDetailModal, ownLike,onCloseMenu }) => {
+const MessageOperations = ({ own, 
+     messageId, 
+     onDetailModal, 
+     ownLike,
+     onCloseMenu,
+     onForwardModal }) => {
   const { currentUser,currentChat,Socket } = useContext(chatContext);
 
   const { mutate: like } = useMutation(handleLikeMessage, {
@@ -65,7 +70,10 @@ const MessageOperations = ({ own, messageId, onDetailModal, ownLike,onCloseMenu 
             Details
           </div>
         ) : null}
-        <div aria-label="Forward to" role="button">
+        <div 
+        aria-label="Forward to" 
+        role="button"
+        onClick={()=>onForwardModal()}>
           <TiArrowForwardOutline />
           Forward to
         </div>
