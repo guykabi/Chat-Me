@@ -5,7 +5,7 @@ import {AiOutlineCloseCircle} from 'react-icons/ai'
 
 const Modal = ({show,onClose,children,title,isError,isFileMessage}) => {
     const [onMount,setOnMount]=useState(false)
-
+     
 useEffect(()=>{
   setOnMount(true)
 },[]) 
@@ -37,6 +37,10 @@ const modalContent = show ? (
            <header className={styles.modalHeader}>
                {title}
            </header>:null}
+           {isError?
+           <span className={styles.errorMsg}>
+            {isError}
+           </span>:null}
            <main className={styles.modalContent}>
              {children}
            </main>

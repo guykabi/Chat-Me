@@ -46,10 +46,11 @@
 
 .deleteModalSign{
     position: absolute;
-    top: 1;
+    top: 0;
     right: 0;
     float: right;
-    margin-right: 0.5rem;
+    margin-right: 0.1rem;
+    margin-top: 0.2rem;
     font-size: larger;
     cursor: pointer;
     transition: 0.5s;
@@ -63,7 +64,13 @@
     text-align: center;
     margin: 0 auto;
     width: 50%;
-} 
+}  
+
+
+.errorMsg{
+    margin: 0 auto;
+    color: red;
+}
 
 .modalContent{
     margin: 0 auto;
