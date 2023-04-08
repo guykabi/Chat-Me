@@ -16,7 +16,7 @@ const excludeFields =
       .populate({ path: "participants", select: excludeFields })
       .populate({ path: "manager", select: excludeFields });
 
-    let all = await Promise.all(
+      let all = await Promise.all(
       allConversations.map(async (con) => {
         let newCon = { ...con._doc };
         let temp = await Message.count({
@@ -56,13 +56,13 @@ export const addNewConversation = async (req, resp, next) => {
     if (isAlreadyConversation?.length)
       return resp.status(200).json("Conversation already exist");
 
-    let newAddedCon = await newConversation.save();
+      let newAddedCon = await newConversation.save();
 
-    let conversation = await Conversation.findById(
-      newAddedCon._doc._id.toString()
-    )
-      .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "participants", select: excludeFields });
+      let conversation = await Conversation.findById(
+        newAddedCon._doc._id.toString()
+      )
+        .populate({ path: "manager", select: excludeFields })
+        .populate({ path: "participants", select: excludeFields });
 
     return resp.status(200).json({ message: "New conversation made", conversation });
   } catch (err) {
@@ -216,4 +216,3 @@ export const deleteConversation = async (req, resp, next) => {
     next(err);
   }
 };
-
