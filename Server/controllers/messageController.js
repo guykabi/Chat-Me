@@ -6,6 +6,9 @@ import {
 } from "../services/cloudinary.js";
 import { getPlaiceholder } from "plaiceholder";
 
+const excludeFields =
+  "-media -lastActive -__v";
+
 export const getMessageByConId = async (req, resp, next) => {
   const { conversation } = req.params;
 
@@ -24,6 +27,8 @@ export const getMessageByConId = async (req, resp, next) => {
     next(err);
   }
 };
+
+
 
 export const addNewMessage = async (req, resp, next) => {
   let newMessage = null;
@@ -47,10 +52,11 @@ export const addNewMessage = async (req, resp, next) => {
 
     let savedMessage = await newMessage.populate({
       path: "conversation",
-      select: "participants",
+      select: excludeFields,
     });
 
     if (req?.file?.path) {
+      
       //If message is an image, add to the conversation's media
       await Conversation.updateOne(newMessage.conversation, {
         $set: { lastActive: new Date() },
@@ -60,6 +66,7 @@ export const addNewMessage = async (req, resp, next) => {
         .status(200)
         .json({ message: "New message just added", data: savedMessage });
     }
+
     //Updating last time conversation was active
     await Conversation.updateOne(
       { _id: newMessage.conversation },
@@ -72,7 +79,42 @@ export const addNewMessage = async (req, resp, next) => {
   } catch (err) {
     next(err);
   }
-};
+}; 
+
+
+export const forwardMessage = async (req, resp, next) => {
+  const {body} = req
+  
+  try{
+    let allForwardMessages = []
+    await Promise.all(body.receivers.slice(0,4).map(async (conversation)=>{
+       let newMessage = new Message(body.message);
+       newMessage.conversation = conversation
+       await newMessage.save();
+       
+       let savedMessage = await newMessage.populate({
+        path: "conversation",
+        select: excludeFields
+      });
+
+       if(body.message?.image){
+       await Conversation.updateOne({_id:conversation}, {
+          $set: { lastActive: new Date() },
+          $push: { media: savedMessage._id },
+        });
+       }
+
+      allForwardMessages.push(savedMessage)
+    }))
+    resp.status(200).json({
+      message:'New message just added',
+      data: allForwardMessages,
+      receivers:body.receivers})
+    
+  }catch(err){
+    next(err)
+  }
+}
 
 export const likeMessage = async (req, resp, next) => {
   const { id } = req.params;
