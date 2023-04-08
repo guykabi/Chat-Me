@@ -1,12 +1,12 @@
-const express = require('express')
+import express from 'express'
+import cors from 'cors'
+import http from 'http'
+import {addUsers,removeUser,getUser,getAllUsers} from './utils/utils.js'
+import {Server} from 'socket.io'
+import {} from 'dotenv/config'
+
 const app = express() 
-const cors = require('cors')
-const http = require('http')
-const {addUsers,removeUser,getUser,getAllUsers} = require('./utils/utils')
-const {Server} = require('socket.io')
 
-
-require('dotenv').config() 
 app.use(cors());
 
 const server = http.createServer(app) 
@@ -81,6 +81,13 @@ io.on('connection', socket=>{
 
             console.log(`Private room message:${userTyping} typing...`);
     
+    }) 
+
+    socket.on('forward-message',(messages,rooms)=>{
+        rooms.forEach((room,i)=>{
+            io.to(room).emit('recieve-message',{message:messages[i]});
+            io.local.emit('background-message',messages[i])
+        }) 
     })
 
     socket.on('join_room',room =>{
