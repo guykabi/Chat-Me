@@ -2,7 +2,8 @@ import * as cookie from "cookie";
 import { push, useRouter } from "next/router";
 import Modal from "../components/Modal/modal";
 import Button from "../components/UI/Button/button";
-import moment from 'moment'
+import moment from 'moment' 
+import Day from "../components/messages/Day/day";
 
 
 export const getTime = (date) => {
@@ -114,6 +115,7 @@ export const handleChatFriendField = (conversation, userId) => {
   return newConversation;
 };
 
+
 export const handleFilterCons = (allConversations, query) => {
  
   return allConversations?.filter((con) => {
@@ -138,6 +140,58 @@ export const searchPastMember = (userId,data) =>{
     return pastMember.name
 } 
 
+//Dividing the messages to dates regions
+//Example of the first item from previous rendered messages,
+//To check if it's the same date
+export const handleDateDividing = (messages,example=null) =>{
+    let datedMessages = []
+    let currentDateGroup;
+
+    messages.reverse().forEach((m,i)=>{
+     
+    currentDateGroup = moment(m.createdAt).format('YYYY/MM/DD')
+    let dateCondition = currentDateGroup==moment().format('YYYY/MM/DD')?'Today':currentDateGroup
+
+      if(i === 0 && messages.length < 30){
+        let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
+        datedMessages.push(dateMessage)
+        datedMessages.push(m)
+        return
+      }
+
+
+      if(i === 0 && messages.length === 30){
+        datedMessages.push(m)
+        return
+      } 
+
+      if(i === messages.length -1 && example){
+       if(currentDateGroup == moment(example).format('YYYY/MM/DD')){
+        datedMessages.push(m)
+        return
+       }
+       if(currentDateGroup > moment(example).format('YYYY/MM/DD')){
+        let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
+        datedMessages.push(m)
+        datedMessages.push(dateMessage)
+       } 
+       return
+      }
+
+     
+      if(currentDateGroup > (moment(messages[i-1]?.createdAt).format('YYYY/MM/DD'))){
+        let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
+        datedMessages.push(m)
+        datedMessages.splice(-1,0,dateMessage)//push?
+        return
+      } 
+
+      datedMessages.push(m)
+
+    })
+
+    return datedMessages;
+}
 
 
 //Inserting demy message to indicate to mark the position of unseen messages
@@ -148,4 +202,6 @@ export const handleUnSeenMessages = (messages,index) =>{
       unSeenLine._id = Math.random()
       messagesWithUnSeen.splice((messages.length) - index,0,unSeenLine)
       return messagesWithUnSeen
-}
+} 
+
+
