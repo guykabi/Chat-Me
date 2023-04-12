@@ -14,14 +14,15 @@ export const getMessageByConId = async (req, resp, next) => {
 
   //The amount of documents to skip
   const amount = req.headers["load-more"];
-
+  const limit = req.headers["limit"]
+  
   try {
     const messages = await Message.find({ conversation })
       .sort({ createdAt: -1 })
-      .limit(amount > 30 ? amount : 30)
-      .skip(amount > 30 ? 0 : amount)
+      .limit(limit)
+      .skip(amount)//Change condition
       .select("-__v");
-
+     
     resp.status(200).json(messages);
   } catch (err) {
     next(err);
