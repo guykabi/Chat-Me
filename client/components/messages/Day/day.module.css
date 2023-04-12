@@ -1,0 +1,12 @@
+.mainDay{
+    margin: 0 auto;
+    width: 6rem;
+    height: 1rem;
+    font-size: small;
+    background-color: rgba(152, 229, 239, 0.7);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    cursor: none;
+}
