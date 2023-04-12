@@ -34,6 +34,11 @@ io.on('connection', socket=>{
         if(exists)return
         io.emit('getUsers',users)
     })   
+    
+    socket.on('all-connected',()=>{
+       let allUsers =  getAllUsers()
+       io.emit('getUsers',allUsers)
+    })
 
 
     socket.on('notification',({reciever,sender,message})=>{
