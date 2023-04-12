@@ -43,7 +43,7 @@ export const addNewConversation = async (req, resp, next) => {
     let isAlreadyConversation;
 
     //Only non group chats are not allowed to duplicate
-    if (!req.body?.chatName) {
+    if (!req.body?.chatName) {     
       isAlreadyConversation = await Conversation.find({
         $or:[{
          chatName:{$exists:false},
@@ -103,7 +103,7 @@ export const updateConversation = async (req, resp, next) => {
 
     let editConversation = await Conversation.findByIdAndUpdate(
       id,
-      { chatName: body.chatName },
+      body,
       { new: true }
     )
       .populate({ path: "manager", select: excludeFields })
@@ -165,13 +165,12 @@ export const removeManager = async (req, resp, next) => {
 export const addMember = async (req, resp, next) => {
   const { conId } = req.params;
   const { participants } = req.body;
-
+  
   try {
+    await Conversation.findByIdAndUpdate(conId,{$push: { participants }}) 
+
     let updateConversation = await Conversation.findByIdAndUpdate(
-      conId,
-      { $push: { participants } },
-      { new: true }
-    )
+      conId,{$pull: { participants: null}},{new:true})
       .populate({ path: "manager", select: excludeFields })
       .populate({ path: "participants", select: excludeFields });
 
