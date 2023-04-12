@@ -352,7 +352,7 @@ const ChatDetails = ({ onReturn }) => {
 
       {!isGroup && (
         <h2>
-          {`Joint Groups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
+          {`Joint grsoups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
         </h2>
       )}
 
