@@ -35,10 +35,11 @@ export const logOut =async () =>{
 }  
 
 
-export const getMessages = async(conversationId,amount=0)=> {
+export const getMessages = async(conversationId,amount=0,limit=30)=> {
     const {data:res} = await Axios('messages/'+conversationId,{
       headers:{
-        'load-more':amount
+        'load-more':amount,
+        'limit':limit
       }
     })
     return res
@@ -82,8 +83,8 @@ export const removeFriend = async ({currentUserId,friendId})=>{
   return res
 }
 
-
-export const createConversation = async ({userId,friendId}) =>{
+//Individual conversation
+export const createConversation = async ({userId,friendId=null}) =>{
   let obj = {participants:[userId,friendId]}
   const {data:res} = await Axios.post('conversation',obj)
   return res
