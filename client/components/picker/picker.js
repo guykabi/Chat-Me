@@ -105,7 +105,7 @@ const itemsToPick = (
         ) : null}
 
         <section className={items.length?styles.ListToPick:styles.noItems}>
-          {items.length ? allToPick : <h3>No items to pick</h3>}
+          {items.length ? allToPick : <h3>Nothing to pick...</h3>}
         </section>
   </section>
 )
