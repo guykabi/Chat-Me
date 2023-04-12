@@ -103,6 +103,7 @@ const Person = ({ user, decreaseNotify }) => {
   const { mutate: newConversation } = useMutation(createConversation, {
     onSuccess: (data) => {
       if (data === "Conversation already exist") return;
+      data.conversation.friend = user
       Socket.emit("new-conversation", data.conversation);
     },
   });
@@ -184,7 +185,7 @@ const Person = ({ user, decreaseNotify }) => {
   };
 
   const addConversation = () => {
-    newConversation({ userId: currentUser._id, friendId: user._id });
+    newConversation({ userId: currentUser._id });
   };
 
   return (
