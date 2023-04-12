@@ -7,7 +7,6 @@ import { useQuery } from "react-query";
 import {
   needToReSign,
   onError,
-  handleChatFriendField,
   handleFilterCons,
 } from "../../utils/utils";
 
@@ -32,16 +31,17 @@ const Conversations = ({ sortBy }) => {
   useEffect(() => {
     Socket.removeAllListeners("background-message");
     Socket?.on("background-message", (message) => {
+      
       if (!allConversations.length) return;
 
       //Check if there is already such conversation
       let latestConversation = allConversations?.find(
         (con) => con._id === message.conversation._id
       );
-
+      
       //For adding to the counter of unseen messages
       if (message.conversation._id !== currentChat?._id) {
-        setIncomingMessage(message.conversation);
+        setIncomingMessage(message.conversation._id);
       }
 
       if (message.sender === currentUser._id || latestConversation) {
@@ -68,7 +68,7 @@ const Conversations = ({ sortBy }) => {
 
     //When a new chat is created
     Socket.on("arrival-conversation", (conversation) => {
-      if (conversation.message === "Conversation deleted!") {
+      if (conversation?.message === "Conversation deleted!") {
         //When a new conversation with no messages was deleted
         let updatedConversations = [...allConversations];
         let index = allConversations.findIndex(
@@ -99,10 +99,8 @@ const Conversations = ({ sortBy }) => {
         setAllConversations(updatedConversations);
         return;
       }
-
-      if (!conversation.participants.find((p) => p._id === currentUser._id))
-        return;
-
+      
+      if (!conversation.participants.find((p) => p._id === currentUser._id))return;
       setAllConversations((prev) => [conversation, ...prev]);
 
       if (
@@ -110,18 +108,10 @@ const Conversations = ({ sortBy }) => {
         conversation?.manager.find((m) => m._id === currentUser._id) ||
         conversation.participants[0]._id === currentUser._id
       ) {
-        let conPlusFriend;
-        if (!conversation.chatName) {
-          //Adding a friend field to conversation
-          let friend = conversation.participants.find(
-            (p) => p._id !== currentUser._id
-          );
-          conPlusFriend = handleChatFriendField(conversation, friend);
-        }
-
+       
         dispatch({
           type: "CURRENT_CHAT",
-          payload: conPlusFriend ? conPlusFriend : conversation,
+          payload:conversation,
         });
       }
     });
