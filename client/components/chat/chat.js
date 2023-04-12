@@ -1,6 +1,6 @@
 import styles from './chat.module.css'
 import { useEffect, useState,useContext,useRef, useCallback} from 'react'
-import { needToReSign,onError } from '../../utils/utils'
+import { needToReSign,onError,handleDateDividing } from '../../utils/utils'
 import { chatContext} from '../../context/chatContext'
 import {useQuery,useMutation} from 'react-query'
 import { getMessages,sendNewMessage } from '../../utils/apiUtils'
@@ -33,7 +33,7 @@ const Chat = ()=> {
   {
     onSuccess:(data)=>{
       if(!data.length) setMessages([])
-      setMessages(data.reverse())
+      setMessages(handleDateDividing(data))
     }, 
     staleTime:2000,
     refetchOnWindowFocus:false
