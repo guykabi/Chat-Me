@@ -18,6 +18,7 @@ useEffect(()=>{
   setNumOfUnseen(con.unSeen)
   //If not a group chat
   if(con.chatName)return
+  if(con?.friend)return setFriend(con.friend)
     let friend = con?.participants?.find(p=>p._id !== currentUser?._id)
     setFriend(friend)  
 },[con])
