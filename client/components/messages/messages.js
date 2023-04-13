@@ -6,6 +6,7 @@ import React, {
   useState,
   useMemo,
 } from "react";
+import {useErrorBoundary} from 'react-error-boundary'
 import { needToReSign, onError,handleUnSeenMessages, handleDateDividing } from "../../utils/utils";
 import styles from "./messages.module.css";
 import Message from "../message/message";
@@ -19,6 +20,7 @@ import moment from "moment";
 const Messages = ({ messages }) => {
 
   const { currentUser, currentChat, Socket } = useContext(chatContext);
+  const {showBoundary} = useErrorBoundary()
   const scrollRef = useRef();
   const windowRef = useRef()
   const [allMessages, setAllMessages] = useState(null);
@@ -57,6 +59,7 @@ const Messages = ({ messages }) => {
           }
               
       },
+      onError:error=>showBoundary(error),
       enabled: false,
       refetchOnWindowFocus:false
     }
@@ -69,6 +72,7 @@ const Messages = ({ messages }) => {
       const {conId,message} = data
       Socket.emit("new-conversation",{message,conId});
     },
+    onError:error=>showBoundary(error)
   });
 
   const { mutate: addMember } = useMutation(addGroupMember, {
@@ -76,6 +80,7 @@ const Messages = ({ messages }) => {
       if (data.message !== "Member added") return;
       Socket.emit("new-conversation",data.conversation);
     },
+    onError:error=>showBoundary(error)
   });
 
 
@@ -252,13 +257,6 @@ const Messages = ({ messages }) => {
   };
 
 
-  if (error) {
-    if (error?.response?.status === 401) {
-      return needToReSign(currentUser.name);
-    }
-    return onError();
-  }
-
   const memoMessages = useMemo(() => allMessages, [allMessages]);
 
   return (
@@ -268,7 +266,7 @@ const Messages = ({ messages }) => {
       ref={windowRef}>
         {memoMessages?.map((message) => {
           if(message?.type){
-            return <Day date={message}/>
+            return <Day key={message._id} date={message}/>
           }else{
           return  <Message
             key={message._id}

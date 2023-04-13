@@ -1,14 +1,16 @@
 import styles from '../styles/IntroductionPage.module.css'
-import { exctractCredentials,onError,needToReSign } from '../utils/utils'; 
+import { exctractCredentials} from '../utils/utils'; 
 import { tokenValidation } from '../utils/apiUtils';
 import {useMutation} from 'react-query'
 import { Loader } from '../components/UI/clipLoader/clipLoader';
 import {push} from 'next/router'
 import Link from 'next/link'
 import { useEffect } from 'react';
+import {useErrorBoundary} from 'react-error-boundary'
 
  const Introduction = ({isLoggedIn,userName}) => { 
-  
+  const {showBoundary} = useErrorBoundary()
+
   const {mutate,error,isLoading} = useMutation(tokenValidation,{
     onSuccess:()=>{
         push('/messenger')
@@ -30,12 +32,8 @@ if(isLoading){
 }
 
   if(error){
-    if(error?.response?.status === 401){
-      //If refreshToken is no more valid
-      return needToReSign(userName)
-    }
-    return onError('Welcome to Chat Me')
-  }
+    showBoundary(error)
+}
  
   return (  
     <>

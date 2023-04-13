@@ -12,6 +12,7 @@ import EditGroup from '../chatDetails/chatDetails'
 import Modal from '../Modal/modal'
 import FileForm from './fileForm/fileForm'
 import Input from '../UI/Input/Input'
+import {useErrorBoundary} from 'react-error-boundary'
 import {FiCamera} from 'react-icons/fi'
 
 
@@ -19,6 +20,7 @@ const Chat = ()=> {
   
   const {currentChat,currentUser,Socket} = useContext(chatContext)
   const [showModal,setShowModal]=useState(false)
+  const {showBoundary} = useErrorBoundary()
   const [newMessage,setNewMessage]=useState('')
   const [file,setFile]=useState(null)
   const [messages,setMessages]= useState(null)
@@ -35,19 +37,21 @@ const Chat = ()=> {
       if(!data.length) setMessages([])
       setMessages(handleDateDividing(data))
     }, 
+    onError:error=>showBoundary(error),
     staleTime:2000,
     refetchOnWindowFocus:false
  }) 
  
 
-const {mutate:sendMessage,isError,isLoading:messageLoad} = useMutation(sendNewMessage,{
+const {mutate:sendMessage,isLoading:messageLoad} = useMutation(sendNewMessage,{
   onSuccess:({message,data})=>{
     
     if(message !== 'New message just added')return
     if(file)setFile(null)
     
     Socket.emit('sendMessage',data,room)
-  }
+  },
+  onError:error=>showBoundary(error)
 }) 
 
 
@@ -135,16 +139,6 @@ const handleImage = (currentChat?.friend?
     alt={currentChat.chatName}
     onClick={()=>setShowModal(true)}/>)
 
-
-
-  if(error){
-    if(error?.response?.status === 401){
-      return needToReSign(currentUser.name)
-     }
-    
-    return onError('Connection problem')
-  } 
-  
 
   return (
     <>

@@ -3,17 +3,15 @@ import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
 import { getConversations } from "../../utils/apiUtils";
+import {useErrorBoundary} from 'react-error-boundary'
 import { useQuery } from "react-query";
-import {
-  needToReSign,
-  onError,
-  handleFilterCons,
-} from "../../utils/utils";
+import {handleFilterCons} from "../../utils/utils";
 
 const Conversations = ({ sortBy }) => {
   const { currentUser, currentChat, dispatch, Socket } =
     useContext(chatContext);
   const [allConversations, setAllConversations] = useState([]);
+  const {showBoundary} = useErrorBoundary()
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
 
@@ -24,6 +22,7 @@ const Conversations = ({ sortBy }) => {
       onSuccess: (data) => {
         setAllConversations(data);
       },
+      onError:error=>showBoundary(error),
       staleTime: 2000,
     }
   );
@@ -136,12 +135,7 @@ const Conversations = ({ sortBy }) => {
     refetch();
   }, [sortBy]);
 
-  if (error) {
-    if (error?.response?.status === 401) {
-      return needToReSign(currentUser.name);
-    }
-    return onError("Connection error...");
-  }
+
 
   const filteredConversations = useMemo(
     () => handleFilterCons(allConversations, query),

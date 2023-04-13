@@ -3,7 +3,8 @@ import styles from "./person.module.css";
 import Image from "next/image";
 import noAvatar from '../../public/images/no-avatar.png'
 import { chatContext } from "../../context/chatContext";
-import { setUserStatus, excludeFieldsUserData } from "../../utils/utils";
+import { setUserStatus, excludeFieldsUserData, onError } from "../../utils/utils";
+import {useErrorBoundary} from 'react-error-boundary'
 import {
   friendRequest,
   approveFriend,
@@ -14,8 +15,10 @@ import {
 import { useMutation } from "react-query";
 import { useGetUser } from "../../hooks/useUser";
 
+
 const Person = ({ user, decreaseNotify }) => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
+  const {showBoundary} = useErrorBoundary()
   const [personStatus, setPersonStatus] = useState();
   const [toDeclineRequest, setToDeclineRequest] = useState(false);
 
@@ -48,6 +51,7 @@ const Person = ({ user, decreaseNotify }) => {
         Socket.emit("notification", notifyObj);
       }
     },
+    onError:error=>showBoundary(error)
   });
 
   const { mutate: approveRequest } = useMutation(approveFriend, {
@@ -69,6 +73,7 @@ const Person = ({ user, decreaseNotify }) => {
         Socket.emit("notification", notifyObj);
       }
     },
+    onError:error=>showBoundary(error)
   });
 
   const { mutate: unapprove } = useMutation(unapproveFriend, {
@@ -89,6 +94,7 @@ const Person = ({ user, decreaseNotify }) => {
         Socket.emit("notification", notifyObj);
       }
     },
+    onError:error=>showBoundary(error)
   });
 
   const { mutate: remove } = useMutation(removeFriend, {
@@ -98,6 +104,7 @@ const Person = ({ user, decreaseNotify }) => {
         dispatch({ type: "CURRENT_USER", payload: data.user });
       }
     },
+    onError:error=>showBoundary(error)
   });
 
   const { mutate: newConversation } = useMutation(createConversation, {
@@ -106,17 +113,16 @@ const Person = ({ user, decreaseNotify }) => {
       data.conversation.friend = user
       Socket.emit("new-conversation", data.conversation);
     },
+    onError:error=>showBoundary(error)
   });
 
   //Triggered by the incoming socket to get user update data
-  const onSuccess = () => {
-    dispatch({ type: "CURRENT_USER", payload: data });
-  };
+  const onSuccess = () => {dispatch({ type: "CURRENT_USER", payload: data });};
+  const onError = (error) =>{showBoundary(error)}
   const { data, refetch: getUserData } = useGetUser(
-    currentUser._id,
-    false,
-    onSuccess
+        currentUser._id,false,onSuccess,onError
   );
+
 
   useEffect(() => {
     let status = setUserStatus(currentUser, user);
@@ -185,7 +191,7 @@ const Person = ({ user, decreaseNotify }) => {
   };
 
   const addConversation = () => {
-    newConversation({ userId: currentUser._id });
+    newConversation({ userId: currentUser._id,friendId:user._id });
   };
 
   return (

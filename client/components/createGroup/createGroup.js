@@ -5,10 +5,12 @@ import { createGroup } from "../../utils/apiUtils";
 import { chatContext } from "../../context/chatContext";
 import Button from "../UI/Button/button";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
+import {useErrorBoundary} from 'react-error-boundary'
 import Picker from "../picker/picker";
 
 const CreateGroup = ({ onSwitch }) => {
   const { currentUser, Socket } = useContext(chatContext);
+  const {showBoundary} = useErrorBoundary()
   const [allUsers, setAllUsers] = useState([]);
   const [groupName, setGroupName] = useState(null);
   const [pickedUsers, setPickedUsers] = useState([]);
@@ -22,6 +24,7 @@ const CreateGroup = ({ onSwitch }) => {
       Socket.emit("new-conversation", data.conversation);
       onSwitch();
     },
+    onError:error=>showBoundary(error)
   });
 
   useEffect(() => {

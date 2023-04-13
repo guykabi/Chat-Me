@@ -42,6 +42,7 @@ const ChatDetails = ({ onReturn }) => {
   const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
 
+  
   ////////////API calls - reactQuery/////////////
 
   const { mutate: update } = useMutation(updateConversation, {

@@ -2,22 +2,20 @@ import React from 'react'
 import Head from 'next/head'
 import { exctractCredentials,onError } from '../../../utils/utils'
 import { useGetUser } from '../../../hooks/useUser'
+import {useErrorBoundary} from 'react-error-boundary'
 
 
 const UserPage = ({user,hasError}) => { 
+  const {showBoundary} = useErrorBoundary()
 
-  const {data,error,isLoading} = useGetUser(user._id)
+  const {data,isLoading} = useGetUser(user._id,{
+    onError:error=>showBoundary(error)
+  })
 
   if(hasError){
    return onError()
   } 
 
-  if(error){
-    if(error?.response?.status === 401){
-      return needToReSign(user.name)
-     }
-    return onError('Details are not available')
-  }
   
   return (
     <div className='center'> 

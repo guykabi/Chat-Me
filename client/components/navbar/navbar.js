@@ -5,6 +5,7 @@ import noAvatar from '../../public/images/no-avatar.png'
 import { push } from "next/router";
 import { logOut, searchUser } from "../../utils/apiUtils";
 import useClickOutSide from '../../hooks/useClickOutside'
+import {useErrorBoundary} from 'react-error-boundary'
 import { useQuery, useMutation } from "react-query";
 import { chatContext } from "../../context/chatContext";
 import Person from "../person/person";
@@ -15,6 +16,7 @@ import { useGetUser } from "../../hooks/useUser";
 
 const Navbar = () => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
+  const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchedUser, setSearchedUser] = useState();
@@ -26,7 +28,6 @@ const Navbar = () => {
 
   const {
     mutate: search,
-    error,
     isLoading,
   } = useMutation(searchUser, {
     onSuccess: (data) => {
@@ -37,12 +38,15 @@ const Navbar = () => {
       }
       setAllUsers(data);
     },
+    onError:error=>showBoundary(error),
+
   });
 
-  const onSuccess = () => {
+
+const onSuccess = () => {
     if (!currentUser) return;
     dispatch({ type: "CURRENT_USER", payload: data });
-  };
+};
 
   const { data, refetch: getUserData } = useGetUser(
     currentUser?._id,
@@ -65,6 +69,7 @@ const Navbar = () => {
     setNotifications(currentUser.notifications);
     setNumOfNotifications(currentUser.notifications.length);
   }, []);
+
 
   useEffect(() => {
     if (noUserFound) setNoUserFound(false);

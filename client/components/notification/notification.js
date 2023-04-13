@@ -6,10 +6,12 @@ import { chatContext } from '../../context/chatContext'
 import { useMutation } from 'react-query'
 import {excludeFieldsUserData} from '../../utils/utils'
 import { approveFriend , unapproveFriend } from '../../utils/apiUtils'
+import {useErrorBoundary} from 'react-error-boundary'
 
 
 const Notification = ({notification,decreaseNotify}) => {
  const {currentUser,dispatch,Socket} = useContext(chatContext)
+ const {showBoundary} = useErrorBoundary()
  const [isRequest,setIsRequest]=useState(true)
 
 
@@ -28,7 +30,8 @@ const Notification = ({notification,decreaseNotify}) => {
       message}
       
       Socket.emit('notification',notifyObj) 
-    }
+    },
+    onError:error=>showBoundary(error)
   
   })
 
@@ -47,7 +50,8 @@ const Notification = ({notification,decreaseNotify}) => {
       message}
     
       Socket.emit('notification',notifyObj) 
-    }
+    },
+    onError:error=>showBoundary(error)
   
   })  
 

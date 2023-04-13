@@ -8,22 +8,25 @@ import Chat from "../../components/chat/chat";
 import Conversations from "../../components/conversations/conversations";
 import Navbar from "../../components/navbar/navbar";
 import OnlineList from "../../components/onlineList/online";
-import { exctractCredentials, onError } from "../../utils/utils";
+import { exctractCredentials} from "../../utils/utils";
 import {getAllusers} from '../../utils/apiUtils'
 import { useGetUser } from "../../hooks/useUser";
 import CreateGroup from "../../components/createGroup/createGroup";
 import ReturnIcon from "../../components/UI/returnIcon/returnIcon";
-import { useQuery } from "react-query";
+import { useQuery } from "react-query"; 
+import {useErrorBoundary} from 'react-error-boundary'
+
 
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
     useContext(chatContext);
   const { data,error,isLoading } = useGetUser(user._id);
+  const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [isSorted,setIsSorted]=useState(true) 
  
-  const {refetch} = useQuery(['users'],getAllusers,{
+  const {refetch,error:usersError} = useQuery(['users'],getAllusers,{
     //For later use - example => identify user that left group
     //Only fetching once 
     staleTime:Infinity
@@ -60,11 +63,8 @@ const Messenger = ({ hasError, user }) => {
     )
   }
 
-  if (hasError || error) {
-    if (error) return onError("Connection problem...");
-
-    //When no token provided
-    return onError();
+  if (hasError || error || usersError) {  
+       showBoundary(error)
   }
 
   return (
