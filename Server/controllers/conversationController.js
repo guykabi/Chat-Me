@@ -37,7 +37,9 @@ const excludeFields =
 
 export const addNewConversation = async (req, resp, next) => {
   const { participants } = req.body;
-  const newConversation = new Conversation(req.body);
+  let newCon = {...req.body}
+  newCon.participants = participants[0]
+  const newConversation = new Conversation(newCon);
   
   try {
     let isAlreadyConversation;
