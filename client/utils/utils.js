@@ -3,7 +3,6 @@ import { push, useRouter } from "next/router";
 import Modal from "../components/Modal/modal";
 import Button from "../components/UI/Button/button";
 import moment from 'moment' 
-import Day from "../components/messages/Day/day";
 
 
 export const getTime = (date) => {
@@ -37,13 +36,12 @@ export const handleSeenTime = (date) =>{
 
 
 
-
-
 export const exctractCredentials = (req) => {
   let Cookie = cookie.parse(req.headers?.cookie);
   let user = JSON.parse(Cookie.userData);
   return user;
 };
+
 
 export const onError = (title) => {
   const { reload } = useRouter();
@@ -65,19 +63,6 @@ export const onError = (title) => {
   );
 };
 
-//When refresh token is not valid any more
-export const needToReSign = (name) => {
-  setTimeout(() => {
-    push("/login");
-  }, 4000);
-  return (
-    <div className="center">
-      <section>
-        <strong>Dear {name}, it's been a while since you last sign in</strong>
-      </section>
-    </div>
-  );
-};
 
 //For sender field on the socket notification event
 export const excludeFieldsUserData = (userData) => {
