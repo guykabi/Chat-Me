@@ -35,6 +35,7 @@ const ChatDetails = ({ onReturn }) => {
   const [showModal, setShowModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isGroup, setIsGroup] = useState(false);
+  const[chatMedia,setchatMedia]=useState(false)
   const [groupChangedDetails, setGroupChangedDetails] = useState({});
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
@@ -42,7 +43,7 @@ const ChatDetails = ({ onReturn }) => {
   const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
 
-  
+  const demyOnes = ['1','2','3','4','5','6','7','8','9']
   ////////////API calls - reactQuery/////////////
 
   const { mutate: update } = useMutation(updateConversation, {
@@ -350,11 +351,28 @@ const ChatDetails = ({ onReturn }) => {
           </article>
         </form>
       </header>
+      
+      <section className={styles.mediaSwitcherBtn}>
+        <div 
+        onClick={()=>setchatMedia(false)}
+        role='button'>
+        Main
+        </div>
+        <div 
+        onClick={()=>setchatMedia(true)}
+        role='button'>
+        Media
+        </div>
+      </section>
 
+      {!chatMedia?
+      <section className={styles.chatMainContent}>
       {!isGroup && (
+        <>
         <h2>
-          {`Joint grsoups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
+          {`Joint groups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
         </h2>
+        </>
       )}
 
       {isGroup ? (
@@ -385,6 +403,25 @@ const ChatDetails = ({ onReturn }) => {
           />
         </section>
       )}
+      </section>:
+      <section className={styles.chatMedia}>
+       {currentChat.media.length?
+       <main className={styles.mainMediaWrapper}>
+        {currentChat.media.map((item,index)=>(
+          <div key={index} className={styles.mediaItem}>
+            <Image
+            fill
+            placeholder='blur'
+            blurDataURL={item.image.base64}
+            src={item.image.url}
+            alt="media-image"
+            style={{
+              objectFit: "contain"
+            }}/>
+          </div>
+        ))}
+       </main>:<h3>No media yet</h3>}
+      </section>}  
 
       <Modal
         show={showModal}

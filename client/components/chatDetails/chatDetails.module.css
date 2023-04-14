@@ -5,8 +5,8 @@
     align-items: center;
     margin: 0 auto;
     min-width: 90%;
-    height: 100%;
-    gap: 1rem;
+    height: 98%;
+    gap: 0.4rem;
     padding-top: 0.5rem;
 }
 
@@ -46,12 +46,69 @@
     height: 1rem;
 }
 
+.mediaSwitcherBtn{
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: fit-content;
+    transition: 0.5s;
+    cursor: pointer;
+}
+.mediaSwitcherBtn div:hover{
+  color: rgb(77, 75, 75);
+}
+
+
+.chatMainContent{
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 0.2rem;
+}
+
+.chatMedia{
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+}
+
+.mainMediaWrapper{
+    margin: 0 auto;
+    width: 80%;
+    height: 70%;
+    display: -webkit-flex;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+} 
+.mainMediaWrapper::-webkit-scrollbar{
+    display: none;
+}
+
+.mediaItem{
+    position: relative;
+    width: 33%;
+    height:50%;
+    cursor: pointer;
+    border: 1px solid rgba(85, 83, 83, 0.413);
+    background-color: rgba(245, 245, 245, 0.632);
+    transition: 0.5s;
+}
+.mediaItem:hover{
+    transform: scale(1.02);
+    background-color: rgba(208, 203, 203, 0.722);
+}
+
 .groupMembers{
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     width: 60%;
-    height: fit-content;
+    height: 70%;
     max-height: 11rem;
     min-width:15rem;
     overflow-y: scroll;
@@ -66,10 +123,12 @@
     display: flex;
     flex-direction: column;
     width: 60%;
-    height: fit-content;
+    height:fit-content;
     max-height: 14rem;
     min-width:15rem;
     overflow-y: scroll;
+    box-shadow: 0px 2px 2px 0px rgba(51, 49, 49, 0.492);
+
 }
 
 .jointGroupsWrapper::-webkit-scrollbar{
@@ -84,6 +143,7 @@
 }
 
 .buttonsWrapper{
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     width: 80%;
