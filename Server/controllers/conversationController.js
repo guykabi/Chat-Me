@@ -14,7 +14,8 @@ const excludeFields =
     })
       .sort({ lastActive: -1 })
       .populate({ path: "participants", select: excludeFields })
-      .populate({ path: "manager", select: excludeFields });
+      .populate({ path: "manager", select: excludeFields })
+      .populate({ path: "media"});
 
       let all = await Promise.all(
       allConversations.map(async (con) => {
