@@ -3,7 +3,8 @@
     text-align: center;
     margin: 0 auto;
     width: 100%;
-    height: 70px;
+    height: 20%;
+    min-height: 5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -21,7 +22,8 @@
     text-align: center;
     margin: 0 auto;
     width: 100%;
-    height: 70px;
+    height: 20%;
+    min-height: 5rem;
     display:flex;
     flex-direction: row;
     align-items: center;
@@ -62,8 +64,8 @@
     text-align: right;
     top: 0;
     right: 0;
-    width: 8rem;
+    width: 9rem;
     font-weight: bold;
     color: rgb(95, 89, 89);
-    font-size: x-small;
+    font-size: 75%;
 }

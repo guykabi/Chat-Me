@@ -63,24 +63,26 @@ const selectedConversation = ()=>{
         <div className={styles.conversationImage}> 
           {friend?
           <Image 
-          width={35}
-          height={35}
+          width={40}
+          height={40}
           style={{borderRadius:'50%'}}
           src={friend?.image?.url
           ?friend.image.url
           :noAvatar}
-          alt={friend.name}
+          alt={friend.name ||'chat-image'}
+          placeholder={friend?.image?.url?'blur':'empty'}
+          blurDataURL={friend?.image?.base64?friend.image.base64:''}
           />:
           <Image
-          width={35}
-          height={35}
+          width={40}
+          height={40}
           style={{borderRadius:'50%'}}
-          placeholder="blur"
-          blurDataURL={con?.image?.base64}
           src={con?.image?.url
             ?con.image.url
             :noAvatarGroup}
-            alt={con.chatName}
+            alt={con.chatName||'chat-image'}
+            placeholder={con?.image?.url?'blur':'empty'}
+            blurDataURL={con?.image?.base64?con.image.base64:null}
           />}
         </div> 
 
