@@ -149,6 +149,8 @@ const Message = forwardRef(({ message, own }, ref) => {
   const image = (
     <Image
       fill
+      sizes="(max-width: 368px) 100vw,
+              (max-width: 300px) 50vw,33vw"
       style={{ objectFit:showImage?"contain":"cover"}}
       placeholder="blur"
       blurDataURL={message?.image?.base64}
