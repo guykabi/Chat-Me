@@ -247,10 +247,12 @@ const onSuccess = () => {
             currentUser?.image?.url ? currentUser.image.url :noAvatar
           }
           alt={
-            currentUser.name 
+            currentUser.name || 'User-image' 
           }
-          width={35}
-          height={35}
+          placeholder={currentUser?.image?.url?'blur':'empty'}
+          blurDataURL={currentUser?.image?.base64?currentUser?.image?.base64:null}
+          width={40}
+          height={40}
         />
       </div>
 
