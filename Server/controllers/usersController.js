@@ -2,6 +2,7 @@ import {User} from '../models/messagesModel.js'
 import bcrypt from 'bcryptjs'
 import {approveFriend} from '../utils/utils.js'
 import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
+import { getPlaiceholder } from "plaiceholder";
 const {hash,genSalt} = bcrypt
 
 
@@ -234,8 +235,11 @@ export const updateUser = async(req,resp,next) => {
 try{
 
   if(req?.file?.path){
-    const data = await uploadToCloudinary(req.file.path,'user-images')
+    const data = await uploadToCloudinary(req.file.path,'user-images',next)
+    const { base64 } = await getPlaiceholder(data.url);
     const newBody = {...body} 
+
+    data.base64 = base64;
     newBody.image = data
 
     if (body.removeImage) {
@@ -243,12 +247,20 @@ try{
     }
     
     let editUser = await User.findByIdAndUpdate(id,newBody,{new:true})
-    resp.status(200).json({message:'Updated successfully',editUser}) 
+    return resp.status(200).json({message:'Updated successfully',editUser}) 
 
   }
   
-  const result = await User.findByIdAndUpdate(id,body,{new:true})
-  resp.status(200).json('Updated successfully')
+  let editUser = await User.findByIdAndUpdate(id,body,{new:true})
+  .populate({ path: "friends", select: excludeFields })
+  .populate({ path: "friendsWaitingList", select: excludeFields })
+  .populate({
+    path: "notifications",
+    select: excludeFields,
+    populate: { path: "sender", select: excludeFields },
+  }); 
+  
+  resp.status(200).json({message:'Updated successfully',editUser})
 
 }catch(error){
   next(error)
