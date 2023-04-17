@@ -7,7 +7,10 @@ import IconButton from '@mui/material/IconButton';
 
 const ReturnIcon = ({onClick}) => {
   return (
-    <div className={styles.returnIconWrapper}>
+    <div 
+    className={styles.returnIconWrapper} 
+    aria-label='return button' 
+    role='button'>
        <IconButton onClick={onClick}>
          <ArrowBackIcon 
          sx={{ color:'black' }}/>
