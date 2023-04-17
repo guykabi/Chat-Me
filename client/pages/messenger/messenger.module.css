@@ -23,8 +23,8 @@
 
 .conversationsWrapper{
     position: relative;
-    width: 22rem; 
-    min-width:16rem;
+    width: 30%; 
+    min-width:18rem;
     height: 100%;
     margin: 0 auto;
     background-color: rgb(255, 252, 252);
@@ -36,8 +36,8 @@
   }  
 
   .createGroupsWrapper{
-    width: 24rem; 
-    min-width:20rem;
+    width: 35%; 
+    min-width:18rem;
     height: 100%;
     margin: 0 auto;
     background-color: rgb(255, 252, 252);
