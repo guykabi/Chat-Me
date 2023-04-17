@@ -19,7 +19,7 @@ export const getUserDetails = async (userId)=>{
 
 
 export const updateUserDetails =async ({userId,body}) => {
-  const {data:res} = await Axios.post('users/image'+userId,body)
+  const {data:res} = await Axios.patch('users/'+userId,body)
   return res
 }
 
