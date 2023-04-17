@@ -161,9 +161,9 @@ const handleImage = (currentChat?.friend?
           </section>:
           <section className={styles.chatBoxHeader}>
 
-            <span className={styles.imageWrapper}>
+            <div className={styles.imageWrapper}>
                  {handleImage}               
-            </span>
+            </div>
             
             <div 
             className={styles.friendName} 
