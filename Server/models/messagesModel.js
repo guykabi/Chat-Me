@@ -16,7 +16,10 @@ export const UserSchema = new Schema({
     lastName:String,
     email:{type: String,unique: true},
     password:String,
-    image:{url:{type:String},cloudinary_id:{type:String}},
+    image:{
+        url:{type:String},
+        cloudinary_id:{type:String},
+        base64:{type:String}},
     friends:[userRef],
     friendsWaitingList:[userRef],
     notifications:[
