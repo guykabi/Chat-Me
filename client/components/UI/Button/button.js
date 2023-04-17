@@ -17,7 +17,7 @@ const Button = (props) => {
   return (
 
     <button
-    className={styles[className]}
+    className={disabled?styles.disabledStyle:styles[className]}
     style={{
     width:`${width}rem`,
     height:`${height}px`}}
