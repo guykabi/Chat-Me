@@ -6,6 +6,7 @@ const Input = forwardRef((props,ref) => {
 const {
   placeholder,
   onChange,
+  onBlur,
   type,
   value,
   name,
@@ -16,6 +17,7 @@ const {
   textAlign,
   fontSize,
   fontWeight,
+  formik,
   disabled} = props
 
   return (
@@ -39,7 +41,8 @@ const {
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
-          onChange={onChange}/>
+          onChange={onChange}
+          onBlur={onBlur}/>
           
     </>
   )
