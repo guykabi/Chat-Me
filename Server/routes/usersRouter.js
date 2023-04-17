@@ -27,7 +27,7 @@ router
 
 router
 .post('/search-user',Auth,searchUser)
-.post('/image/:id',Auth,upload.single("userImage"),updateUser)
+.patch('/:id',Auth,upload.single("userImage"),updateUser)
 .patch('/friendship-request/:id',Auth,friendShipRequest)
 .patch('/add-friend/:id',Auth,friendApproval)
 .patch('/remove-friend/:id',Auth,removeFriend)
