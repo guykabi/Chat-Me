@@ -1,6 +1,7 @@
 
 .primaryBtn{
     min-height: 20px;
+    min-width: 3rem;
     color: rgb(34, 32, 32);
     font-weight: 400;
     background-color: rgb(210, 213, 167);
@@ -39,7 +40,6 @@
     border: none;
     box-shadow: 0px 2px 3px 0px rgba(57, 55, 55, 0.292);
     transition: 0.5s;
-   
 }  
 
 .secondaryBtn:hover{
@@ -48,7 +48,22 @@
 }
 
 
-
+.disabledStyle{
+    min-height: 20px;
+    min-width: 3rem;
+    color: rgb(34, 32, 32);
+    font-weight: 400;
+    background-color: rgb(208, 208, 203);
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 0.2rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0px 2px 3px 0px rgba(57, 55, 55, 0.292);
+}
 
 
 
