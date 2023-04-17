@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import Head from 'next/head'
 import {chatContext} from '../../context/chatContext'
+import Button from '../../components/UI/Button/button'
 import styles from './login.module.css'
 import Input from '../../components/UI/Input/Input'
 import {checkUser} from '../../utils/apiUtils'
@@ -55,12 +56,14 @@ const Login = () => {
     <div className={styles.mainLoginWrapper}>
       <Head><title>Chat me login</title></Head>
         <div className={styles.loginWrapper}>
-            <div>
+            <header>
                 <h2>Login</h2>
-            </div>
+            </header>
             <div className={styles.formWrapper}>
-                <form onSubmit={sendCredentials}>
+                <form onSubmit={sendCredentials} className={styles.loginForm}>
                  <Input 
+                 width={40}
+                 height={20}
                  value={email}
                  placeholder='Email...'
                  type='email'
@@ -68,6 +71,8 @@ const Login = () => {
                  onChange={(e)=>setEmail(e.target.value)}
                  />
                  <Input 
+                 width={40}
+                 height={20}
                  value={password}
                  placeholder={'Password...'}
                  type='password'
@@ -78,7 +83,12 @@ const Login = () => {
                  {loginMessage?<span>{loginMessage}</span>:null}
                  {isError?<span>Something went wrong!</span>:null}
                  <br/><br/>
-                 <button type='submit'>Login</button>
+                 <Button
+                 type='submit'
+                 text='Login'
+                 className='primaryBtn'
+                 width={12}
+                 height={10}/>
                 </form>
             </div>
         </div>
