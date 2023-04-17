@@ -79,7 +79,7 @@ export const updateConversation = async (req, resp, next) => {
 
   try {
     if (req?.file?.path) {
-      const data = await uploadToCloudinary(req.file.path, "group-images");
+      const data = await uploadToCloudinary(req.file.path, "group-images",next);
       const {base64} = await getPlaiceholder(data.url)
       
       const newBody = {...body}
