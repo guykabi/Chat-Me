@@ -20,7 +20,7 @@ import {useErrorBoundary} from 'react-error-boundary'
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } =
     useContext(chatContext);
-  const { data,error,isLoading } = useGetUser(user._id);
+  const { data,error,isLoading } = useGetUser(user?._id);
   const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -69,7 +69,7 @@ const Messenger = ({ hasError, user }) => {
 
   return (
     <>
-      {currentUser ? (
+      {currentUser && Socket ? (
         <section className={styles.messangerWrapper}>
           <Head><title>Chat Me</title></Head>
           <Navbar />
