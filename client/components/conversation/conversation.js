@@ -71,7 +71,7 @@ const selectedConversation = ()=>{
           :noAvatar}
           alt={friend.name ||'chat-image'}
           placeholder={friend?.image?.url?'blur':'empty'}
-          blurDataURL={friend?.image?.base64?friend.image.base64:''}
+          blurDataURL={friend?.image?.base64}
           />:
           <Image
           width={40}
@@ -82,7 +82,7 @@ const selectedConversation = ()=>{
             :noAvatarGroup}
             alt={con.chatName||'chat-image'}
             placeholder={con?.image?.url?'blur':'empty'}
-            blurDataURL={con?.image?.base64?con.image.base64:null}
+            blurDataURL={con?.image?.base64}
           />}
         </div> 
 
