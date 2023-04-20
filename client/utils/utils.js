@@ -2,36 +2,28 @@ import * as cookie from "cookie";
 import { push, useRouter } from "next/router";
 import Modal from "../components/Modal/modal";
 import Button from "../components/UI/Button/button";
-import moment from 'moment' 
+import {format,intervalToDuration,formatRelative,addDays} from 'date-fns'
 
 
 export const getTime = (date) => {
-  const formatter = new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
   if(!date)return null
-  return formatter.format(Date.parse(date));
+  return format(new Date(date), 'HH:mm')
 };
 
 
-
 export const handleSeenTime = (date) =>{
-  let d = new Date(date).toISOString()
-  let d2 = moment().format();
-  let diff = moment(d2).diff(d, 'days')
-
-  if(diff >= 7){
-   return moment(date).calendar()
+  
+  let formatDate  = format(new Date(date),'yyyy/MM/dd');
+  let duration = intervalToDuration({start:new Date(date) , end:new Date()})
+  
+  if(duration.days >= 7){
+   return formatDate
   }
   else{
-   let d = new Date(date).toISOString()
-   let time = moment(d).calendar()
-   if(time.includes('Yesterday'))return 'Yesterday'
-   if(time.includes('Today'))return time.split('Today at')
-   return time.split('Last')
+   let time = formatRelative(addDays(new Date(date), 0 ), new Date())
+   if(time.includes('last'))return time.split('last')
+   return time
  }
-  
 } 
 
 
@@ -134,8 +126,8 @@ export const handleDateDividing = (messages,example=null) =>{
 
     messages.reverse().forEach((m,i)=>{
      
-    currentDateGroup = moment(m.createdAt).format('YYYY/MM/DD')
-    let dateCondition = currentDateGroup==moment().format('YYYY/MM/DD')?'Today':currentDateGroup
+    currentDateGroup = format(new Date(m.createdAt),'yyyy/MM/dd')
+    let dateCondition = currentDateGroup==format(new Date(),'yyyy/MM/dd')?'Today':currentDateGroup
 
       if(i === 0 && messages.length < 30){
         let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
@@ -151,11 +143,11 @@ export const handleDateDividing = (messages,example=null) =>{
       } 
 
       if(i === messages.length -1 && example){
-       if(currentDateGroup == moment(example).format('YYYY/MM/DD')){
+       if(currentDateGroup == format(new Date(example),'yyyy/MM/dd')){
         datedMessages.push(m)
         return
        }
-       if(currentDateGroup > moment(example).format('YYYY/MM/DD')){
+       if(currentDateGroup > format(new Date(example),'yyyy/MM/dd')){
         let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
         datedMessages.push(m)
         datedMessages.push(dateMessage)
@@ -164,7 +156,7 @@ export const handleDateDividing = (messages,example=null) =>{
       }
 
      
-      if(currentDateGroup > (moment(messages[i-1]?.createdAt).format('YYYY/MM/DD'))){
+      if(currentDateGroup > format(new Date(messages[i-1]?.createdAt),'yyyy/MM/dd')){
         let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
         datedMessages.push(m)
         datedMessages.splice(-1,0,dateMessage)//push?
