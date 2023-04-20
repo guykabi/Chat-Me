@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import styles from "./chatDetails.module.css";
 import Image from "next/image";
+import { handleSeenTime } from "../../utils/utils";
 import noAvatar from "../../public/images/no-avatar.png";
 import noAvatarGroup from "../../public/images/no-avatarGroup.png";
 import { chatContext } from "../../context/chatContext";
@@ -35,7 +36,9 @@ const ChatDetails = ({ onReturn }) => {
   const [showModal, setShowModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isGroup, setIsGroup] = useState(false);
-  const[chatMedia,setchatMedia]=useState(false)
+  const [chatMedia, setchatMedia] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [mediaImage, setMediaImage] = useState(null);
   const [groupChangedDetails, setGroupChangedDetails] = useState({});
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
@@ -43,7 +46,6 @@ const ChatDetails = ({ onReturn }) => {
   const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
 
-  const demyOnes = ['1','2','3','4','5','6','7','8','9']
   ////////////API calls - reactQuery/////////////
 
   const { mutate: update } = useMutation(updateConversation, {
@@ -140,8 +142,9 @@ const ChatDetails = ({ onReturn }) => {
   const handleChatDetailChange = (e) => {
     const { value, name } = e.target;
 
-    if (e.target?.files?.[0]) {
+    if (e.target?.files?.length) {
       const fileUploaded = e.target.files[0];
+      setPreview(URL.createObjectURL(fileUploaded));
       setGroupChangedDetails({ ...groupChangedDetails, [name]: fileUploaded });
       return;
     }
@@ -157,6 +160,13 @@ const ChatDetails = ({ onReturn }) => {
     setShowModal(false);
   };
 
+  const closeImagePreviewModal = () => {
+    let obj = { ...groupChangedDetails };
+    delete obj.groupImage;
+    setGroupChangedDetails(obj);
+    setPreview(null);
+  };
+
   const handleMemberAdding = useCallback(
     (e) => {
       let obj = { participants: e };
@@ -169,7 +179,7 @@ const ChatDetails = ({ onReturn }) => {
     (e) => {
       let obj;
 
-      if (typeof e !== "string") {
+      if (typeof e !== "string" && currentChat.participants.length > 1) {
         //When the only manager wants to leave the group -
         //Sets a random member of the group as manager
         if (
@@ -306,7 +316,7 @@ const ChatDetails = ({ onReturn }) => {
                         ? currentChat.image.url
                         : noAvatarGroup
                     }
-                    placeholder="blur"
+                    placeholder={currentChat?.image?"blur":'empty'}
                     blurDataURL={currentChat?.image?.base64}
                     width={150}
                     height={140}
@@ -334,7 +344,7 @@ const ChatDetails = ({ onReturn }) => {
             ) : (
               <Image
                 width={150}
-                height={120}
+                height={150}
                 src={
                   currentChat?.friend?.image?.url
                     ? currentChat.friend.image.url
@@ -351,77 +361,109 @@ const ChatDetails = ({ onReturn }) => {
           </article>
         </form>
       </header>
-      
+
       <section className={styles.mediaSwitcherBtn}>
-        <div 
-        onClick={()=>setchatMedia(false)}
-        role='button'>
-        Main
+        <div onClick={() => setchatMedia(false)} className={styles.switcherBtn} role="button">
+         <strong>Main</strong>
         </div>
-        <div 
-        onClick={()=>setchatMedia(true)}
-        role='button'>
-        Media
+        <div onClick={() => setchatMedia(true)} className={styles.switcherBtn} role="button">
+         <strong>Media</strong>
         </div>
       </section>
 
-      {!chatMedia?
-      <section className={styles.chatMainContent}>
-      {!isGroup && (
-        <>
-        <h2>
-          {`Joint groups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
-        </h2>
-        </>
-      )}
+      {!chatMedia ? (
+        <section className={styles.chatMainContent}>
+          {!isGroup && (
+            <>
+              <h3>
+                {`Joint groups with ${currentChat?.friend?.name} - (${jointGroups?.length})`}
+              </h3>
+            </>
+          )}
 
-      {isGroup ? (
-        <section className={styles.groupMembers}>{groupMembers}</section>
+          {isGroup ? (
+            <section className={styles.groupMembers}>{groupMembers}</section>
+          ) : (
+            <section className={styles.jointGroupsWrapper}>
+              {jointGroups}
+            </section>
+          )}
+
+          {isGroup && (
+            <section className={styles.buttonsWrapper}>
+              <Button
+                width="8"
+                height="25"
+                text="Leave group"
+                className="secondaryBtn"
+                onClick={handleMemberRemoval}
+              />
+              <Button
+                width="8"
+                height="25"
+                text="Add member"
+                //Only manager can add
+                disabled={
+                  !currentChat?.manager.some((m) => m._id === currentUser._id)
+                }
+                className="secondaryBtn"
+                onClick={handleOpenModal}
+              />
+            </section>
+          )}
+        </section>
       ) : (
-        <section className={styles.jointGroupsWrapper}>{jointGroups}</section>
-      )}
-
-      {isGroup && (
-        <section className={styles.buttonsWrapper}>
-          <Button
-            width="8"
-            height="25"
-            text="Leave group"
-            className="secondaryBtn"
-            onClick={handleMemberRemoval}
-          />
-          <Button
-            width="8"
-            height="25"
-            text="Add member"
-            //Only manager can add
-            disabled={
-              !currentChat?.manager.some((m) => m._id === currentUser._id)
-            }
-            className="secondaryBtn"
-            onClick={handleOpenModal}
-          />
+        <section className={styles.chatMedia}>
+          {currentChat.media.length ? (
+            <main className={styles.mainMediaWrapper}>
+              {currentChat.media.map((item, index) => (
+                <div
+                  key={index}
+                  className={styles.mediaItem}
+                  onClick={() => setMediaImage(item.image.url)}
+                >
+                  <section className={styles.timeOfMedia}>
+                    {handleSeenTime(item.createdAt)}
+                  </section>
+                  <Image
+                    fill
+                    placeholder={item.image?"blur":'empty'}
+                    blurDataURL={item.image.base64}
+                    src={item.image.url}
+                    alt="media-image"
+                    style={{
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              ))}
+            </main>
+          ) : (
+            <h3>No media yet</h3>
+          )}
         </section>
       )}
-      </section>:
-      <section className={styles.chatMedia}>
-       {currentChat.media.length?
-       <main className={styles.mainMediaWrapper}>
-        {currentChat.media.map((item,index)=>(
-          <div key={index} className={styles.mediaItem}>
-            <Image
-            fill
-            placeholder='blur'
-            blurDataURL={item.image.base64}
-            src={item.image.url}
-            alt="media-image"
-            style={{
-              objectFit: "contain"
-            }}/>
-          </div>
-        ))}
-       </main>:<h3>No media yet</h3>}
-      </section>}  
+
+      <Modal show={preview} onClose={closeImagePreviewModal}>
+        <section 
+        className={styles.imagePreview}
+        aria-label="preview-image">
+          <Image
+            src={preview}
+            width={300}
+            height={160}
+            style={{ objectFit: "contain", borderRadius: "5%" }}
+            alt="preview"
+          />
+          <Button
+            className="secondaryBtn"
+            text="This is the one"
+            width={8}
+            height={15}
+            onClick={() => setPreview(null)}
+          />
+        </section>
+      </Modal>
 
       <Modal
         show={showModal}
@@ -433,6 +475,25 @@ const ChatDetails = ({ onReturn }) => {
           type="users"
           onFinalPick={handleMemberAdding}
         />
+      </Modal>
+
+      <Modal
+        show={mediaImage}
+        onClose={() => setMediaImage(null)}
+        isFileMessage={true}
+      >
+        <section 
+        className={styles.presentChatMedia}
+        aria-label="image from chat media">
+          <Image
+            fill
+            src={mediaImage}
+            alt="media-image"
+            style={{
+              objectFit: "contain",
+            }}
+          />
+        </section>
       </Modal>
     </main>
   );
