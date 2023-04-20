@@ -2,12 +2,11 @@ import {Schema,model} from 'mongoose'
 import {ConversationSchema} from '../models/conversationModel.js'
 import bcrypt from 'bcryptjs'
 import moment from 'moment'
+import {formatISO} from 'date-fns'
 const {hash} = bcrypt
 
 let createdAt = function(){
-    let d = new Date();
-    let formattedDate = moment(d).format("MM-DD-YYYY, h:mm:ss a");
-    return formattedDate;
+    return formatISO(new Date())
 };
 
 const userRef = {type: Schema.Types.ObjectId, ref: 'users' }
