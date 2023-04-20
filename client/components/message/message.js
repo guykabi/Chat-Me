@@ -34,6 +34,8 @@ const Message = forwardRef(({ message, own }, ref) => {
   const allUsers = useGetCacheQuery("users");
   const conversations = useGetCacheQuery("conversations");
 
+   
+
   const { mutate: switchToSeen } = useMutation(seenMessage,{
     onError:error=>showBoundary(error)
   });
@@ -152,10 +154,10 @@ const Message = forwardRef(({ message, own }, ref) => {
       sizes="(max-width: 368px) 100vw,
               (max-width: 300px) 50vw,33vw"
       style={{ objectFit:showImage?"contain":"cover"}}
-      placeholder="blur"
+      placeholder={message.image?"blur":'empty'}
       blurDataURL={message?.image?.base64}
       src={message?.image?.url}
-      alt={message?.text ? message?.text : "img"}
+      alt={message?.text || 'message-image'}
     />
   );
 
