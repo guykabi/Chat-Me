@@ -79,10 +79,13 @@ const Login = () => {
                  require
                  onChange={(e)=>setPassword(e.target.value)}
                  /> 
-                 {isLoading?<Loader size={22}/>:null}
+                 {isLoading?
+                 <section className={styles.loaderWrapper}>
+                 <Loader size={22}/>
+                 </section>
+                 :null}
                  {loginMessage?<span>{loginMessage}</span>:null}
                  {isError?<span>Something went wrong!</span>:null}
-                 <br/><br/>
                  <Button
                  type='submit'
                  text='Login'
