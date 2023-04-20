@@ -16,7 +16,7 @@ const io =new Server(server,{
     }
 })  
 
-
+const port =  process.env.SOCKET_PORT || 8001
 
 io.on('connection', socket=>{
 
@@ -110,7 +110,7 @@ io.on('connection', socket=>{
 })   
 
 
-  server.listen(3001,()=>{
-    console.log(`Listenning on port 3001`);
+  server.listen(port,()=>{
+    console.log(`Listenning on port ${port}`);
 })
   
