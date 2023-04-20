@@ -8,6 +8,7 @@ import authRouter from './routes/authRouter.js'
 import {errorHandler} from './middleware/errorHandler.js'
 import cookieParser from 'cookie-parser'
  
+
 const port = process.env.PORT || 8000  
 
 const app = express() 
