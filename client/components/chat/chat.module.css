@@ -1,10 +1,11 @@
 
 .mainDiv{
+    position: relative;
     margin: 0 auto;
     text-align: center;
     height: 100%;
     padding: 0;
-   } 
+  } 
 
 .chatDiv{
      position: relative;
@@ -28,16 +29,15 @@
      bottom: 0;
    } 
 
+
    .modalImageWrapper{
+    margin:  0 auto;
+    position: relative;
     align-items: center;
     text-align: center;
-   }
-
-   .modalImageWrapper img{
     width: 220px;
-    height: 220px;
+    height: 200px;
     border-radius: 50%;
-    object-fit: cover;
    }
 
    .chatBoxHeader{
@@ -45,6 +45,8 @@
     flex-direction: row;
     margin: 0 auto;
     margin-bottom: 0.1rem;
+    padding-top:5px;
+    padding-bottom: 5px;
     height: 7%;
     min-height: 2rem;
     width: 100%;
@@ -91,13 +93,13 @@
   } 
 
   
-   .imageWrapper img{
+   .imageWrapper{
     position: relative;
     margin-left: 0.4rem;
     cursor: pointer;
     float: left;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     object-fit: cover;
    }
