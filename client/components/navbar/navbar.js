@@ -38,7 +38,7 @@ const Navbar = () => {
       }
       setAllUsers(data);
     },
-    onError:error=>showBoundary(error),
+    onError:error=>showBoundary(error)
 
   });
 
@@ -54,7 +54,7 @@ const onSuccess = () => {
     onSuccess
   );
 
-  const { isError, refetch } = useQuery(["logout"], logOut, {
+  const { refetch } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
       if (data.message === "User logged out successfully") {
         dispatch({ type: "CURRENT_USER", payload: null }), 
@@ -62,8 +62,11 @@ const onSuccess = () => {
         push("/login");
       }
     },
+    onError:error=>showBoundary(error),
     enabled: false,
   });
+
+
 
   useEffect(() => {
     setNotifications(currentUser.notifications);
@@ -250,7 +253,7 @@ const onSuccess = () => {
             currentUser.name || 'User-image' 
           }
           placeholder={currentUser?.image?.url?'blur':'empty'}
-          blurDataURL={currentUser?.image?.base64?currentUser?.image?.base64:null}
+          blurDataURL={currentUser?.image?.base64}
           width={40}
           height={40}
         />
