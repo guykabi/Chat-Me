@@ -26,22 +26,21 @@ import {format} from 'date-fns'
 const Messages = ({ messages }) => {
   const { currentUser, currentChat, Socket } = useContext(chatContext);
   const { showBoundary } = useErrorBoundary();
-  const scrollRef = useRef();
-  const windowRef = useRef();
+  const scrollRef = useRef() , windowRef = useRef()
   const [allMessages, setAllMessages] = useState(null);
   const [amountToSkip, setAmountToSkip] = useState(30);
   const [limitOfMessages, setLimitOfMessages] = useState(30);
   const [isMoreMessages, setIsMoreMessages] = useState(false);
   const [newChatToDelete, setNewChatToDelete] = useState(null);
   const [isUnseenMessages, setIsUnSeenMessages] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(true);
+  const [scrollHeight, setScrollHeight] = useState(null);
   const [isOverTwentyUnSeen, setIsOverTwentyUnSeen] = useState({
     loadMore: false,
     removeLine: false,
   });
-  const [isScrollable, setIsScrollable] = useState(true);
-  const [scrollHeight, setScrollHeight] = useState(null);
 
-  const { refetch: loadMore, error } = useQuery(
+  const { refetch: loadMore } = useQuery(
     ["more-messages"],
     () => getMessages(currentChat?._id, amountToSkip, limitOfMessages),
     {
@@ -58,6 +57,7 @@ const Messages = ({ messages }) => {
             reverseMessages,
             currentChat.unSeen
           );
+
           setIsOverTwentyUnSeen({ ...isOverTwentyUnSeen, loadMore: false });
           setLimitOfMessages(30);
         }
@@ -76,6 +76,7 @@ const Messages = ({ messages }) => {
       refetchOnWindowFocus: false,
     }
   );
+
 
   const { mutate: removeConversation } = useMutation(deleteConversation, {
     onSuccess: (data) => {
@@ -111,6 +112,7 @@ const Messages = ({ messages }) => {
 
     if (currentChat?.unSeen > 0 && currentChat?.unSeen <= 20) {
       setIsUnSeenMessages(true);
+      
       //Place the line of unseen on the correct index
       let result = handleUnSeenMessages(messages, currentChat.unSeen);
       setAllMessages(result);
@@ -135,13 +137,15 @@ const Messages = ({ messages }) => {
     if (newChatToDelete) setNewChatToDelete(null);
 
     //Extra condition - scrolling down only on start or new message
-    if (!isScrollable) return;
-    scrollRef.current?.scrollIntoView({
-      behavior: "auto",
-      block: "start",
-      inline: "end",
-    });
+    if (isScrollable){
+        scrollRef.current?.scrollIntoView({
+         behavior: "auto",
+         block: "end",
+         inline: "end",
+       }); 
+    }
 
+  
     //When more messages are fetched, keeps the same position of view
     //Preventing from getting in on mount/first render of messages / new message enter
     if (!allMessages || allMessages?.length < 31 || !scrollHeight) return;
@@ -179,10 +183,10 @@ const Messages = ({ messages }) => {
       if (isUnseenMessages || isOverTwentyUnSeen.removeLine) {
         let nonDates = allMessages.filter((m) => !m?.type);
         let lastMsg = nonDates[nonDates.length - 1].createdAt;
-
+       
         let newMessages = [...allMessages];
-        newMessages.splice(messages.length - currentChat.unSeen, 1);
-
+        let t = newMessages.splice((newMessages.length-1) - currentChat.unSeen, 1);
+        
         //If no message was sent today - add today date banner before
         if (
           format(new Date(lastMsg),'yyyy/MM/dd') <
@@ -266,19 +270,29 @@ const Messages = ({ messages }) => {
         onScroll={handleMoreLoading}
         ref={windowRef}
       >
-        {memoMessages?.map((message) => {
+        {memoMessages?.map((message,i) => {
           if (message?.type) {
             return <Day key={message._id} date={message} />;
           } else {
+            if(message?.banner){
+              return(
+                <Message
+                key={message._id}
+                message={message}
+                ref={scrollRef}
+                own={message?.sender === currentUser._id}
+              />
+              )
+            }
             return (
               <Message
                 key={message._id}
-                ref={scrollRef}
                 message={message}
+                ref={i==memoMessages.length-1&&!isUnseenMessages?scrollRef:null}
                 own={message?.sender === currentUser._id}
               />
             );
-          }
+           }
         })}
       </section>
     </>
