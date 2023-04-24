@@ -82,7 +82,7 @@ export const setUserStatus = (currentUser, user) => {
   if (currentUser?.friendsWaitingList.find((u) => u._id === user._id)) {
     return "Approve";
   } else {
-    return "+";
+    return "Add";
   }
 };
 
