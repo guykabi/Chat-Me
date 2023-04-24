@@ -22,7 +22,7 @@ import GroupPerson from "../group-person/groupPerson";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import Picker from "../picker/picker";
 
-const Message = forwardRef(({ message, own }, ref) => {
+  const Message = forwardRef(({ message, own }, ref) => {
   const { currentChat, currentUser, Socket } = useContext(chatContext);
   const {showBoundary} = useErrorBoundary()
   const [memeberName, setMemberName] = useState(null);
@@ -49,18 +49,23 @@ const Message = forwardRef(({ message, own }, ref) => {
     onError:error=>showBoundary(error)
   });
 
+  
   useEffect(() => {
     //Checks if message is unseen
     if (message?.banner) return;
     if (!own && !message.seen.some((s) => s.user === currentUser._id)) {
       switchToSeen({ messageId: message._id, userId: currentUser._id });
     }
+     
 
     if (!currentChat.chatName || message.sender === currentUser._id) return;
     let member = currentChat.participants.find((p) => p._id === message.sender);
     setMemberName(
       member?.name ? member.name : searchPastMember(message.sender, allUsers)
-    );
+    ); 
+
+
+   
   }, []);
 
   const handleMessageOperationMenu = () => {
@@ -263,7 +268,7 @@ const Message = forwardRef(({ message, own }, ref) => {
           </Modal>
         </article>
       ) : (
-        <article className={styles.bannerUnSeen}>
+        <article className={styles.bannerUnSeen} ref={ref}>
           <div className={styles.bannerContentWrapper}>{message.banner}</div>
         </article>
       )}
@@ -271,4 +276,5 @@ const Message = forwardRef(({ message, own }, ref) => {
   );
 });
 
+Message.displayName = 'Message'
 export default memo(Message);
