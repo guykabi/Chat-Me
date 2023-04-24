@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import Head from 'next/head'
+import Modal from '../../components/Modal/modal'
 import {chatContext} from '../../context/chatContext'
 import Button from '../../components/UI/Button/button'
 import styles from './login.module.css'
@@ -16,11 +17,13 @@ const Login = () => {
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
   const [loginMessage,setLoginMessage]=useState(null)
+  const [userName,setUserName]=useState(null)
+  const [showStayConnect,setShowStayConnect]=useState(false)
 
   const {mutate:authUser,isLoading,isError}=useMutation(checkUser,{
     onSuccess:(data)=>{  
 
-      //If invalid details was inserted
+      //If invalid details was inserted - present the error message
       if(typeof data === "string"){
 
         setLoginMessage(data)
@@ -31,26 +34,31 @@ const Login = () => {
         return () => {clearTimeout(timer)}
       }
 
-      if(!data.message)return
-        push('/messenger')
-      
+      if(data.message !== 'User got authorized')return
+          setUserName(data.userData.name)
+          setShowStayConnect(true)
     }
   }) 
 
-  useEffect(()=>{
-     if(!Socket)return
-      
-     Socket.disconnect()
-     dispatch({type:'SOCKET',payload:null})
-
-  },[currentUser])
-
+  
 
   const sendCredentials =(e)=>{
     e.preventDefault()
     let obj = {email,password}
     authUser(obj)
   } 
+
+  const handleStayConnect = () =>{
+    localStorage.setItem('connect',true)
+    setShowStayConnect(false)
+    push('/messenger')
+  }
+
+  const handleNotStayConnect = () =>{
+    localStorage.setItem('connect',false)
+    setShowStayConnect(false)
+    push('/messenger')
+  }
 
   return (
     <div className={styles.mainLoginWrapper}>
@@ -94,6 +102,23 @@ const Login = () => {
                  height={10}/>
                 </form>
             </div>
+            <Modal show={showStayConnect}>
+              <section className={styles.stayConnect}>
+                <h3>{`${userName}, do you want to stay connect?`}</h3>
+                <section className={styles.modalBtns}>
+                <Button 
+                width={6}
+                text='Yes'
+                className='primaryBtn'
+                onClick={handleStayConnect}/>
+                <Button 
+                width={6}
+                text='No'
+                className='primaryBtn'
+                onClick={handleNotStayConnect}/>
+                </section>
+              </section>
+            </Modal>
         </div>
     </div>
   )

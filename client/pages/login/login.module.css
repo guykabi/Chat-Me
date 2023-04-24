@@ -36,3 +36,20 @@
 .loaderWrapper{
     margin: 0 auto;
 }
+
+.stayConnect{
+    width: 12rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0 auto;
+}
+
+.modalBtns{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
