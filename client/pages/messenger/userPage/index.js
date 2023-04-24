@@ -91,7 +91,6 @@ const UserPage = ({ user, hasError }) => {
 
         return update({ userId: data._id, body: formData });
       }
-      console.log("Hree");
       update({ userId: data._id, body: values });
     },
     validationSchema: yup.object({
@@ -125,7 +124,7 @@ const UserPage = ({ user, hasError }) => {
           <section className={styles.mainUserPage} role="region">
             <ReturnIcon onClick={() => push("/messenger")} />
             <header className={styles.userPageHeader} role="heading">
-              <h2>{data?.name}'s details</h2>
+              <h2>{data?.name} details</h2>
             </header>
             <main className={styles.formWrapper} role="form">
               <form onSubmit={handleSubmit} className={styles.userPageForm}>
