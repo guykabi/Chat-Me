@@ -25,13 +25,13 @@ useEffect(()=>{
      {isRefreshToken?
        <section className={styles.errorWrapper}>
         <pre>
-         It's been a while since you last signed in 
+         Its been a while since you last signed in 
         </pre>
        </section> :  
        <section className={styles.errorWrapper}>
         <header>
          <h2>Sorry</h2>
-         <h3> it's seems that something went wrong</h3>
+         <h3> its seems that something went wrong</h3>
         </header>
         <Button
           className="primaryBtn"
