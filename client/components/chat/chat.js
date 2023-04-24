@@ -226,6 +226,7 @@ const Chat = () => {
               width={4}
               height={35}
               text="Send"
+              disabled={!newMessage.trim().length}
               arialable="Send message"
               onClick={handleNewMessage}
             />
