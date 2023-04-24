@@ -56,9 +56,9 @@ const onSuccess = () => {
 
   const { refetch } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
-      if (data.message === "User logged out successfully") {
-        dispatch({ type: "CURRENT_USER", payload: null }), 
+      if (data.message === "User logged out successfully") { 
         Socket.close();
+        dispatch({ type: "CURRENT_USER", payload: null }),
         push("/login");
       }
     },
@@ -166,7 +166,6 @@ const onSuccess = () => {
 
   
   const handleSideMenu = () => {
-    //setIsMenu(!isMenu);
     setIsVisible(!isVisible)
     if (!openNotifications) return;
 
@@ -200,7 +199,7 @@ const onSuccess = () => {
   return (
     <nav className={styles.mainNav}>
       <div className={styles.logo} role="banner">
-        Next chat
+        Chat Me
       </div>
 
       <div className={styles.searchInput}>
