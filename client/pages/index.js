@@ -5,12 +5,12 @@ import {useMutation} from 'react-query'
 import { Loader } from '../components/UI/clipLoader/clipLoader';
 import {push} from 'next/router'
 import Link from 'next/link'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {useErrorBoundary} from 'react-error-boundary'
 
- const Introduction = ({isLoggedIn,userName}) => { 
+ const Introduction = ({isLoggedIn}) => { 
   const {showBoundary} = useErrorBoundary()
-
+  const  [isConnect,setIsConnect]=useState(null)
   const {mutate,error,isLoading} = useMutation(tokenValidation,{
     onSuccess:()=>{
         push('/messenger')
@@ -18,8 +18,16 @@ import {useErrorBoundary} from 'react-error-boundary'
   })
 
   useEffect(()=>{
+     let connect = localStorage.getItem('connect')
+      
+     if(connect === 'false' || isLoggedIn === false){
+       setIsConnect(true)
+       return
+     }
+     if(isLoggedIn == undefined && connect === 'true'){
       mutate()
-  },[])
+     }
+  },[isLoggedIn])
    
   
 if(isLoading){
@@ -37,15 +45,19 @@ if(isLoading){
  
   return (  
     <>
-      {isLoggedIn===false&&
-      <main className='center'>
-       <h1>Welcome to messenger</h1>
+      {isConnect&&
+      <section className={styles.homePageWrapper}>
+      <main className={styles.mainHomeDiv}>
+       <h1>Chat-Me</h1>
          <div className={styles.titlesWrapper}>
-             <h4><Link href='/login'>Sign in</Link></h4>
-             <h6>or</h6>
-             <h4>Sign up</h4>
+             <div className={styles.signIn}>
+              <Link href='/login'>Sign in</Link>
+             </div>
+             <div>or</div>
+             <div className={styles.signUp}>Sign up</div>
          </div>
-      </main>}
+      </main>
+      </section>}
      </>
   )
 } 
