@@ -103,6 +103,10 @@ export const forwardMessage = async (req, resp, next) => {
           $set: { lastActive: new Date() },
           $push: { media: savedMessage._id },
         });
+       }else{
+        await Conversation.updateOne({_id:conversation}, {
+          $set: { lastActive: new Date() }
+        });
        }
 
       allForwardMessages.push(savedMessage)
