@@ -40,6 +40,7 @@ const ChatDetails = ({ onReturn }) => {
   const [preview, setPreview] = useState(null);
   const [mediaImage, setMediaImage] = useState(null);
   const [groupChangedDetails, setGroupChangedDetails] = useState({});
+  const [isChanged,setIsChanged]=useState(false)
   const [errorText, setErrorText] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
   const fileRef = useRef(null);
@@ -146,14 +147,18 @@ const ChatDetails = ({ onReturn }) => {
       const fileUploaded = e.target.files[0];
       setPreview(URL.createObjectURL(fileUploaded));
       setGroupChangedDetails({ ...groupChangedDetails, [name]: fileUploaded });
+      setIsChanged(true)
       return;
     }
 
     if (value === currentChat.chatName && name === "chatName") {
+      if(Object.keys(groupChangedDetails).length==1)setIsChanged(false)
       delete groupChangedDetails[name];
       return;
     }
     setGroupChangedDetails({ ...groupChangedDetails, [name]: value });
+    if(!Object.keys(groupChangedDetails).length)return setIsChanged(true)
+    
   };
 
   const handleModalClose = () => {
@@ -222,6 +227,7 @@ const ChatDetails = ({ onReturn }) => {
 
   const submitChatDetailChange = (e) => {
     e.preventDefault();
+   
     if (!Object.keys(groupChangedDetails).length) return;
     const data = new FormData();
     for (const [key, value] of Object.entries(groupChangedDetails)) {
@@ -239,13 +245,19 @@ const ChatDetails = ({ onReturn }) => {
     fileRef.current.click();
   };
 
+  const memoItems = useMemo(() =>{
+    if(currentChat?.chatName){
+      return currentChat.participants
+    }
+    if(!currentChat?.chatName){
+      return conversations
+    }
+  },[currentChat,conversations])
+
+  
   let groupMembers;
   if (currentChat?.chatName) {
-    const memoGroupMembers = useMemo(
-      () => currentChat.participants,
-      [currentChat]
-    );
-    groupMembers = memoGroupMembers.map((user) => (
+    groupMembers = memoItems.map((user) => (
       <GroupPerson
         key={user._id}
         user={user}
@@ -259,8 +271,7 @@ const ChatDetails = ({ onReturn }) => {
 
   let jointGroups;
   if (!currentChat?.chatName) {
-    const memoConversations = useMemo(() => conversations, [conversations]);
-    jointGroups = memoConversations
+    jointGroups = memoItems
       .filter(
         (c) =>
           c.chatName &&
@@ -277,11 +288,12 @@ const ChatDetails = ({ onReturn }) => {
           {isGroup && (
             <div className={styles.saveChangesBtn}>
               <Button
-                width="50%"
+                width="4"
                 height="10"
                 text="Save"
                 className="secondaryBtn"
                 type="submit"
+                disabled={!isChanged}
               />
             </div>
           )}
