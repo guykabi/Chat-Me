@@ -1,15 +1,45 @@
+.homePageWrapper{
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/chat-me.jpg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-position-y: center;
+  background-size:cover;
+  color: white;
+}
+
 
 .mainHomeDiv{
   margin: 0 auto;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  width:50%;
+  min-width:35rem;
   height: 100vh;
-  float: left;
   padding: 0;
-  background-color: burlywood;
+  background-color: rgba(226, 236, 232, 0);
   text-align: center;
+  font-weight: 700;
+  font-size: xx-large;
+  font-size: 5.5vmin;
+  color: white;
 }   
 
+.titlesWrapper{
+  width: 35%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  text-align: center;
+  padding-top: 10%;
+  font-size: 5.5vmin;
+}
 
-.titlesWrapper h4 a{
+
+
+.titlesWrapper div a{
   text-decoration: none;
 }
