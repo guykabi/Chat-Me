@@ -18,8 +18,7 @@ import {useErrorBoundary} from 'react-error-boundary'
 
 
 const Messenger = ({ hasError, user }) => {
-  const { currentUser, currentChat, Socket, dispatch } =
-    useContext(chatContext);
+  const { currentUser, currentChat, Socket, dispatch } = useContext(chatContext);
   const { data,error,isLoading } = useGetUser(user?._id);
   const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
@@ -29,7 +28,8 @@ const Messenger = ({ hasError, user }) => {
   const {refetch,error:usersError} = useQuery(['users'],getAllusers,{
     //For later use - example => identify user that left group
     //Only fetching once 
-    staleTime:Infinity
+    enabled:false,
+    refetchOnWindowFocus:false
   })
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Messenger = ({ hasError, user }) => {
     }
 
     if (!currentUser) return;
-    Socket?.emit("addUser", user._id);
+    Socket?.emit("addUser", data._id);
     refetch()
   }, [data, currentUser]); 
 
@@ -72,7 +72,9 @@ const Messenger = ({ hasError, user }) => {
       {currentUser && Socket ? (
         <section className={styles.messangerWrapper}>
           <Head><title>Chat Me</title></Head>
-          <Navbar />
+          <header className={styles.navbarWrapper}>
+          <Navbar/>
+          </header>
           <main className={styles.innerWrapper}>
             <div
               className={
@@ -133,7 +135,8 @@ const Messenger = ({ hasError, user }) => {
         </section>
       ) : (
         <section className="center">
-          <h2>Loading...</h2>
+          <h2>Loading...</h2><br/>
+          <Loader/>
         </section>
       )}
     </>
