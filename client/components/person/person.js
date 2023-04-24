@@ -3,7 +3,7 @@ import styles from "./person.module.css";
 import Image from "next/image";
 import noAvatar from '../../public/images/no-avatar.png'
 import { chatContext } from "../../context/chatContext";
-import { setUserStatus, excludeFieldsUserData, onError } from "../../utils/utils";
+import { setUserStatus, excludeFieldsUserData } from "../../utils/utils";
 import {useErrorBoundary} from 'react-error-boundary'
 import {
   friendRequest,
@@ -40,7 +40,7 @@ const Person = ({ user, decreaseNotify }) => {
       }
 
       if (data === "Request has been removed!" && personStatus === "Pending") {
-        setPersonStatus("+");
+        setPersonStatus("Add");
 
         let notifyObj = {
           reciever: user._id,
@@ -100,7 +100,7 @@ const Person = ({ user, decreaseNotify }) => {
   const { mutate: remove } = useMutation(removeFriend, {
     onSuccess: (data) => {
       if ((data.message = "Friend has been removed!")) {
-        setPersonStatus("+");
+        setPersonStatus("Add");
         dispatch({ type: "CURRENT_USER", payload: data.user });
       }
     },
@@ -141,7 +141,7 @@ const Person = ({ user, decreaseNotify }) => {
       }
       if (data.message === "Request has been removed!") {
         //If the person declined the user request
-        setPersonStatus("+");
+        setPersonStatus("Add");
         getUserData();
       }
       if (data.message === "The Friend approval has been done") {
@@ -150,7 +150,7 @@ const Person = ({ user, decreaseNotify }) => {
         getUserData();
       }
       if (data.message === "Request has been decline!") {
-        setPersonStatus("+");
+        setPersonStatus("Add");
       }
     };
 
@@ -161,7 +161,7 @@ const Person = ({ user, decreaseNotify }) => {
   const handlePersonStatusChange = (e) => {
     e.stopPropagation();
     let obj = { currentUserId: currentUser._id, friendId: user._id };
-    if (personStatus === "+") {
+    if (personStatus === "Add") {
       //Send friendship request
       friendshipRequest(obj);
       return;
