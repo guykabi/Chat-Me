@@ -12,6 +12,7 @@ useEffect(()=>{
 
 const handleClose = (e) =>{
   e.preventDefault()
+  if(!onClose)return
   onClose()
 }
 
