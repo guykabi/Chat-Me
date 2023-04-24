@@ -15,7 +15,7 @@ const Conversations = ({ sortBy }) => {
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
 
-  const { error, isLoading, refetch } = useQuery(
+  const {isLoading, refetch } = useQuery(
     ["conversations"],
     () => getConversations(currentUser._id),
     {
@@ -39,7 +39,8 @@ const Conversations = ({ sortBy }) => {
       );
       
       //For adding to the counter of unseen messages
-      if (message.conversation._id !== currentChat?._id) {
+      if (message.conversation._id !== currentChat?._id &&
+          message.sender !== currentUser._id) {
         setIncomingMessage(message.conversation._id);
       }
 
