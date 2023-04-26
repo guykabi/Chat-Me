@@ -17,7 +17,12 @@ useEffect(()=>{
          push("/login");
        }, 4000)
     }
-},[])
+},[]) 
+
+const directToLogin = () =>{
+  resetErrorBoundary()
+  push("/login")
+}
 
 
   return (
@@ -33,6 +38,7 @@ useEffect(()=>{
          <h2>Sorry</h2>
          <h3> its seems that something went wrong</h3>
         </header>
+        <section className={styles.btnsWrapper}>
         <Button
           className="primaryBtn"
           text="Try again"
@@ -41,6 +47,15 @@ useEffect(()=>{
           arialable="Refresh button"
           onClick={()=>reload()}
         />
+        <Button
+          className="primaryBtn"
+          text="Login page"
+          width="8"
+          height="10"
+          arialable="Direct to login button"
+          onClick={directToLogin}
+        />
+        </section>
        </section>}
     </>
   )
