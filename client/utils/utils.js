@@ -5,12 +5,14 @@ import Button from "../components/UI/Button/button";
 import {format,intervalToDuration,formatRelative,addDays} from 'date-fns'
 
 
-export const getTime = (date) => {
+
+export const getMessageTime = (date) => {
   if(!date)return null
   return format(new Date(date), 'HH:mm')
 };
 
 
+//For messages's seen time + conversation's last active time
 export const handleSeenTime = (date) =>{
   
   let formatDate  = format(new Date(date),'yyyy/MM/dd');
@@ -29,8 +31,10 @@ export const handleSeenTime = (date) =>{
 
 
 export const exctractCredentials = (req) => {
-  let Cookie = cookie.parse(req.headers?.cookie);
-  let user = JSON.parse(Cookie.userData);
+  if(!req?.headers?.cookie)return 'No cookie'
+  let Cookie = cookie.parse(req?.headers?.cookie);
+  if(Cookie.token == 'none' || Cookie.userData == 'none')return 'No cookie'
+  let user = JSON.parse(Cookie?.userData);
   return user;
 };
 

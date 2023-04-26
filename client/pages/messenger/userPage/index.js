@@ -24,11 +24,13 @@ const UserPage = ({ user, hasError }) => {
   const { showBoundary } = useErrorBoundary();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
+
+  
   const onError = (error) => {
     showBoundary(error);
   };
   const { data, refetch, isLoading } = useGetUser(
-    user._id,
+    user?._id,
     false,
     null,
     onError
@@ -106,7 +108,7 @@ const UserPage = ({ user, hasError }) => {
   };
 
   if (hasError) {
-    return onError();
+    return onError(hasError);
   }
 
   return (
@@ -242,12 +244,14 @@ const UserPage = ({ user, hasError }) => {
 };
 
 export async function getServerSideProps({ req }) {
-  if (!req.headers.cookie) {
+
+  const user = exctractCredentials(req);
+  if (user == 'No cookie') {
     return { props: { hasError: true } };
   }
-  const user = exctractCredentials(req);
+
   return {
-    props: { user },
+    props: { user }
   };
 }
 

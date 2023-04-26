@@ -38,7 +38,7 @@ const Messenger = ({ hasError, user }) => {
     }
 
     if (!currentUser) return;
-    Socket?.emit("addUser", data._id);
+    Socket?.emit("addUser", user._id);
     refetch()
   }, [data, currentUser]); 
 
@@ -64,7 +64,7 @@ const Messenger = ({ hasError, user }) => {
   }
 
   if (hasError || error || usersError) {  
-       showBoundary(error)
+       showBoundary()
   }
 
   return (
@@ -144,11 +144,12 @@ const Messenger = ({ hasError, user }) => {
 };
 
 export async function getServerSideProps({ req }) {
-  if (!req.headers.cookie) {
+
+  const user = exctractCredentials(req);
+  if (user === 'No cookie') {
     return { props: { hasError: true } };
   }
-  const user = exctractCredentials(req);
-
+  
   return {
     props: { user },
   };

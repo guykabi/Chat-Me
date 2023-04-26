@@ -64,14 +64,15 @@ if(isLoading){
 
 export async function getServerSideProps({req}){
 
-  if(!req.headers.cookie){ 
+  const user = exctractCredentials(req)
+
+  if(user == 'No cookie'){ 
     return{
       props:{isLoggedIn:false}
     } 
   }    
-
-  const user= exctractCredentials(req)
   
+
   return{
     props:{userName:user.name}
    }
