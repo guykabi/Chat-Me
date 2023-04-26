@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { chatContext } from "../../context/chatContext";
 import styles from "./message.module.css";
-import { getTime, searchPastMember, handleFilterCons } from "../../utils/utils";
+import { getMessageTime, searchPastMember, handleFilterCons } from "../../utils/utils";
 import useClickOutSide from "../../hooks/useClickOutside";
 import { useMutation } from "react-query";
 import {useErrorBoundary} from 'react-error-boundary'
@@ -217,7 +217,7 @@ import Picker from "../picker/picker";
               )}
 
               <div className={styles.timeBatch}>
-                {getTime(message.createdAt)}
+                {getMessageTime(message.createdAt)}
               </div>
 
               {message?.likes?.length ? (
