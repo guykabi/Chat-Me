@@ -397,7 +397,7 @@ const ChatDetails = ({ onReturn }) => {
             <section className={styles.groupMembers}>{groupMembers}</section>
           ) : (
             <section className={styles.jointGroupsWrapper}>
-              {jointGroups}
+              {jointGroups.length ? jointGroups : <h3>No common groups yet...</h3>}
             </section>
           )}
 
