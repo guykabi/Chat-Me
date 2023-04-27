@@ -17,6 +17,10 @@ export const getUserDetails = async (userId)=>{
   return res
 }  
 
+export const addUser =async (user) =>{
+  const {data:res} = await Axios.post('users',user)
+  return res
+}
 
 export const updateUserDetails =async ({userId,body}) => {
   const {data:res} = await Axios.patch('users/'+userId,body)
