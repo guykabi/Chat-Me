@@ -17,7 +17,6 @@ const {
   textAlign,
   fontSize,
   fontWeight,
-  formik,
   disabled} = props
 
   return (
@@ -30,7 +29,7 @@ const {
             textAlign,
             fontSize,fontWeight}}
 
-          autoComplete="off"
+          autoComplete="new-password"
           className={styles.inputStyle}
           type={type}
           required={require}
