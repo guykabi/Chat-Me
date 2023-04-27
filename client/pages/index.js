@@ -54,7 +54,9 @@ if(isLoading){
               <Link href='/login'>Sign in</Link>
              </div>
              <div>or</div>
-             <div className={styles.signUp}>Sign up</div>
+             <div className={styles.signUp}>
+             <Link href='/signUp'>Sign up</Link>
+             </div>
          </div>
       </main>
       </section>}
