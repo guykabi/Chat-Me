@@ -67,11 +67,11 @@ const Login = () => {
             <header>
                 <h2>Login</h2>
             </header>
-            <div className={styles.formWrapper}>
+            <main className={styles.formWrapper}>
                 <form onSubmit={sendCredentials} className={styles.loginForm}>
                  <Input 
                  width={40}
-                 height={20}
+                 height={30}
                  value={email}
                  placeholder='Email...'
                  type='email'
@@ -80,7 +80,7 @@ const Login = () => {
                  />
                  <Input 
                  width={40}
-                 height={20}
+                 height={30}
                  value={password}
                  placeholder={'Password...'}
                  type='password'
@@ -94,14 +94,22 @@ const Login = () => {
                  :null}
                  {loginMessage?<span>{loginMessage}</span>:null}
                  {isError?<span>Something went wrong!</span>:null}
+                 <section className={styles.btnsWrapper}>
                  <Button
                  type='submit'
                  text='Login'
                  className='primaryBtn'
                  width={12}
-                 height={10}/>
+                 height={25}/>
+                 <Button
+                 text='Home'
+                 className='primaryBtn'
+                 width={12}
+                 height={25}
+                 onClick={()=>push('/')}/>
+                 </section>
                 </form>
-            </div>
+            </main>
             <Modal show={showStayConnect}>
               <section className={styles.stayConnect}>
                 <h3>{`${userName}, do you want to stay connect?`}</h3>
