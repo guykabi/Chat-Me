@@ -208,12 +208,12 @@ const Messages = ({ messages }) => {
       } else {
         let nonDates = allMessages.filter((m) => !m?.type);
         let lastMsg = nonDates[nonDates.length - 1]?.createdAt;
-
+      
         //If no message was sent today - add today date banner before
         if (
+          !allMessages.length ||
           format(new Date(lastMsg),'yyyy/MM/dd') <
-          format(new Date(),'yyyy/MM/dd') || 
-          !allMessages.length
+          format(new Date(),'yyyy/MM/dd') 
         ) {
           let day = { _id: Math.random(), type: "date", date: "Today" };
           setAllMessages((prev) => [...prev, day, message]);
