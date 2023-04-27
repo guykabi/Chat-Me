@@ -13,7 +13,7 @@ import noAvatar from "../../../public/images/no-avatar.png";
 import Image from "next/image";
 import { BsFillCameraFill } from "react-icons/bs";
 import ReturnIcon from "../../../components/UI/returnIcon/returnIcon";
-import { useFormik, ErrorMessage, Formik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import { Loader } from "../../../components/UI/clipLoader/clipLoader";
 import Button from "../../../components/UI/Button/button";
