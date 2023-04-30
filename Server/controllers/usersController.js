@@ -2,6 +2,7 @@ import {User} from '../models/messagesModel.js'
 import bcrypt from 'bcryptjs'
 import {approveFriend} from '../utils/utils.js'
 import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
+import {sendEmail} from '../services/email.js'
 import { getPlaiceholder } from "plaiceholder";
 const {hash,genSalt} = bcrypt
 
@@ -30,13 +31,30 @@ export const getUser = async (req, resp, next) => {
         path: "notifications",
         select: excludeFields,
         populate: { path: "sender", select: excludeFields },
-      });
+      }); 
+     
 
     return resp.status(200).json(user);
   } catch (err) {
     return next(new Error("No such user!"));
   }
-};
+}; 
+
+
+export const handleEmailSending =async (req,resp,next) =>{
+  const {body} = req
+  
+   try{
+      let user = await User.find({email:body.email})
+      if(!user.length)return resp.status(200).json('Email does not exist')
+      
+      let emailResult = await sendEmail(user[0],body.url,next)
+      return resp.status(200).json(emailResult) 
+
+   }catch(error){
+     next(error)
+   }
+}
 
 export const addUser = async (req, resp, next) => {
   const newUser = new User(req.body);
@@ -210,18 +228,19 @@ export const handleSeenNotification = async (req, resp, next) => {
   }
 };
 
+
 export const resetPassword = async (req, resp, next) => {
   //Crypt the changed password
   const salt = await genSalt(12);
   const passwordHash = await hash(req.body.password, salt);
-
+  
   try {
     let data = await User.updateOne(
       { _id: req.params.id },
       { $set: { password: passwordHash } } 
     ).select("-password");
 
-    if (data) return resp.status(200).json("Updated");
+    if (data) return resp.status(200).json("Password updated");
   } catch (err) {
     next(err);
   }
