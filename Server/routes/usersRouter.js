@@ -8,6 +8,7 @@ const router = express.Router()
 import {
       getAllUsers,
       addUser,
+      handleEmailSending,
       updateUser,
       searchUser,
       getUser,friendShipRequest,
@@ -20,6 +21,7 @@ import {
 router
 .get('/', Auth, getAllUsers)
 .post('/',addUser)
+.post('/email',handleEmailSending)
 
 router
 .get('/:id',Auth,getUser) 
@@ -32,7 +34,7 @@ router
 .patch('/add-friend/:id',Auth,friendApproval)
 .patch('/remove-friend/:id',Auth,removeFriend)
 .patch('/unapprove-request/:id',Auth,unapproveFriend)
-.patch('/reset-pass/:id',resetPassword) 
+.patch('/reset-password/:id',resetPassword) 
 
 
 export default router
