@@ -8,6 +8,10 @@ import {useFormik} from 'formik'
 import * as yup from 'yup'
 import Input from '../../components/UI/Input/Input'
 import Button from '../../components/UI/Button/button'
+import {MdOutlinePersonOutline} from 'react-icons/md'
+import {RiLockPasswordLine} from 'react-icons/ri'
+import {AiOutlineMail} from 'react-icons/ai'
+
 
 const SignUp = () => {
   const {showBoundary} = useErrorBoundary()
@@ -79,7 +83,6 @@ const SignUp = () => {
 
     
 
-
   return (
     <section className={styles.signUpWrapper}>
        {!isSuccessSignUp?<section className={styles.signUpInnerWrapper}>
@@ -89,92 +92,110 @@ const SignUp = () => {
         <main className={styles.formWrapper}>
             <form 
             onSubmit={handleSubmit}
-            className={styles.signUpForm}>
-                <section className={styles.inputWrapper}>
+            className='form'>
+                <section className='inputWrapper'>
+                    <div className={styles.inputField}>
+                    <MdOutlinePersonOutline size={20}/>
                     <Input
                     placeholder='Name'
                     name='name'
-                    width='60'
+                    width='90'
                     height='45'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
+                    </div>
                     {touched.name && errors.name ? (
                     <span>{errors.name}</span>
                   ) : null}
                 </section>
-                <section className={styles.inputWrapper}>
+                <section className='inputWrapper'>
+                    <div className={styles.inputField}>
+                    <MdOutlinePersonOutline size={20}/>
                     <Input
                     placeholder='Lastname'
                     name='lastName'
-                    width='60'
+                    width='90'
                     height='45'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
+                    </div>
                     {touched.lastName && errors.lastName ? (
                     <span>{errors.lastName}</span>
                   ) : null}
                 </section>
-                <section className={styles.inputWrapper}>
+                <section className='inputWrapper'>
+                    <div className={styles.inputField}>
+                    <RiLockPasswordLine size={20}/>
                     <Input
                     placeholder='Password'
                     name='password'
                     type='password'
-                    width='60'
+                    width='90'
                     height='45'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
+                    </div>
                     {touched.password && errors.password ? (
                     <span>{errors.password}</span>
                   ) : null}
                 </section>
-                <section className={styles.inputWrapper}>
+                <section className='inputWrapper'>
+                    <div className={styles.inputField}>
+                    <RiLockPasswordLine size={20}/>
                     <Input
                     placeholder='Confirm password'
                     name='confirmpassword'
                     type='password'
-                    width='60'
+                    width='90'
                     height='45'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
+                    </div>
                     {touched.confirmpassword && errors.confirmpassword ? (
                     <span>{errors.confirmpassword}</span>
                   ) : null}
                 </section>
-                <section className={styles.inputWrapper}>
+                <section className='inputWrapper'>
+                    <div className={styles.inputField}>
+                    <AiOutlineMail size={20}/>
                     <Input
                     placeholder='Email'
                     name='email'
-                    width='60'
+                    width='90'
                     height='45'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
+                    </div>
                     {touched.email && errors.email ? (
                     <span>{errors.email}</span>
                   ) : null}
                 </section>
-                <section className={styles.btnsWrapper}>
+                <section className='btnsWrapper'>
                     <Button
                     className='secondaryBtn'
                     text='Done'
                     type='submit'
-                    width='10'
+                    width='15'
                     height='30'/>
                     <Button
                     className='secondaryBtn'
                     text='Return'
-                    onClick={()=>push('/')}
-                    width='10'
+                    onClick={(e)=>{
+                      e.preventDefault()
+                      push('/')
+                    }}
+                    width='15'
                     height='30'/>
                 </section>
             </form>
         </main>
        </section>:
-       <section className={styles.successfulRegistration}>
+       <section className='successfulAction'>
         <main>
           <h2>
             {values?.name}, your registration has done
