@@ -1,7 +1,6 @@
 import {Schema,model} from 'mongoose'
 import {ConversationSchema} from '../models/conversationModel.js'
 import bcrypt from 'bcryptjs'
-import moment from 'moment'
 import {formatISO} from 'date-fns'
 const {hash} = bcrypt
 
