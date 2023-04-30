@@ -15,7 +15,8 @@
     height:max-content;
     padding: 2rem;
     text-align: center;
-    box-shadow: 0px 0px 4px 0px rgba(57, 55, 55, 0.692);
+    box-shadow: 0px 2px 4px 0px rgba(57, 55, 55, 0.692);
+    border-radius: 8px;
 } 
 .formWrapper{
     margin: 0 auto;
@@ -39,6 +40,15 @@
     border: 1px solid rgb(154, 146, 146);
     border-top: none;
     border-radius: 8px;
+} 
+
+.loginInputField{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+    margin: 0 auto;
+    align-items: center;
+    gap: 0.2rem;
 }
 
 .btnsWrapper{
@@ -68,4 +78,29 @@
     flex-direction: row;
     align-items: center;
     gap: 1rem;
+} 
+
+.forgotPassword{
+    margin: 0 auto;
+    width: 8rem;
+    text-decoration: underline;
+    color: rgb(66, 66, 219);
+    font-size: small;
+    margin-top: 1rem;
+}
+
+.forgotPassword:hover{
+    text-decoration: none;
+    color: rgb(115, 115, 211);
+    cursor: pointer;
+}
+
+.resetPasswordWrapper{
+    margin: 0 auto;
+    width: 32rem;
+    height: 12rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    text-align: center;
 }
