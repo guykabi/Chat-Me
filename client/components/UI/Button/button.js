@@ -12,6 +12,7 @@ const Button = (props) => {
     type,
     onClick,
     disabled,
+    fontWeight,
     arialable} = props
 
   return (
@@ -20,7 +21,8 @@ const Button = (props) => {
     className={disabled?styles.disabledStyle:styles[className]}
     style={{
     width:`${width}rem`,
-    height:`${height}px`}}
+    height:`${height}px`,
+    fontWeight:`${fontWeight}`}}
     onClick={onClick}
     aria-label={arialable}
     type={type}
