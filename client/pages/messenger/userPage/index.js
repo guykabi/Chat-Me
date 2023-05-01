@@ -89,9 +89,9 @@ const UserPage = ({ user, hasError }) => {
 
         if (data?.image?.url)
           formData.append("removeImage", data.image.cloudinary_id);
-        formData.append("userImage", file);
+          formData.append("userImage", file);
 
-        return update({ userId: data._id, body: formData });
+          return update({ userId: data._id, body: formData });
       }
       update({ userId: data._id, body: values });
     },
@@ -138,7 +138,7 @@ const UserPage = ({ user, hasError }) => {
                     alt="user-image"
                     style={{ objectFit: "cover", borderRadius: "50%" }}
                     sizes="(max-width: 368px) 100vw,
-              (max-width: 300px) 50vw,33vw"
+                           (max-width: 300px) 50vw,33vw"
                     placeholder={data?.image?.base64 ? "blur" : "empty"}
                     blurDataURL={data?.image?.base64}
                   />
