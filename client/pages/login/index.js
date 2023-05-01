@@ -111,15 +111,15 @@ const Login = () => {
   return (
     <div className={styles.mainLoginWrapper}>
       <Head>
-        <title>Chat me login</title>
+        <title>Chat Me login</title>
       </Head>
-      <div className={styles.loginWrapper}>
+      <div className={styles.loginWrapper} aria-label="Login form">
         <header>
           <h2>Login</h2>
         </header>
         <main className={styles.formWrapper}>
           <form onSubmit={sendCredentials} className={styles.loginForm}>
-            <section className={styles.loginInputField}>
+            <section className={styles.loginInputField} aria-label="email">
             <AiOutlineMail
             size={25}/>
             <Input
@@ -132,7 +132,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             </section>
-            <section className={styles.loginInputField}>
+            <section className={styles.loginInputField} aria-label="password">
               <RiLockPasswordLine
               size={25}/>
               <Input
