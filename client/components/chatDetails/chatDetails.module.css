@@ -16,12 +16,22 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-    width: 70%;
+    width: 90%;
 }
 
 .mainEditGroup h2{
     margin: 0 auto;
     text-align: center;
+}
+
+.inputField{
+    display: flex;
+    flex-direction: column;
+} 
+
+.inputField span{
+    font-size: small;
+    color: red;
 }
 
 .chatImageWrapper{
