@@ -110,8 +110,8 @@ export const createConversation = async ({userId,friendId=null}) =>{
   return res
 }
 
-export const updateConversation = async ({conId,obj}) =>{
-  const {data:res} = await Axios.patch('conversation/'+conId,obj)
+export const updateConversation = async ({conId,body}) =>{
+  const {data:res} = await Axios.patch('conversation/'+conId,body)
   return res
 } 
 
