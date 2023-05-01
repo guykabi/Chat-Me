@@ -21,6 +21,7 @@ import Modal from "../Modal/modal";
 import GroupPerson from "../group-person/groupPerson";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import Picker from "../picker/picker";
+import {Loader} from '../UI/clipLoader/clipLoader'
 
   const Message = forwardRef(({ message, own }, ref) => {
   const { currentChat, currentUser, Socket } = useContext(chatContext);
@@ -30,6 +31,7 @@ import Picker from "../picker/picker";
   const [showImage, setShowImage] = useState(false);
   const [showForward, setShowForward] = useState(false);
   const [toggleDetailsMenu, setToggleDetailsMenu] = useState(true);
+  const [isControls,setIsControls]=useState(false)
   const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const allUsers = useGetCacheQuery("users");
   const conversations = useGetCacheQuery("conversations");
@@ -65,18 +67,17 @@ import Picker from "../picker/picker";
     ); 
 
 
-   
   }, []);
 
   const handleMessageOperationMenu = () => {
     setIsVisible(!isVisible);
   };
 
-  const openModal = useCallback(() => {
+  const openDetailsModal = useCallback(() => {
     setShowModal(true);
   }, [showModal]);
 
-  const closeModal = () => {
+  const closeMessageDetailsModal = () => {
     setToggleDetailsMenu(true);
     setShowModal(false);
   };
@@ -104,6 +105,12 @@ import Picker from "../picker/picker";
 
     forward({ receivers: e, fixedMessage });
   };
+
+
+  const onShowImageModalClose = () =>{
+    setShowImage(false)
+    setIsControls(false)
+  }
 
   const messageDetails = (
     <section className={styles.messageDetailsWrapper}>
@@ -151,15 +158,16 @@ import Picker from "../picker/picker";
         )}
       </main>
     </section>
-  );
+  ); 
+
 
   const image = (
-    <Image
+      <Image
       fill
       sizes="(max-width: 368px) 100vw,
               (max-width: 300px) 50vw,33vw"
       style={{ objectFit:showImage?"contain":"cover"}}
-      placeholder={message.image?"blur":'empty'}
+      placeholder={message.image?.base64?"blur":'empty'}
       blurDataURL={message?.image?.base64}
       src={message?.image?.url}
       alt={message?.text || 'message-image'}
@@ -237,13 +245,13 @@ import Picker from "../picker/picker";
                   own={own}
                   onCloseMenu={() => setIsVisible(false)}
                   ownLike={message.likes.includes(currentUser._id)}
-                  onDetailModal={openModal}
+                  onDetailModal={openDetailsModal}
                   onForwardModal={openForwardModal}
                 />
               )}
             </div>
           </main>
-          <Modal show={showModal} onClose={closeModal} title="Message Details">
+          <Modal show={showModal} onClose={closeMessageDetailsModal} title="Message Details">
             {messageDetails}
           </Modal>
 
@@ -261,7 +269,7 @@ import Picker from "../picker/picker";
 
           <Modal
             show={showImage}
-            onClose={() => setShowImage(false)}
+            onClose={onShowImageModalClose}
             isFileMessage={true}
           >
             <div className={styles.modalImageMessage}>{image}</div>
