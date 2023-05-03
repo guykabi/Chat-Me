@@ -1,8 +1,8 @@
-import React,{forwardRef} from 'react' 
+import React,{forwardRef, useEffect, useState} from 'react' 
 import styles from './Input.module.css'
 
 const Input = forwardRef((props,ref) => {
-
+const [acceptedFormats,setAcceptedFormats]=useState(null)
 const {
   placeholder,
   onChange,
@@ -17,7 +17,17 @@ const {
   textAlign,
   fontSize,
   fontWeight,
-  disabled} = props
+  disabled,
+  newMessageInput} = props 
+  
+useEffect(()=>{
+if(type === 'file'){
+  if(newMessageInput){
+    return setAcceptedFormats('image/*, video/*')
+  }
+  setAcceptedFormats('image/*')
+}
+},[])
 
   return (
     <>
@@ -36,7 +46,7 @@ const {
           disabled={disabled}
           name={name}
           ref={ref}
-          accept={type==='file'?"image/*":null}
+          accept={acceptedFormats}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
