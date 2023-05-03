@@ -213,6 +213,7 @@ const Chat = () => {
               <Input
                 type="file"
                 name="messageImage"
+                newMessageInput={true}
                 onChange={handleInputFileChange}
                 className="invisibleFileInput"
                 width={0}
