@@ -35,12 +35,14 @@ export const addNewMessage = async (req, resp, next) => {
   
   let newMessage = null;
   const { body } = req;
-
+  let fileType = req.file.mimetype.includes('video')?'video':'image'
+  const folder = fileType == 'video'?'chat-videos':'chat-images'
+  
   try {
     if (req?.file?.path) {
-      const data = await uploadToCloudinary(req.file, "chat-images",next);
+      const data = await uploadToCloudinary(req.file, folder,next);
       
-      if(!req.file.mimetype.includes('video')){
+      if(fileType == 'image'){
         const { base64 } = await getPlaiceholder(data.url);
         data.base64 = base64;
       } 
