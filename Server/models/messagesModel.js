@@ -43,7 +43,8 @@ export const MessageSchema = new Schema({
     image:{
          url:{type:String},
          cloudinary_id:{type:String},
-         base64:{type:String}},
+         base64:{type:String},
+         video:{type:Boolean}},
     likes:[userRef],   
     seen:[{user:userRef,createdAt:{type:String,default:createdAt}}]
 },
