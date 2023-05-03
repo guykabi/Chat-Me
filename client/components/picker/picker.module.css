@@ -1,6 +1,7 @@
 .pickedItemsWrapper{
     position: relative;
     max-width: 22rem;
+    width: 100%;
     display: flex;
     flex-direction: row;
     margin: 0 auto;
