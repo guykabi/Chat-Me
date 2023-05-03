@@ -32,16 +32,19 @@ export const getMessageByConId = async (req, resp, next) => {
 
 
 export const addNewMessage = async (req, resp, next) => {
+  
   let newMessage = null;
   const { body } = req;
 
   try {
     if (req?.file?.path) {
-      const data = await uploadToCloudinary(req.file.path, "chat-images",next);
-      const { base64 } = await getPlaiceholder(data.url);
+      const data = await uploadToCloudinary(req.file, "chat-images",next);
+      
+      if(!req.file.mimetype.includes('video')){
+        const { base64 } = await getPlaiceholder(data.url);
+        data.base64 = base64;
+      } 
       const newBody = { ...body };
-
-      data.base64 = base64;
       newBody.image = data;
 
       newMessage = new Message(newBody);
@@ -59,7 +62,8 @@ export const addNewMessage = async (req, resp, next) => {
     if (req?.file?.path) {
       
       //If message is an image, add to the conversation's media
-      await Conversation.updateOne(newMessage.conversation, {
+      await Conversation.updateOne(
+        { _id: newMessage.conversation }, {
         $set: { lastActive: new Date() },
         $push: { media: savedMessage._id },
       });
@@ -111,6 +115,7 @@ export const forwardMessage = async (req, resp, next) => {
 
       allForwardMessages.push(savedMessage)
     }))
+    
     resp.status(200).json({
       message:'New message just added',
       data: allForwardMessages,
