@@ -8,7 +8,7 @@
 
 .userPageWrapper::before{   
         content: "";
-        background-image: url('/images/detils-bg.webp');
+        background-image: url('/images/details-bg.webp');
         position: absolute;
         top: 0px;
         right: 0px;
