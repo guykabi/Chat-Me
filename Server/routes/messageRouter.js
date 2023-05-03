@@ -14,7 +14,7 @@ import {
 
 router
 .get('/:conversation',Auth,getMessageByConId)  
-.post('/',Auth,upload.single('messageImage'),addNewMessage)
+.post('/',Auth,upload.single('messageFile'),addNewMessage)
 .post('/forward-message',Auth,forwardMessage)
 .patch('/seen/:id',handleSeenMessage)
 .patch('/like-message/:id',Auth,likeMessage)

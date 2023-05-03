@@ -212,7 +212,7 @@ const Chat = () => {
               <FiCamera onClick={handleInputFileClick} />
               <Input
                 type="file"
-                name="messageImage"
+                name="messageFile"
                 newMessageInput={true}
                 onChange={handleInputFileChange}
                 className="invisibleFileInput"

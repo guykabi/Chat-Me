@@ -30,7 +30,7 @@ const FileForm = ({ file, onFile, loading }) => {
       for (const [key, value] of Object.entries(messageObj)) {
         data.append([key], value);
       }
-      data.append("messageImage", file);
+      data.append("messageFile", file);
       onFile({ message: "File", data });
     }
   };
