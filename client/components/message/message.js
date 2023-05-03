@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { chatContext } from "../../context/chatContext";
 import styles from "./message.module.css";
-import { getMessageTime, searchPastMember, handleFilterCons } from "../../utils/utils";
+import { getMessageTime, searchPastMember } from "../../utils/utils";
 import useClickOutSide from "../../hooks/useClickOutside";
 import { useMutation } from "react-query";
 import {useErrorBoundary} from 'react-error-boundary'
@@ -17,11 +17,11 @@ import MessageOperations from "./messageOperation/messageOperations";
 import { FcLike } from "react-icons/fc";
 import { AiOutlineDown } from "react-icons/ai";
 import Image from "next/image";
+import Video from "../UI/video/video";
 import Modal from "../Modal/modal";
 import GroupPerson from "../group-person/groupPerson";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import Picker from "../picker/picker";
-import {Loader} from '../UI/clipLoader/clipLoader'
 
   const Message = forwardRef(({ message, own }, ref) => {
   const { currentChat, currentUser, Socket } = useContext(chatContext);
@@ -31,7 +31,6 @@ import {Loader} from '../UI/clipLoader/clipLoader'
   const [showImage, setShowImage] = useState(false);
   const [showForward, setShowForward] = useState(false);
   const [toggleDetailsMenu, setToggleDetailsMenu] = useState(true);
-  const [isControls,setIsControls]=useState(false)
   const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const allUsers = useGetCacheQuery("users");
   const conversations = useGetCacheQuery("conversations");
@@ -109,7 +108,6 @@ import {Loader} from '../UI/clipLoader/clipLoader'
 
   const onShowImageModalClose = () =>{
     setShowImage(false)
-    setIsControls(false)
   }
 
   const messageDetails = (
@@ -162,7 +160,9 @@ import {Loader} from '../UI/clipLoader/clipLoader'
 
 
   const image = (
-      <Image
+    message?.image?.video?  
+      <Video video={message.image.url} openVideo={showImage}/>
+      :<Image
       fill
       sizes="(max-width: 368px) 100vw,
               (max-width: 300px) 50vw,33vw"
@@ -187,7 +187,7 @@ import {Loader} from '../UI/clipLoader/clipLoader'
                   </div>
                   {message?.image ? (
                     <div
-                      className={styles.dropMenuSignImage}
+                      className={own?styles.dropMenuSignImage:styles.dropMenuSignOtherImage}
                       onClick={handleMessageOperationMenu}
                     >
                       <AiOutlineDown />
