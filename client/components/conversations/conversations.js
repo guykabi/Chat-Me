@@ -171,7 +171,7 @@ const Conversations = ({ sortBy }) => {
           </section>
         ) : (
           <section className={styles.allConversationsWrapper}>
-            {memoCons.length ? memoCons : <h3>No conversations yet!</h3>}
+            {memoCons.length ? memoCons : <h3>No conversations!</h3>}
           </section>
         )}
       </div>
