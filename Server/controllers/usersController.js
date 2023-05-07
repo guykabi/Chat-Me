@@ -254,7 +254,7 @@ export const updateUser = async(req,resp,next) => {
 try{
 
   if(req?.file?.path){
-    const data = await uploadToCloudinary(req.file.path,'user-images',next)
+    const data = await uploadToCloudinary(req.file,'user-images',next)
     const { base64 } = await getPlaiceholder(data.url);
     const newBody = {...body} 
 
