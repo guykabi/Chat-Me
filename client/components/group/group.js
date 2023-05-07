@@ -3,15 +3,25 @@ import styles from './group.module.css'
 import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import noAvatar from '../../public/images/no-avatar.png'
 import Image from 'next/image'
+import {getConversation} from '../../utils/apiUtils'
 import { chatContext } from '../../context/chatContext'
+import {useQuery} from 'react-query'
 
 const Group = ({group,onPick}) => {
    
-const {dispatch,currentUser} = useContext(chatContext)
+const {dispatch,currentUser} = useContext(chatContext) 
+
+const {refetch:getChatData} = useQuery('conversation',
+  ()=>getConversation(group._id,currentUser._id,true),{
+    onSuccess:({conversation})=>{
+        dispatch({type:'CURRENT_CHAT',payload:conversation})
+    },
+    enabled:false
+  })
 
 const handlePick = (e) =>{
   e.stopPropagation();
-  dispatch({type:'CURRENT_CHAT',payload:group})
+  getChatData()
 } 
 
 const onGroupPick = (e) =>{
@@ -35,6 +45,8 @@ const getUserName = ()=> {
            height={70}
            style={{borderRadius:'50%',objectFit:'cover'}}
            src={group?.image?.url?group.image.url:noAvatarGroup}
+           placeholder={group?.image?.base64?'blur':'empty'}
+           blurDataURL={group?.image?.base64}
            alt={group.chatName}
           />:
           <Image
@@ -42,6 +54,8 @@ const getUserName = ()=> {
            height={70}
            style={{borderRadius:'50%',objectFit:'cover'}}
            src={group?.image?.url?group.image.url:noAvatar}
+           placeholder={group?.image?.base64?'blur':'empty'}
+           blurDataURL={group?.image?.base64}
            alt={getUserName()}
           />}
       </div>
