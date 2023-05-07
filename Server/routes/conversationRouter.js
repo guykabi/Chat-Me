@@ -5,6 +5,7 @@ const router = express.Router()
 
 
 import {
+      getSingleConversation,
       getAllConversations,
       addNewConversation,
       updateConversation,
@@ -15,6 +16,7 @@ import {
       deleteConversation} from '../controllers/conversationController.js'
 
 router
+.get('/single/:conId',Auth,getSingleConversation)
 .get('/:id',Auth,getAllConversations)
 .post('/',Auth,addNewConversation)
 .patch('/:id',Auth,upload.single("groupImage"),updateConversation)
