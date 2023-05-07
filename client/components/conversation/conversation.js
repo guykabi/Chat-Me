@@ -3,22 +3,35 @@ import Image from 'next/image'
 import noAvatar from '../../public/images/no-avatar.png'
 import noAvatarGroup from '../../public/images/no-avatarGroup.png'
 import styles from './conversation.module.css' 
+import { useErrorBoundary } from "react-error-boundary";
 import { chatContext } from '../../context/chatContext'
+import {useQuery} from 'react-query'
 import { handleSeenTime } from '../../utils/utils'
+import {getConversation} from '../../utils/apiUtils'
 
 
 const Conversation = ({con,newMessage}) => {
+  const { showBoundary } = useErrorBoundary();
   const [friend,setFriend]=useState(null)
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
   const [numsOfUnSeen,setNumOfUnseen]=useState()
   const [isCurrentOne,setIsCurrentOne]=useState(false)
+
+  const {refetch:fetchChatData} = useQuery(['conversation'],
+     ()=>getConversation(con._id,currentUser._id,true),{
+      onSuccess:({conversation})=>{
+      dispatch({type:'CURRENT_CHAT',payload:conversation})
+     },
+     onError: (error) => showBoundary(error),
+     enabled:false
+  })
+
   
 useEffect(()=>{
-  
   setNumOfUnseen(con.unSeen)
   //If not a group chat
   if(con.chatName)return
-  if(con?.friend)return setFriend(con.friend)
+  if(con?.friend) return setFriend(con.friend)
     let friend = con?.participants?.find(p=>p._id !== currentUser?._id)
     setFriend(friend)  
 },[con])
@@ -39,17 +52,9 @@ useEffect(()=>{
 },[currentChat])
 
 const selectedConversation = ()=>{
-  let conversation = {...con}
-
-  //If it's not a group chat!
-  if(!con.chatName){
-    //Adding a friend name field
-    conversation.friend = friend
-  }
-
   //Preventing from the same conversation to be picked again!
-  if(currentChat?._id === conversation._id) return
-  dispatch({type:'CURRENT_CHAT',payload:conversation})
+  if(currentChat?._id === con._id) return
+  fetchChatData()
 }
 
   return (
