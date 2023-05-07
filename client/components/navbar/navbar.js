@@ -31,7 +31,7 @@ const Navbar = () => {
     isLoading,
   } = useMutation(searchUser, {
     onSuccess: (data) => {
-      if (!data.length || data[0]._id === currentUser._id) {
+      if (!data.length) {
         setAllUsers(null);
         setNoUserFound(true);
         return;
@@ -84,7 +84,7 @@ const onSuccess = () => {
     }
 
     setIsSearching(true); //To show all the search results
-    let obj = { userName: searchedUser };
+    let obj = { userName: searchedUser, userId:currentUser._id };
     const timer = setTimeout(() => {
       search(obj);
     }, 400);
@@ -129,7 +129,7 @@ const onSuccess = () => {
 
     if (!searchedUser) return;
     setIsSearching(true);
-    let obj = { userName: searchedUser };
+    let obj = { userName: searchedUser, userId:currentUser._id };
     search(obj);
   };
 
