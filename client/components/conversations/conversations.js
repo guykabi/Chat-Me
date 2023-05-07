@@ -6,6 +6,8 @@ import { getConversations } from "../../utils/apiUtils";
 import {useErrorBoundary} from 'react-error-boundary'
 import { useQuery } from "react-query";
 import {handleFilterCons} from "../../utils/utils";
+import {Loader} from '../UI/clipLoader/clipLoader'
+
 
 const Conversations = ({ sortBy }) => {
   const { currentUser, currentChat, dispatch, Socket } =
@@ -14,7 +16,7 @@ const Conversations = ({ sortBy }) => {
   const {showBoundary} = useErrorBoundary()
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
-
+  
   const {isLoading, refetch } = useQuery(
     ["conversations"],
     () => getConversations(currentUser._id),
@@ -26,7 +28,7 @@ const Conversations = ({ sortBy }) => {
       staleTime: 2000,
     }
   );
-
+  
   useEffect(() => {
     Socket.removeAllListeners("background-message");
     Socket?.on("background-message", (message) => {
@@ -163,9 +165,10 @@ const Conversations = ({ sortBy }) => {
           />
         </div>
         {isLoading ? (
-          <title>
-            <strong>Loading conversations...</strong>
-          </title>
+          <section>
+            <strong><h3>Loading conversations...</h3></strong>
+            <Loader size={30}/>
+          </section>
         ) : (
           <section className={styles.allConversationsWrapper}>
             {memoCons.length ? memoCons : <h3>No conversations yet!</h3>}
