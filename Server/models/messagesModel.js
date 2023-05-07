@@ -54,5 +54,4 @@ export const MessageSchema = new Schema({
 
 export const User = model('users',UserSchema)
 export const Message = model('messages',MessageSchema) 
-model('conversations',ConversationSchema)
 
