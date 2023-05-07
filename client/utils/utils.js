@@ -175,7 +175,7 @@ export const handleDateDividing = (messages,example=null) =>{
 }
 
 
-//Inserting demy message to indicate to mark the position of unseen messages
+//Inserting demy message to mark the position of unseen messages
 export const handleUnSeenMessages = (messages,index) =>{
       let messagesWithUnSeen = [...messages]
       let unSeenLine = {} 
