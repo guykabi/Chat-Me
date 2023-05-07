@@ -11,6 +11,16 @@ export const getConversations = async (userId)=>{
   return res
 } 
 
+export const getConversation = async (conId,userId,partialDetails=null)=>{
+  const {data:res} = await Axios('conversation/single/'+conId,{
+    headers:{
+      'userid':userId,
+      //Partial data only for messages presentation
+      'partialDetails':partialDetails
+    }
+  })
+  return res
+} 
 
 export const getUserDetails = async (userId)=>{
   const {data:res} = await Axios('users/'+userId)
