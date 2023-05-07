@@ -42,7 +42,14 @@ const Messenger = ({ hasError, user }) => {
     refetch()
   }, [data, currentUser]); 
 
- 
+  
+  useEffect(()=>{
+    //Handling socket connection error
+    if(!Socket)return
+    Socket.on('connect_error',err=>{
+     showBoundary(err)
+    })
+ },[Socket])
   
   const handleOpenCreateGroup = () => {
     setOpenCreateGroup(true);
