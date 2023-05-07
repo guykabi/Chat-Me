@@ -8,8 +8,10 @@ export const chatReducer = (state,action)=>{
     switch (action.type){
         case 'CURRENT_USER':
             return {...state,currentUser:action.payload}  
+
         case 'CURRENT_CHAT':
             return {...state,currentChat:action.payload} 
+
         case 'SOCKET':
             return {...state,Socket:action.payload} 
         default :
