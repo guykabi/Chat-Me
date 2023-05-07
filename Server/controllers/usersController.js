@@ -74,6 +74,7 @@ export const searchUser = async (req, resp, next) => {
   try {
     //Search for any username - without case sensitivity
     let user = await User.find({
+      _id:{$ne:body.userId},
       name: { $regex: `${body.userName}`, $options: "i" },
     }).select("-password -notifications -__v");
 
