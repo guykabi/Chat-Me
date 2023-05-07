@@ -1,25 +1,14 @@
 import React, {
-  useContext,
-  useEffect,
-  useRef,
-  memo,
-  useState,
-  useMemo,
+  useContext,useEffect,useRef,
+  memo,useState,useMemo,
 } from "react";
 import { useErrorBoundary } from "react-error-boundary";
-import {
-  handleUnSeenMessages,
-  handleDateDividing,
-} from "../../utils/utils";
+import {handleUnSeenMessages,handleDateDividing,} from "../../utils/utils";
 import styles from "./messages.module.css";
 import Message from "../message/message";
 import { chatContext } from "../../context/chatContext";
 import { useMutation, useQuery } from "react-query";
-import {
-  getMessages,
-  deleteConversation,
-  addGroupMember,
-} from "../../utils/apiUtils";
+import {getMessages,deleteConversation,addGroupMember} from "../../utils/apiUtils";
 import Day from "./Day/day";
 import {format} from 'date-fns'
 
@@ -40,16 +29,15 @@ const Messages = ({ messages }) => {
     removeLine: false,
   });
 
-  const { refetch: loadMore } = useQuery(
-    ["more-messages"],
+  const { refetch: loadMore } = useQuery(["more-messages"],
     () => getMessages(currentChat?._id, amountToSkip, limitOfMessages),
     {
       onSuccess: (data) => {
         if (!data.length) return;
         let reverseMessages = handleDateDividing(
-          data,
-          allMessages[0].createdAt
-        );
+          data,allMessages[0].createdAt
+          );
+
         if (isOverTwentyUnSeen.loadMore) {
           //Only onmount, if chat has more than 20 unseen messages
           //Place the line of unseen on the correct index
@@ -104,8 +92,8 @@ const Messages = ({ messages }) => {
     }
 
     if (isUnseenMessages) setIsUnSeenMessages(false);
-
-    if (currentChat?.unSeen < 1) setAllMessages(messages);
+    
+    if (currentChat?.unSeen < 1 || !currentChat?.unSeen) setAllMessages(messages);
 
     //Removing the dates types messages - checks pure messages length
     if (messages.filter((m) => !m?.type).length === 30) setIsMoreMessages(true);
@@ -147,7 +135,7 @@ const Messages = ({ messages }) => {
 
   
     //When more messages are fetched, keeps the same position of view
-    //Preventing from getting in on mount/first render of messages / new message enter
+    //Preventing from getting in onmount/first render of messages / new message enter
     if (!allMessages || allMessages?.length < 31 || !scrollHeight) return;
     let position = windowRef.current.scrollHeight - scrollHeight;
     windowRef.current.scrollTo({ top: position, left: 0, behavior: "auto" });
@@ -157,6 +145,7 @@ const Messages = ({ messages }) => {
 
   useEffect(() => {
     Socket.on("recieve-message", ({ message }) => {
+      
       if (message?.conversation?._id !== currentChat._id) return;
 
       if (allMessages.some((m) => m._id === message._id)) {
@@ -205,6 +194,7 @@ const Messages = ({ messages }) => {
         if (isUnseenMessages) setIsUnSeenMessages(false);
         if (isOverTwentyUnSeen.removeLine)
           setIsOverTwentyUnSeen({ ...isOverTwentyUnSeen, removeLine: false });
+
       } else {
         let nonDates = allMessages.filter((m) => !m?.type);
         let lastMsg = nonDates[nonDates.length - 1]?.createdAt;
@@ -226,8 +216,8 @@ const Messages = ({ messages }) => {
       new Audio("/assets/notifySound.mp3").play();
 
       //In order to avoid messages duplication -
-      //increasing the amount of documnets that need  to skip
-      //on when new message is added
+      //increasing the amount of documnets that need to be skiped
+      //when new message is added
       if (allMessages.length >= 30) {
         setAmountToSkip((prev) => (prev += 1));
       }
@@ -241,6 +231,7 @@ const Messages = ({ messages }) => {
     });
 
     return () => Socket.off("recieve-message");
+
   }, [Socket, currentChat, newChatToDelete, allMessages]);
 
   useEffect(() => {
