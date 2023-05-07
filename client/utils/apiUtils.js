@@ -80,9 +80,8 @@ export const sendNewMessage =async (message)=>{
   return res
 }
 
-export const searchUser =async (username) =>{
-  
-  const {data:res} = await Axios.post('users/search-user',username)
+export const searchUser =async (body) =>{
+  const {data:res} = await Axios.post('users/search-user',body)
   return res
 }
 
