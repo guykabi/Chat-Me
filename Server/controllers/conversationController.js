@@ -6,26 +6,70 @@ import {getPlaiceholder} from 'plaiceholder'
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -__v";
 
+
+  export const getSingleConversation =async (req,resp,next) =>{
+    const {conId} = req.params
+    const userId = req.headers.userid
+    const partialDetails = req.headers?.partialdetails
+    
+     try{
+       let conversation = await Conversation.findById(conId)
+       .populate({ path: "participants",select: excludeFields })
+       .populate({ path: "manager", select: `${excludeFields} -image` })
+      
+        let newCon = {...conversation._doc}
+        
+        let count = await Message.count({
+          conversation: conversation._id,
+          sender: { $ne: userId },"seen.user": { $ne: userId }
+        })
+        if(!newCon.chatName) newCon.friend = newCon.participants.find(f=> f._id != userId)
+        newCon.unSeen = count
+        
+        
+        if(partialDetails !== undefined){
+          delete newCon.media
+          return resp.status(200).json({conversation:newCon})
+        }
+     
+        await conversation.populate({ path: "media", select:'-likes -seen'});
+           
+        //Adding joints groups field (to privates chats only!)
+        if(!newCon.chatName){
+          let jointGroups = await Conversation.find({
+              chatName:{$exists:true},
+              participants: { $all: [userId,newCon.friend._id] }
+              })
+              .select('_id chatName image')
+              newCon.jointGroups = jointGroups
+          }
+          
+          resp.status(200).json({conversation:newCon})
+     }catch(err){
+      next(err)
+    }
+  }
+
   export const getAllConversations = async (req, resp, next) => {
   const { id } = req.params;
+ 
   try {
-    let allConversations = await Conversation.find({
-      participants: { $in: { _id: id } },
+    const allConversations = await Conversation.find({
+      participants: { $in: { _id: id } }
     })
-      .sort({ lastActive: -1 })
-      .populate({ path: "participants", select: excludeFields })
-      .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "media"});
-
+    .sort({ lastActive: -1 }).select('-manager -media')
+    .populate({ path: 'participants',select: excludeFields})
+     
+      //Counts unseen messages of each conversation
       let all = await Promise.all(
       allConversations.map(async (con) => {
         let newCon = { ...con._doc };
-        let temp = await Message.count({
-          conversation: con._id,
-          sender: { $ne: id },
-          "seen.user": { $ne: id },
-        });
-        newCon.unSeen = temp;
+
+        let count = await Message.count({
+        conversation: con._id,sender: { $ne: id },"seen.user": { $ne: id }});
+
+        if(con.chatName) delete newCon.participants
+        newCon.unSeen = count;
         return newCon;
       })
     );
@@ -79,7 +123,7 @@ export const updateConversation = async (req, resp, next) => {
 
   try {
     if (req?.file?.path) {
-      const data = await uploadToCloudinary(req.file.path, "group-images",next);
+      const data = await uploadToCloudinary(req.file, "group-images",next);
       const {base64} = await getPlaiceholder(data.url)
       
       const newBody = {...body}
@@ -97,7 +141,8 @@ export const updateConversation = async (req, resp, next) => {
         { new: true }
       )
         .populate({ path: "manager", select: excludeFields })
-        .populate({ path: "participants", select: excludeFields });
+        .populate({ path: "participants", select: excludeFields })
+        .populate({ path: "media", select:'-likes -seen'});
        
         return resp
         .status(200)
@@ -110,7 +155,8 @@ export const updateConversation = async (req, resp, next) => {
       { new: true }
     )
       .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "participants", select: excludeFields });
+      .populate({ path: "participants", select: excludeFields })
+      .populate({ path: "media", select:'-likes -seen'});
 
       resp
       .status(200)
@@ -218,3 +264,6 @@ export const deleteConversation = async (req, resp, next) => {
     next(err);
   }
 };
+
+
+
