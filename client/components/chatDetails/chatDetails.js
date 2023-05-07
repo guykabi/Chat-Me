@@ -1,14 +1,9 @@
 import React, {
-  useContext,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+  useContext,useState,
+  useMemo,useCallback,useEffect,useRef} from "react";
 import styles from "./chatDetails.module.css";
 import Image from "next/image";
-import { handleSeenTime } from "../../utils/utils";
+import Video from "../UI/video/video";
 import { useErrorBoundary } from "react-error-boundary";
 import noAvatar from "../../public/images/no-avatar.png";
 import noAvatarGroup from "../../public/images/no-avatarGroup.png";
@@ -19,25 +14,21 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import GroupPerson from "../group-person/groupPerson";
 import Group from "../group/group";
+import MediaItem from "./mediaItem/mediaItem";
 import Button from "../UI/Button/button";
 import { useMutation } from "react-query";
 import Modal from "../Modal/modal";
 import { BsFillCameraFill } from "react-icons/bs";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import Picker from "../picker/picker";
-import {
-  updateConversation,
-  addGroupMember,
-  removeGroupMember,
-  addManager,
-  removeManager,
-} from "../../utils/apiUtils";
+import {Loader} from '../UI/clipLoader/clipLoader'
+import {updateConversation,addGroupMember,
+  removeGroupMember,addManager,removeManager} from "../../utils/apiUtils";
 
 const ChatDetails = ({ onReturn }) => {
-  const { currentChat, currentUser, Socket, dispatch } =
-    useContext(chatContext);
+  const { currentChat, currentUser, Socket, dispatch } = useContext(chatContext);
   const { showBoundary } = useErrorBoundary();
-  const [showModal, setShowModal] = useState(false);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isGroup, setIsGroup] = useState(false);
   const [chatMedia, setchatMedia] = useState(false);
@@ -46,15 +37,15 @@ const ChatDetails = ({ onReturn }) => {
   const [file, setFile] = useState(null);
   const [addMemberErrorText, setAddMemberErrorText] = useState(null);
   const fileRef = useRef(null);
-  const conversations = useGetCacheQuery("conversations");
   const users = useGetCacheQuery("users");
 
-  ////////////API calls - reactQuery/////////////
+  //-------------API calls - ReactQuery--------------//
 
-  const { mutate: update } = useMutation(updateConversation, {
+  const { mutate: update, isLoading:loadSubmit } = useMutation(updateConversation, {
     onSuccess: (data) => {
       if (data.message !== "Update") return;
       Socket.emit("new-conversation", data.conversation);
+      setFile(null)
       dispatch({ type: "CURRENT_CHAT", payload: data.conversation });
     },
     onError: (error) => showBoundary(error),
@@ -64,6 +55,7 @@ const ChatDetails = ({ onReturn }) => {
     onSuccess: ({ message, conversation }) => {
       if (message !== "Member added") return;
       Socket.emit("new-conversation", conversation);
+      setShowAddMemberModal(false)
       dispatch({ type: "CURRENT_CHAT", payload: conversation });
     },
     onError: (error) => {
@@ -111,12 +103,12 @@ const ChatDetails = ({ onReturn }) => {
   }, []);
 
   const handleOpenAddMembers = () => {
-    if (allUsers.length) return setShowModal(true);
+    if (allUsers.length) return setShowAddMemberModal(true);
 
     let chatMembersIds = currentChat.participants.map((p) => p._id);
     let filteredData = users.filter((u) => !chatMembersIds.includes(u._id));
     setAllUsers(filteredData);
-    setShowModal(true);
+    setShowAddMemberModal(true);
   };
 
   const { handleSubmit, handleBlur, handleChange, touched, errors, dirty } =
@@ -134,7 +126,7 @@ const ChatDetails = ({ onReturn }) => {
 
           if (currentChat?.image?.url)
             formData.append("removeImage", currentChat.image.cloudinary_id);
-          formData.append("groupImage", file);
+            formData.append("groupImage", file);
 
           return update({ conId: currentChat._id, body: formData });
         }
@@ -150,11 +142,10 @@ const ChatDetails = ({ onReturn }) => {
     setFile(e.target.files[0]);
     const objectUrl = URL.createObjectURL(e.target.files[0]);
     setPreview(objectUrl);
-    //setIsChanged(true);
   };
 
   const handleAddMembersModalClose = () => {
-    setShowModal(false);
+    setShowAddMemberModal(false);
   };
 
   const closeImagePreviewModal = () => {
@@ -166,9 +157,7 @@ const ChatDetails = ({ onReturn }) => {
     (e) => {
       let obj = { participants: e };
       addMember({ conId: currentChat._id, obj });
-    },
-    [currentChat]
-  );
+  },[currentChat]);
 
   const handleMemberRemoval = useCallback(
     (e) => {
@@ -204,16 +193,14 @@ const ChatDetails = ({ onReturn }) => {
       let obj = { manager: e };
       setManager({ conId: currentChat._id, obj });
     },
-    [currentChat]
-  );
+    [currentChat]);
 
   const handleManagerRemoval = useCallback(
     (e) => {
       let obj = { manager: e };
       managerRemoval({ conId: currentChat._id, obj });
     },
-    [currentChat]
-  );
+    [currentChat]);
 
   const handleInputFileClick = (e) => {
     fileRef.current.click();
@@ -223,14 +210,11 @@ const ChatDetails = ({ onReturn }) => {
     if (currentChat?.chatName) {
       return currentChat.participants;
     }
-    if (!currentChat?.chatName) {
-      return conversations;
-    }
-  }, [currentChat, conversations]);
+  }, [currentChat]);
 
   let groupMembers;
   if (currentChat?.chatName) {
-    groupMembers = memoItems.map((user) => (
+    groupMembers = memoItems?.map((user) => (
       <GroupPerson
         key={user._id}
         user={user}
@@ -243,14 +227,9 @@ const ChatDetails = ({ onReturn }) => {
   }
 
   let jointGroups;
-  if (!currentChat?.chatName) {
-    jointGroups = memoItems
-      .filter(
-        (c) =>
-          c.chatName &&
-          c.participants.some((p) => p._id === currentChat?.friend?._id)
-      )
-      .map((con) => <Group key={con._id} group={con} />);
+  if (currentChat?.friend) {
+    jointGroups = currentChat?.jointGroups
+    ?.map((con) => <Group key={con._id} group={con} />);
   }
 
   return (
@@ -261,9 +240,9 @@ const ChatDetails = ({ onReturn }) => {
           <form onSubmit={handleSubmit}>
             <section className={styles.saveChangesBtn}>
               <Button
-                width="4"
+                width="6"
                 height="10"
-                text="Save"
+                text={loadSubmit?<Loader size={12}/>:"Save"}
                 className="secondaryBtn"
                 type="submit"
                 disabled={!file && !dirty}
@@ -305,7 +284,7 @@ const ChatDetails = ({ onReturn }) => {
                     borderRadius: "50%",
                     marginTop: "10%",
                   }}
-                  alt={currentChat.chatName}
+                  alt={currentChat?.chatName}
                 />
               </section>
               <section className={styles.chooseImageWrapper}>
@@ -366,7 +345,7 @@ const ChatDetails = ({ onReturn }) => {
       </section>
 
       {!chatMedia ? (
-        <section className={styles.chatMainContent}>
+        <main className={styles.chatMainContent}>
           {isGroup ? (
             <>
               <section className={styles.groupMembers}>{groupMembers}</section>
@@ -405,39 +384,24 @@ const ChatDetails = ({ onReturn }) => {
               </section>
             </>
           )}
-        </section>
+        </main>
       ) : (
-        <section className={styles.chatMedia}>
-          {currentChat.media.length ? (
-            <main className={styles.mainMediaWrapper}>
-              {currentChat?.media?.map((item, index) => (
-                <div
-                  key={index}
-                  className={styles.mediaItem}
-                  onClick={() => setMediaImage(item.image.url)}
-                >
-                  <section className={styles.timeOfMedia}>
-                    {handleSeenTime(item.createdAt)}
-                  </section>
-                  <Image
-                    fill
-                    placeholder={item.image ? "blur" : "empty"}
-                    blurDataURL={item.image.base64}
-                    src={item.image.url}
-                    alt="media-image"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
+        <main className={styles.chatMedia}>
+          {currentChat?.media?.length ? (
+            <section className={styles.mainMediaWrapper}>
+              {currentChat?.media?.map(item => (
+                <MediaItem 
+                key={item._id} 
+                item={item} 
+                onPick={(e)=>setMediaImage(e)} />
               ))}
-            </main>
+            </section>
           ) : (
             <h3>No media yet</h3>
           )}
-        </section>
+        </main>
       )}
-
+      
       <Modal show={preview} onClose={closeImagePreviewModal}>
         <section className={styles.imagePreview} aria-label="preview-image">
           <Image
@@ -458,7 +422,7 @@ const ChatDetails = ({ onReturn }) => {
       </Modal>
 
       <Modal
-        show={showModal}
+        show={showAddMemberModal}
         onClose={handleAddMembersModalClose}
         isError={addMemberErrorText}
       >
@@ -478,16 +442,19 @@ const ChatDetails = ({ onReturn }) => {
           className={styles.presentChatMedia}
           aria-label="image from chat media"
         >
+          {mediaImage?.video?
+          <Video video={mediaImage?.url} openVideo={true}/>:
           <Image
             fill
-            src={mediaImage}
+            src={mediaImage?.url}
             alt="media-image"
             style={{
               objectFit: "contain",
             }}
-          />
+          />}
         </section>
       </Modal>
+
     </main>
   );
 };
