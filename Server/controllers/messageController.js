@@ -35,11 +35,11 @@ export const addNewMessage = async (req, resp, next) => {
   
   let newMessage = null;
   const { body } = req;
-  let fileType = req.file.mimetype.includes('video')?'video':'image'
-  const folder = fileType == 'video'?'chat-videos':'chat-images'
+  let fileType = req?.file?.mimetype.includes('video')?'video':'image'
   
   try {
     if (req?.file?.path) {
+      const folder = fileType == 'video'?'chat-videos':'chat-images'
       const data = await uploadToCloudinary(req.file, folder,next);
       
       if(fileType == 'image'){
@@ -187,8 +187,12 @@ export const deleteMessage = async (req, resp, next) => {
       path: "conversation",
       select: "_id",
     });
-
+    
     if (deleted?.image?.url) {
+        //Removing file from the chat media + cloudinary
+        await Conversation.findByIdAndUpdate({_id:deleted.conversation._id},{
+        $pull:{media:deleted._id}
+      })
       await removeFromCloudinary(deleted.image.cloudinary_id);
     }
 
