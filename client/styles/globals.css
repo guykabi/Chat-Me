@@ -7,6 +7,7 @@ body {
     max-height: 100%;
     box-sizing: border-box;
     overflow-y: hidden;
+    font-size: 17px;
   }   
 
 input::placeholder{
