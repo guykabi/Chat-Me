@@ -25,13 +25,16 @@ const Messenger = ({ hasError, user }) => {
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [isSorted,setIsSorted]=useState(true) 
  
-  const {refetch,error:usersError} = useQuery(['users'],getAllusers,{
+  const {refetch} = useQuery(['users'],getAllusers,{
     //For later use - example => identify user that left group
     //Only fetching once 
+    onError:error=>{
+      showBoundary(error)
+    },
     enabled:false,
     refetchOnWindowFocus:false
   })
-
+ 
   useEffect(() => {
     if (!currentUser && data) {
       dispatch({ type: "CURRENT_USER", payload: data });
@@ -70,7 +73,7 @@ const Messenger = ({ hasError, user }) => {
     )
   }
 
-  if (hasError || error || usersError) {  
+  if (hasError || error) {  
        showBoundary()
   }
 
