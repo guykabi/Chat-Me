@@ -66,3 +66,11 @@
 .forwardToBtn:hover{
   transform: scale(1.2);
 }
+
+.pickerLoading{
+  margin: 0 auto;
+  text-align: center;
+  align-items: center;
+  width: 10rem;
+  padding: 1rem;
+}
