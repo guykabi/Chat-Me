@@ -159,6 +159,7 @@ const Login = () => {
                 className="primaryBtn"
                 width={12}
                 height={25}
+                disabled={userName}
               />
               <Button
                 text="Home"
@@ -166,6 +167,7 @@ const Login = () => {
                 width={12}
                 height={25}
                 onClick={() => push("/")}
+                disabled={userName}
               />
             </section>
           </form>
