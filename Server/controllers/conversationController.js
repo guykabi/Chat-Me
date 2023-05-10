@@ -127,7 +127,7 @@ export const updateConversation = async (req, resp, next) => {
       const {base64} = await getPlaiceholder(data.url)
       
       const newBody = {...body}
-      newBody.chatName = body.chatName
+      if(body?.chatName)newBody.chatName = body.chatName
       data.base64 = base64
       newBody.image = data
 
