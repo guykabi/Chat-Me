@@ -137,8 +137,7 @@ const UserPage = ({ user, hasError }) => {
                     src={data?.image?.url ? data.image.url : noAvatar}
                     alt="user-image"
                     style={{ objectFit: "cover", borderRadius: "50%" }}
-                    sizes="(max-width: 368px) 100vw,
-                           (max-width: 300px) 50vw,33vw"
+                    sizes="(max-width: 368px) 100vw"
                     placeholder={data?.image?.base64 ? "blur" : "empty"}
                     blurDataURL={data?.image?.base64}
                   />
