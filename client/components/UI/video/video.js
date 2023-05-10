@@ -13,7 +13,7 @@ const Video = ({video,openVideo,preview}) => {
       {finishedLoad&&
       !preview&&!openVideo?
       <span className={styles.playSign}>
-        <BsFillPlayCircleFill/>
+        <BsFillPlayCircleFill size={40}/>
       </span>:null}
 
       {!finishedLoad&&
