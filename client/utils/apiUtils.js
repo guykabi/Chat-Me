@@ -181,7 +181,7 @@ export const handleDeleteMessage = async (messageId) =>{
   return res
 } 
 
-export const handleForwardMessage = async ({receivers,fixedMessage}) =>{
-   const {data:res} = await Axios.post('messages/forward-message',{receivers,message:fixedMessage})
+export const handleForwardMessage = async ({receivers,forwardMessage}) =>{
+   const {data:res} = await Axios.post('messages/forward-message',{receivers,message:forwardMessage})
    return res
 } 
