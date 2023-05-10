@@ -8,8 +8,9 @@ cloudinary.config({
 
 export const uploadToCloudinary = async (file, folder, next) => {
   try {
-    if (file.mimetype.includes("video")) {
-      if (file.size / (1024 * 1024) >= 60) {
+    if (folder === 'chat-videos') { 
+      //Just for new files not forward ones!
+      if (file?.size / (1024 * 1024) >= 60) {
         //Heavy video - over 60MB
         const data = await cloudinary.v2.uploader.upload_large(file.path, {
           resource_type: "video",
@@ -17,13 +18,15 @@ export const uploadToCloudinary = async (file, folder, next) => {
         });
         return { url: data.url, cloudinary_id: data.public_id, video: true };
       }
-      const data = await cloudinary.v2.uploader.upload(file.path, {
+      
+      const data = await cloudinary.v2.uploader.upload(file?.path || file, {
         resource_type: "video",
         folder,
       });
       return { url: data.url, cloudinary_id: data.public_id, video: true };
     }
-    const data = await cloudinary.v2.uploader.upload(file.path, { folder });
+    
+    const data = await cloudinary.v2.uploader.upload(file?.path||file, { folder });
     return { url: data.url, cloudinary_id: data.public_id };
   } catch (err) {
     next(err);
