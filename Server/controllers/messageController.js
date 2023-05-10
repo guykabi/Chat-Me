@@ -35,14 +35,14 @@ export const addNewMessage = async (req, resp, next) => {
   
   let newMessage = null;
   const { body } = req;
-  let fileType = req?.file?.mimetype.includes('video')?'video':'image'
+  let fileType = req?.file?.mimetype.includes('video')
   
   try {
     if (req?.file?.path) {
-      const folder = fileType == 'video'?'chat-videos':'chat-images'
+      const folder = fileType?'chat-videos':'chat-images'
       const data = await uploadToCloudinary(req.file, folder,next);
       
-      if(fileType == 'image'){
+      if(!fileType){
         const { base64 } = await getPlaiceholder(data.url);
         data.base64 = base64;
       } 
@@ -61,9 +61,9 @@ export const addNewMessage = async (req, resp, next) => {
       select: excludeFields,
     });
 
-    if (req?.file?.path) {
-      
-      //If message is an image, add to the conversation's media
+    if (savedMessage?.image?.url) {
+    
+      //Updating last time conversation was active + add to the conversation's media
       await Conversation.updateOne(
         { _id: newMessage.conversation }, {
         $set: { lastActive: new Date() },
@@ -91,35 +91,49 @@ export const addNewMessage = async (req, resp, next) => {
 
 export const forwardMessage = async (req, resp, next) => {
   const {body} = req
+  let fileType = body?.message?.file?.includes('mp4')
+  const folder = fileType?'chat-videos':'chat-images'
   
   try{
     let allForwardMessages = []
     await Promise.all(body.receivers.slice(0,4).map(async (conversation)=>{
-       let newMessage = new Message(body.message);
-       newMessage.conversation = conversation
+
+      let newMessage = new Message(body.message);
+      newMessage.conversation = conversation
+        
+       //Stores each message's file to cloudinary
+       if(body?.message?.file){
+        const file = await uploadToCloudinary(body.message.file,folder,next);
+        if(!fileType){
+          //Only image gets base64 - blure placeholder
+          const { base64 } = await getPlaiceholder(file.url);
+          file.base64 = base64;
+        } 
+        newMessage.image = file
+       }
+
        await newMessage.save();
        
        let savedMessage = await newMessage.populate({
-        path: "conversation",
-        select: excludeFields
-      });
-
-       if(body.message?.image){
-       await Conversation.updateOne({_id:conversation}, {
-          $set: { lastActive: new Date() },
-          $push: { media: savedMessage._id },
-        });
+        path: "conversation",select: excludeFields});
+       
+       if(savedMessage?.message?.image){
+          //Adding to chat media
+          await Conversation.updateOne({_id:conversation}, {
+            $set: { lastActive: new Date() },
+            $push: { media: savedMessage._id },
+          });
        }else{
-        await Conversation.updateOne({_id:conversation}, {
-          $set: { lastActive: new Date() }
-        });
-       }
+          await Conversation.updateOne({_id:conversation}, {
+            $set: { lastActive: new Date() }
+          });
+        }
 
       allForwardMessages.push(savedMessage)
     }))
-    
+      
     resp.status(200).json({
-      message:'New message just added',
+      message:'Forward message succeeded',
       data: allForwardMessages,
       receivers:body.receivers})
     
