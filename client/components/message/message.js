@@ -41,9 +41,9 @@ import Picker from "../picker/picker";
     onError:error=>showBoundary(error)
   });
 
-  const { mutate: forward } = useMutation(handleForwardMessage, {
+  const { mutate: forward,isLoading } = useMutation(handleForwardMessage, {
     onSuccess: (data) => {
-      if (data.message !== "New message just added") return;
+      if (data.message !== "Forward message succeeded") return;
       setShowForward(false);
       Socket.emit("forward-message", data.data, data.receivers);
     },
@@ -95,14 +95,14 @@ import Picker from "../picker/picker";
   };
 
   const handleForward = (e) => {
-    let fixedMessage = {};
-    fixedMessage.text = message.text;
-    fixedMessage.sender = currentUser._id;
+    let forwardMessage = {};
+    forwardMessage.text = message.text;
+    forwardMessage.sender = currentUser._id;
     if (message?.image) {
-      fixedMessage.image = message.image;
+      forwardMessage.file = message.image.url;
     }
-
-    forward({ receivers: e, fixedMessage });
+     
+    forward({ receivers: e, forwardMessage });
   };
 
 
@@ -164,8 +164,7 @@ import Picker from "../picker/picker";
       <Video video={message.image.url} openVideo={showImage}/>
       :<Image
       fill
-      sizes="(max-width: 368px) 100vw,
-              (max-width: 300px) 50vw,33vw"
+      sizes="(max-width: 368px) 100vw"
       style={{ objectFit:showImage?"contain":"cover"}}
       placeholder={message.image?.base64?"blur":'empty'}
       blurDataURL={message?.image?.base64}
@@ -251,7 +250,10 @@ import Picker from "../picker/picker";
               )}
             </div>
           </main>
-          <Modal show={showModal} onClose={closeMessageDetailsModal} title="Message Details">
+          <Modal 
+          show={showModal} 
+          onClose={closeMessageDetailsModal} 
+          title="Message Details">
             {messageDetails}
           </Modal>
 
@@ -264,6 +266,7 @@ import Picker from "../picker/picker";
               items={conversations}
               type="cons"
               onFinalPick={handleForward}
+              isLoad={isLoading}
             />
           </Modal>
 
@@ -272,7 +275,9 @@ import Picker from "../picker/picker";
             onClose={onShowImageModalClose}
             isFileMessage={true}
           >
-            <div className={styles.modalImageMessage}>{image}</div>
+            <div className={styles.modalImageMessage}>
+              {image}
+            </div>
           </Modal>
         </article>
       ) : (
