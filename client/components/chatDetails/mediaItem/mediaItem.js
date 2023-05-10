@@ -18,8 +18,7 @@ const MediaItem = ({ item, onPick }) => {
           ) : (
             <Image
               fill
-              sizes="(max-width: 368px) 100vw,
-              (max-width: 300px) 50vw,33vw"
+              sizes="(max-width: 368px) 100vw"
               placeholder={item.image ? "blur" : "empty"}
               blurDataURL={item.image.base64}
               src={item.image.url}
