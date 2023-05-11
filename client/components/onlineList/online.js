@@ -9,33 +9,41 @@ const OnlineList = () => {
   const [onlineUsers,setOnlineUsers]=useState([])
   const {currentUser,Socket} = useContext(chatContext)
 
+useEffect(()=>{
+ //When messanger page reload for the first time
+ if(onlineUsers.length)return
+      Socket.emit('all-connected')
+},[])
+
 
  useEffect(()=>{
-  
+    
     Socket.removeAllListeners('getUsers')
     
     const handleGetUsersEvent = (users) =>{
-      
     
       let allOnLineUsers = users.filter(user=>user.userId !== currentUser._id)
       .map(u=>u.userId)
  
       let onlineFriends = currentUser.friends.
       filter(f=> allOnLineUsers.includes(f._id))
- 
+
       setOnlineUsers(onlineFriends)
    }
-
+   
    Socket.on('getUsers',handleGetUsersEvent)
-   
-   
-   //When a new friend added - add him (if he is connect) to the online list!
-   const handleNotifyEvent = ({users,message}) =>{
-  
+
+
+   //When a new friend added - add him (if he is connect) to the online list!    
+   const handleNotifyEvent = ({users,message,sender}) =>{
+     
     if(message !== 'The Friend approval has been done')return 
     
-    let allOnLinUsers = users?.map(u=>u._id)
-    let onlineFriends =  currentUser.friends
+    let allOnLinUsers = users?.
+    filter(f=>f.userId !== currentUser._id)
+    .map(u=>u.userId)
+    
+    let onlineFriends = currentUser?.friends
     ?.filter(f=> allOnLinUsers.includes(f._id))
     
     setOnlineUsers(onlineFriends)
@@ -47,11 +55,6 @@ const OnlineList = () => {
  },[Socket])
 
 
- //When messanger page reload for the first time (user redirected to the page)
- if(!onlineUsers.length){     
-        Socket.emit('all-connected')
-        Socket.removeAllListeners('all-connected')
- }
 
  useEffect(()=>{
   //When there is a change on the user's friends
