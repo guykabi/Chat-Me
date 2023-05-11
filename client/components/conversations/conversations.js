@@ -3,46 +3,46 @@ import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
 import { getConversations } from "../../utils/apiUtils";
-import {useErrorBoundary} from 'react-error-boundary'
+import { useErrorBoundary } from "react-error-boundary";
 import { useQuery } from "react-query";
-import {handleFilterCons} from "../../utils/utils";
-import {Loader} from '../UI/clipLoader/clipLoader'
-
+import { handleFilterCons } from "../../utils/utils";
+import { Loader } from "../UI/clipLoader/clipLoader";
 
 const Conversations = ({ sortBy }) => {
   const { currentUser, currentChat, dispatch, Socket } =
     useContext(chatContext);
   const [allConversations, setAllConversations] = useState([]);
-  const {showBoundary} = useErrorBoundary()
+  const { showBoundary } = useErrorBoundary();
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
-  
-  const {isLoading, refetch } = useQuery(
+
+  const { isLoading, refetch } = useQuery(
     ["conversations"],
     () => getConversations(currentUser._id),
     {
       onSuccess: (data) => {
         setAllConversations(data);
       },
-      onError:error=>showBoundary(error),
+      onError: (error) => showBoundary(error),
       staleTime: 2000,
     }
   );
-  
+
   useEffect(() => {
     Socket.removeAllListeners("background-message");
     Socket?.on("background-message", (message) => {
-      
       if (!allConversations.length) return;
 
       //Check if there is already such conversation
       let latestConversation = allConversations?.find(
         (con) => con._id === message.conversation._id
       );
-      
+
       //For adding to the counter of unseen messages
-      if (message.conversation._id !== currentChat?._id &&
-          message.sender !== currentUser._id) {
+      if (
+        message.conversation._id !== currentChat?._id &&
+        message.sender !== currentUser._id
+      ) {
         setIncomingMessage(message.conversation._id);
       }
 
@@ -101,8 +101,9 @@ const Conversations = ({ sortBy }) => {
         setAllConversations(updatedConversations);
         return;
       }
-      
-      if (!conversation.participants.find((p) => p._id === currentUser._id))return;
+
+      if (!conversation.participants.find((p) => p._id === currentUser._id))
+        return;
       setAllConversations((prev) => [conversation, ...prev]);
 
       if (
@@ -110,10 +111,9 @@ const Conversations = ({ sortBy }) => {
         conversation?.manager.find((m) => m._id === currentUser._id) ||
         conversation.participants[0]._id === currentUser._id
       ) {
-       
         dispatch({
           type: "CURRENT_CHAT",
-          payload:conversation,
+          payload: conversation,
         });
       }
     });
@@ -137,8 +137,6 @@ const Conversations = ({ sortBy }) => {
     //Return to sort by date/last active
     refetch();
   }, [sortBy]);
-
-
 
   const filteredConversations = useMemo(
     () => handleFilterCons(allConversations, query),
@@ -166,8 +164,10 @@ const Conversations = ({ sortBy }) => {
         </div>
         {isLoading ? (
           <section>
-            <strong><h3>Loading conversations...</h3></strong>
-            <Loader size={30}/>
+            <strong>
+              <h3>Loading conversations...</h3>
+            </strong>
+            <Loader size={30} />
           </section>
         ) : (
           <section className={styles.allConversationsWrapper}>
