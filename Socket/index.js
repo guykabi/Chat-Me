@@ -22,21 +22,19 @@ io.on('connection', socket=>{
 
     console.log(`User connected: ${socket.id}`)
    
-    
     //On user connect - add to the connected users
     socket.on("addUser",(userId)=>{
         
         let exists = getUser(userId)
-        let users = addUsers(userId,socket.id)
-        
-
-        //Checking if the socket exists - if not, emit the event!
+         //Checking if the socket exists
         if(exists)return
+
+        let users = addUsers(userId,socket.id)
         io.emit('getUsers',users)
     })   
     
     socket.on('all-connected',()=>{
-       let allUsers =  getAllUsers()
+       let allUsers = getAllUsers()
        io.emit('getUsers',allUsers)
     })
 
@@ -47,12 +45,13 @@ io.on('connection', socket=>{
         if(message === 'The Friend approval has been done'){ 
             let users = getAllUsers()
             
-            io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message,users})
-            io.to(result?.socketId).emit('getUsers',users)
+            io.to(result?.socketId)
+            .emit('incoming-notification',{sender,reciever,message,users})
             return
         }
 
-        io.to(result?.socketId).emit('incoming-notification',{sender,reciever,message})            
+        io.to(result?.socketId)
+        .emit('incoming-notification',{sender,reciever,message})            
         
     }) 
 
