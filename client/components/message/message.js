@@ -27,7 +27,7 @@ import Picker from "../picker/picker";
   const { currentChat, currentUser, Socket } = useContext(chatContext);
   const {showBoundary} = useErrorBoundary()
   const [memeberName, setMemberName] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showMessageDetailsModal, setShowMessageDetailsModal] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const [showForward, setShowForward] = useState(false);
   const [toggleDetailsMenu, setToggleDetailsMenu] = useState(true);
@@ -65,7 +65,6 @@ import Picker from "../picker/picker";
       member?.name ? member.name : searchPastMember(message.sender, allUsers)
     ); 
 
-
   }, []);
 
   const handleMessageOperationMenu = () => {
@@ -73,12 +72,12 @@ import Picker from "../picker/picker";
   };
 
   const openDetailsModal = useCallback(() => {
-    setShowModal(true);
-  }, [showModal]);
+    setShowMessageDetailsModal(true);
+  }, [showMessageDetailsModal]);
 
   const closeMessageDetailsModal = () => {
     setToggleDetailsMenu(true);
-    setShowModal(false);
+    setShowMessageDetailsModal(false);
   };
 
   const openImage = (e) => {
@@ -251,7 +250,7 @@ import Picker from "../picker/picker";
             </div>
           </main>
           <Modal 
-          show={showModal} 
+          show={showMessageDetailsModal} 
           onClose={closeMessageDetailsModal} 
           title="Message Details">
             {messageDetails}
