@@ -66,6 +66,7 @@ export const excludeFieldsUserData = (userData) => {
   newData._id = userData._id;
   newData.name = userData.name;
   newData.lastName = userData.lastName;
+  newData.email = userData.email
   newData.image = userData.image;
 
   return newData;
