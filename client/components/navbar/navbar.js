@@ -1,11 +1,17 @@
-import React, { useState, useContext, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useContext,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
-import noAvatar from '../../public/images/no-avatar.png'
+import noAvatar from "../../public/images/no-avatar.png";
 import { push } from "next/router";
 import { logOut, searchUser } from "../../utils/apiUtils";
-import useClickOutSide from '../../hooks/useClickOutside'
-import {useErrorBoundary} from 'react-error-boundary'
+import useClickOutSide from "../../hooks/useClickOutside";
+import { useErrorBoundary } from "react-error-boundary";
 import { useQuery, useMutation } from "react-query";
 import { chatContext } from "../../context/chatContext";
 import Person from "../person/person";
@@ -16,7 +22,7 @@ import { useGetUser } from "../../hooks/useUser";
 
 const Navbar = () => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
-  const {showBoundary} = useErrorBoundary()
+  const { showBoundary } = useErrorBoundary();
   const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchedUser, setSearchedUser] = useState();
@@ -26,10 +32,7 @@ const Navbar = () => {
   const [numOfNotifications, setNumOfNotifications] = useState(0);
   const [openNotifications, setOpenNotifications] = useState(false);
 
-  const {
-    mutate: search,
-    isLoading,
-  } = useMutation(searchUser, {
+  const { mutate: search, isLoading } = useMutation(searchUser, {
     onSuccess: (data) => {
       if (!data.length) {
         setAllUsers(null);
@@ -38,15 +41,13 @@ const Navbar = () => {
       }
       setAllUsers(data);
     },
-    onError:error=>showBoundary(error)
-
+    onError: (error) => showBoundary(error),
   });
 
-
-const onSuccess = () => {
+  const onSuccess = () => {
     if (!currentUser) return;
     dispatch({ type: "CURRENT_USER", payload: data });
-};
+  };
 
   const { data, refetch: getUserData } = useGetUser(
     currentUser?._id,
@@ -56,23 +57,19 @@ const onSuccess = () => {
 
   const { refetch } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
-      if (data.message === "User logged out successfully") { 
+      if (data.message === "User logged out successfully") {
         Socket.close();
-        dispatch({ type: "CURRENT_USER", payload: null }),
-        push("/login");
+        dispatch({ type: "CURRENT_USER", payload: null }), push("/login");
       }
     },
-    onError:error=>showBoundary(error),
+    onError: (error) => showBoundary(error),
     enabled: false,
   });
-
-
 
   useEffect(() => {
     setNotifications(currentUser.notifications);
     setNumOfNotifications(currentUser.notifications.length);
   }, []);
-
 
   useEffect(() => {
     if (noUserFound) setNoUserFound(false);
@@ -84,7 +81,7 @@ const onSuccess = () => {
     }
 
     setIsSearching(true); //To show all the search results
-    let obj = { userName: searchedUser, userId:currentUser._id };
+    let obj = { userName: searchedUser, userId: currentUser._id };
     const timer = setTimeout(() => {
       search(obj);
     }, 400);
@@ -115,7 +112,6 @@ const onSuccess = () => {
       }
 
       if (data.message !== "Friend request") return;
-
       setNotifications((prev) => [...prev, data]);
       setNumOfNotifications((prev) => (prev += 1));
     };
@@ -129,7 +125,7 @@ const onSuccess = () => {
 
     if (!searchedUser) return;
     setIsSearching(true);
-    let obj = { userName: searchedUser, userId:currentUser._id };
+    let obj = { userName: searchedUser, userId: currentUser._id };
     search(obj);
   };
 
@@ -150,7 +146,6 @@ const onSuccess = () => {
 
       setNotifications(unSavedNotifications);
     }
-
   };
 
   const decreaseNotify = useCallback(() => {
@@ -161,12 +156,10 @@ const onSuccess = () => {
 
     if (numOfNotifications < 1) return;
     setNumOfNotifications((prev) => (prev -= 1));
+  }, [notifications, numOfNotifications]);
 
-  },[notifications,numOfNotifications]);
-
-  
   const handleSideMenu = () => {
-    setIsVisible(!isVisible)
+    setIsVisible(!isVisible);
     if (!openNotifications) return;
 
     let unSavedNotifications = notifications.filter(
@@ -215,13 +208,11 @@ const onSuccess = () => {
         {isSearching && (
           <div className={styles.foundPersons}>
             {noUserFound ? (
-              <div className={styles.userSearchErrorMsg}>
-              User not found...
-              </div>
+              <div className={styles.userSearchErrorMsg}>User not found...</div>
             ) : isLoading ? (
               <div className={styles.userSearchErrorMsg}>
-              Searching... <br />
-              <Loader size={15} />
+                Searching... <br />
+                <Loader size={15} />
               </div>
             ) : (
               memoUsers
@@ -233,7 +224,6 @@ const onSuccess = () => {
       <div
         className={styles.notificationIcon}
         onClick={handleNotification}
-        onBlur={() => setOpenNotifications(false)}
         onMouseDown={(e) => e.preventDefault()}
         aria-label="notifications"
       >
@@ -245,13 +235,9 @@ const onSuccess = () => {
 
       <div className={styles.userImage} role="button" onClick={handleSideMenu}>
         <Image
-          src={
-            currentUser?.image?.url ? currentUser.image.url :noAvatar
-          }
-          alt={
-            currentUser.name || 'User-image' 
-          }
-          placeholder={currentUser?.image?.url?'blur':'empty'}
+          src={currentUser?.image?.url ? currentUser.image.url : noAvatar}
+          alt={currentUser.name || "User-image"}
+          placeholder={currentUser?.image?.url ? "blur" : "empty"}
           blurDataURL={currentUser?.image?.base64}
           width={40}
           height={40}
