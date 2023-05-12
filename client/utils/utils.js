@@ -164,7 +164,7 @@ export const handleDateDividing = (messages,example=null) =>{
       if(currentDateGroup > format(new Date(messages[i-1]?.createdAt),'yyyy/MM/dd')){
         let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
         datedMessages.push(m)
-        datedMessages.splice(-1,0,dateMessage)//push?
+        datedMessages.splice(-1,0,dateMessage)
         return
       } 
 
