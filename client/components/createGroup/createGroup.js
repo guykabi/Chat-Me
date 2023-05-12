@@ -3,6 +3,7 @@ import styles from "./createGroup.module.css";
 import { useMutation, useQuery } from "react-query";
 import { createGroup } from "../../utils/apiUtils";
 import { chatContext } from "../../context/chatContext";
+import Input from "../UI/Input/Input";
 import Button from "../UI/Button/button";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import {useErrorBoundary} from 'react-error-boundary'
@@ -55,9 +56,11 @@ const CreateGroup = ({ onSwitch }) => {
       <section>
         <form className={styles.newGroupForm} onSubmit={handleGroupSubmit}>
           <div className={styles.groupNameInputWrapper}>
-            <input
+            <Input
               placeholder="Group name"
-              aria-label="Insert a group name"
+              aria-label='Insert a group name'
+              width={100}
+              height={15}
               required
               onChange={(e) => setGroupName(e.target.value)}
             />
