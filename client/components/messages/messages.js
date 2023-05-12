@@ -155,6 +155,12 @@ const Messages = ({ messages }) => {
         if (message?.event === "Deleted") {
           let index = allMessages.findIndex((m) => m._id === message._id);
           let newMessages = [...allMessages];
+
+          //If it is the first message of particular date - delete also the date banner
+          if(newMessages[index-1].type){
+            newMessages.splice(index-1, 2);
+            return setAllMessages(newMessages);
+          }
           newMessages.splice(index, 1);
           setAllMessages(newMessages);
           return;
