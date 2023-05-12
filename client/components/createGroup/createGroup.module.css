@@ -26,13 +26,8 @@
 
 .groupNameInputWrapper{
     margin: 0 auto;
+    width: 50%;
 }
 
-.groupNameInputWrapper input{
-    border: none;
-    border-bottom: 1px lightgray solid;
-    width: 12rem;
-    line-height: 2rem;
-    outline: none;
-} 
+
 
