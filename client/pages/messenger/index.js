@@ -21,7 +21,7 @@ import {useErrorBoundary} from 'react-error-boundary'
 
 const Messenger = ({ hasError, user }) => {
   const { currentUser, currentChat, Socket, dispatch } = useContext(chatContext);
-  const { data,error,isLoading } = useGetUser(user?._id);
+  const { data,error } = useGetUser(user?._id);
   const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -66,14 +66,6 @@ const Messenger = ({ hasError, user }) => {
     setIsVisible(false);
   }; 
 
-  /*if(isLoading){
-    return(
-      <div className='center'>
-        <h2>Loading...</h2>
-        <Loader/>
-      </div>
-    )
-  }*/
 
   if (hasError || error) {  
        showBoundary()
@@ -151,7 +143,8 @@ const Messenger = ({ hasError, user }) => {
            <h2>Loading your chats...</h2>
            <Loader size={50}/><br/>
            <div>
-           <FaRunning/>&nbsp;&nbsp;
+           <FaRunning/>
+           &nbsp;&nbsp;
            ... &nbsp;
            <BsChatDots/>
            </div>
