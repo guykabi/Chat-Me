@@ -3,6 +3,8 @@ import Head from 'next/head'
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import useClickOutside from '../../hooks/useClickOutside'
 import { chatContext } from "../../context/chatContext";
+import {FaRunning} from 'react-icons/fa'
+import {BsChatDots} from 'react-icons/bs'
 import styles from "./messenger.module.css";
 import Chat from "../../components/chat/chat";
 import Conversations from "../../components/conversations/conversations";
@@ -64,14 +66,14 @@ const Messenger = ({ hasError, user }) => {
     setIsVisible(false);
   }; 
 
-  if(isLoading){
+  /*if(isLoading){
     return(
       <div className='center'>
         <h2>Loading...</h2>
         <Loader/>
       </div>
     )
-  }
+  }*/
 
   if (hasError || error) {  
        showBoundary()
@@ -144,9 +146,16 @@ const Messenger = ({ hasError, user }) => {
           </main>
         </section>
       ) : (
-        <section className="center">
-          <h2>Loading...</h2><br/>
-          <Loader/>
+        <section className={styles.mainMessengerLoading}>
+          <div className={styles.innerLoadingWrapper}>
+           <h2>Loading your chats...</h2>
+           <Loader size={50}/><br/>
+           <div>
+           <FaRunning/>&nbsp;&nbsp;
+           ... &nbsp;
+           <BsChatDots/>
+           </div>
+          </div>
         </section>
       )}
     </>
