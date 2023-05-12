@@ -2,6 +2,7 @@ import React,{useState,useCallback,useMemo, useEffect} from 'react'
 import styles from './picker.module.css'
 import { BiSend } from "react-icons/bi";
 import {BiMailSend} from 'react-icons/bi'
+import {BiSearchAlt} from 'react-icons/bi'
 import GroupPerson from "../group-person/groupPerson";
 import Group from "../group/group";
 import PickedConversation from "../pickedConversation/pickedConversation";
@@ -102,6 +103,9 @@ const itemsToPick = (
               placeholder={type==='cons'?"Search a chat":'Search a user'}
               onChange={(e) => setQuery(e.target.value)}
             />
+            <p className={styles.searchIcon}>
+               <BiSearchAlt/>
+            </p>
           </section>
         ) : null}
 
