@@ -22,7 +22,7 @@ import { BsFillCameraFill } from "react-icons/bs";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import Picker from "../picker/picker";
 import {Loader} from '../UI/clipLoader/clipLoader'
-import {updateConversation,addGroupMember,
+import {updateConversation,addGroupMember,deleteConversation,
   removeGroupMember,addManager,removeManager} from "../../utils/apiUtils";
 
 const ChatDetails = ({ onReturn }) => {
@@ -93,7 +93,18 @@ const ChatDetails = ({ onReturn }) => {
       dispatch({ type: "CURRENT_CHAT", payload: conversation });
     },
     onError: (error) => showBoundary(error),
+  }); 
+
+  const { mutate: removeConversation } = useMutation(deleteConversation, {
+    onSuccess: (data) => {
+      if (data.message !== "Conversation deleted!") return;
+      const { conId, message } = data;
+      Socket.emit("new-conversation", { message, conId });
+      dispatch({type:'CURRENT_CHAT',payload:null})
+    },
+    onError: (error) => showBoundary(error),
   });
+
 
   //------------------------------------------------------//
 
@@ -180,7 +191,13 @@ const ChatDetails = ({ onReturn }) => {
         let obj = { participants: currentUser._id };
         removeMember({ conId: currentChat._id, obj });
         return;
-      }
+      } 
+      
+      //When last member wants to leave - delete chat
+      if(currentChat.participants.length === 1){
+         removeConversation(currentChat._id)
+         return
+       }
 
       obj = { participants: e };
       removeMember({ conId: currentChat._id, obj });
