@@ -6,6 +6,7 @@ import messagesRouter from './routes/messageRouter.js'
 import conversationRouter from './routes/conversationRouter.js'
 import authRouter from './routes/authRouter.js'
 import {errorHandler} from './middleware/errorHandler.js'
+import {corsOptions} from './config/corsOptions.js'
 import cookieParser from 'cookie-parser'
  
 
@@ -13,13 +14,10 @@ const port = process.env.PORT || 8000
 
 const app = express() 
 app.use(cookieParser());
-app.use(cors({
-    origin : process.env.CLIENT_URL,
-    credentials: true,
-})) 
+app.use(cors(corsOptions)) 
 app.use(express.json());  
 
-import './database/database.js'
+import './config/database.js'
 
 
 app.use('/users',usersRouter) 
