@@ -92,6 +92,8 @@ const Conversations = ({ sortBy }) => {
         if (!conversation.participants.find((p) => p._id === currentUser._id)) {
           updatedConversations.splice(index, 1);
           setAllConversations(updatedConversations);
+         
+          if(currentChat._id !== conversation._id)return
           dispatch({ type: "CURRENT_CHAT", payload: null });
           return;
         }
