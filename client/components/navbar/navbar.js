@@ -8,7 +8,11 @@ import React, {
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import noAvatar from "../../public/images/no-avatar.png";
-import { push } from "next/router";
+import { GrLanguage } from "react-icons/gr";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { useRouter } from "next/router";
 import { logOut, searchUser } from "../../utils/apiUtils";
 import useClickOutSide from "../../hooks/useClickOutside";
 import { useErrorBoundary } from "react-error-boundary";
@@ -20,8 +24,9 @@ import Notification from "../notification/notification";
 import NotificationIcon from "../UI/notificationIcon/notificationIcon";
 import { useGetUser } from "../../hooks/useUser";
 
-const Navbar = () => {
+const Navbar = ({ placeholder, dir }) => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
+  const { locales, push } = useRouter();
   const { showBoundary } = useErrorBoundary();
   const { visibleRef, isVisible, setIsVisible } = useClickOutSide(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -31,6 +36,8 @@ const Navbar = () => {
   const [notifications, setNotifications] = useState();
   const [numOfNotifications, setNumOfNotifications] = useState(0);
   const [openNotifications, setOpenNotifications] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const { mutate: search, isLoading } = useMutation(searchUser, {
     onSuccess: (data) => {
@@ -134,6 +141,13 @@ const Navbar = () => {
     getUserData();
   };
 
+  const handleLanguageMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseLanguageMenu = () => {
+    setAnchorEl(null);
+  };
+
   const handleNotification = () => {
     setOpenNotifications(!openNotifications);
     if (numOfNotifications > 0) setNumOfNotifications(0);
@@ -192,13 +206,14 @@ const Navbar = () => {
   return (
     <nav className={styles.mainNav}>
       <div className={styles.logo} role="banner">
-        Chat Me
+        Chat-Me
       </div>
 
       <div className={styles.searchInput}>
         <input
           type="text"
-          placeholder="Find new friend to chat with..."
+          dir={dir}
+          placeholder={placeholder}
           aria-label="Search a new friend to chat with"
           onFocus={serachInputOnFocus}
           onChange={(e) => setSearchedUser(e.target.value)}
@@ -219,6 +234,31 @@ const Navbar = () => {
             )}
           </div>
         )}
+      </div>
+
+      <div className={styles.translateMenu}>
+        <Button
+          id="basic-button"
+          style={{ backgroundColor: "transparent" }}
+          onClick={handleLanguageMenu}
+        >
+          <GrLanguage size={22} />
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleCloseLanguageMenu}
+        >
+          {locales.map((l) => (
+            <MenuItem
+              key={l}
+              onClick={() => push("/", undefined, { locale: l })}
+            >
+              {l}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
 
       <div

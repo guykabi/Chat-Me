@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 3rem;
     background-color: rgb(229, 230, 215);
 } 
 
@@ -58,9 +59,12 @@
     background-color: rgb(219, 230, 230);
 } 
 
+.translateMenu{
+   width: 4rem;
+}
+
 .notificationIcon{
-    margin-right: 10rem;
-    margin-left: 0.5rem;
+    margin-right: 1em;
 }
 .notificationDropper{
     z-index: 100;
