@@ -6,9 +6,10 @@ import { getConversations } from "../../utils/apiUtils";
 import { useErrorBoundary } from "react-error-boundary";
 import { useQuery } from "react-query";
 import { handleFilterCons } from "../../utils/utils";
+import Input from "../UI/Input/Input";
 import { Loader } from "../UI/clipLoader/clipLoader";
 
-const Conversations = ({ sortBy }) => {
+const Conversations = ({ sortBy, placeholder, dir }) => {
   const { currentUser, currentChat, dispatch, Socket } =
     useContext(chatContext);
   const [allConversations, setAllConversations] = useState([]);
@@ -157,9 +158,13 @@ const Conversations = ({ sortBy }) => {
     <>
       <div className={styles.conversationsDiv}>
         <div className={styles.searchInputWrapper}>
-          <input
+          <Input
             type="text"
-            placeholder="Search for chat..."
+            width={100}
+            height={15}
+            fontSize='medium'
+            dir={dir}
+            placeholder={placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
