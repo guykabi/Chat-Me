@@ -9,6 +9,7 @@ const {
   onBlur,
   type,
   value,
+  dir,
   name,
   require,
   defaultValue,
@@ -43,6 +44,7 @@ if(type === 'file'){
           className={styles.inputStyle}
           type={type}
           required={require}
+          dir={dir}
           disabled={disabled}
           name={name}
           ref={ref}
