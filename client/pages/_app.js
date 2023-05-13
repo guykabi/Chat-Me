@@ -4,8 +4,10 @@ import { ChatContextProvider } from '../context/chatContext'
 import {QueryClient,QueryClientProvider} from 'react-query'
 import {ErrorBoundary} from 'react-error-boundary'
 import ErrorFallBack from '../components/error/error'
+import { appWithTranslation } from 'next-i18next'
 
-export default function App({ Component, pageProps }) { 
+
+const App = ({ Component, pageProps })=> { 
 
 
   const [queryClient] = React.useState(() => new QueryClient());
@@ -17,3 +19,5 @@ export default function App({ Component, pageProps }) {
            </ErrorBoundary>
          </ChatContextProvider>     
 }
+
+export default appWithTranslation(App)

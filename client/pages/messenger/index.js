@@ -1,5 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
 import Head from 'next/head'
+import {useRouter} from 'next/router'
+import {useTranslation} from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import useClickOutside from '../../hooks/useClickOutside'
 import { chatContext } from "../../context/chatContext";
@@ -20,6 +23,9 @@ import {useErrorBoundary} from 'react-error-boundary'
 
 
 const Messenger = ({ hasError, user }) => {
+  const {locale} = useRouter()
+  const dir = locale === 'he'?'rtl' : 'ltr'
+  const {t} = useTranslation('common')
   const { currentUser, currentChat, Socket, dispatch } = useContext(chatContext);
   const { data,error } = useGetUser(user?._id);
   const {showBoundary} = useErrorBoundary()
@@ -75,9 +81,9 @@ const Messenger = ({ hasError, user }) => {
     <>
       {currentUser && Socket ? (
         <section className={styles.messangerWrapper}>
-          <Head><title>Chat Me</title></Head>
+          <Head><title>Chat-Me</title></Head>
           <header className={styles.navbarWrapper}>
-          <Navbar/>
+          <Navbar title={t('title')} placeholder={t('placeholder')} dir={dir}/>
           </header>
           <main className={styles.innerWrapper}>
             <div
@@ -113,9 +119,9 @@ const Messenger = ({ hasError, user }) => {
                 </article>
               ) : (
                 <article>
-                  <h2>Conversations</h2>
+                  <h2>{t('conversations')}</h2>
                   <br />
-                  <Conversations sortBy={isSorted} />
+                  <Conversations sortBy={isSorted} placeholder={t('serach-chat')} dir={dir} />
                 </article>
               )}
             </div>
@@ -155,7 +161,7 @@ const Messenger = ({ hasError, user }) => {
   );
 };
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req,locale }) {
 
   const user = exctractCredentials(req);
   if (user === 'No cookie') {
@@ -163,7 +169,8 @@ export async function getServerSideProps({ req }) {
   }
   
   return {
-    props: { user },
+    props: { user, 
+      ...(await serverSideTranslations(locale , ['common'])) }
   };
 }
 

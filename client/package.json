@@ -2,7 +2,11 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "browserslist": [">0.3%", "not dead", "not op_mini all"],
+  "browserslist": [
+    ">0.3%",
+    "not dead",
+    "not op_mini all"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,6 +27,7 @@
     "formik": "^2.2.9",
     "i18next": "^22.4.11",
     "next": "13.1.1",
+    "next-i18next": "^13.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-error-boundary": "^4.0.3",
@@ -34,5 +39,4 @@
     "socket.io-client": "^4.5.4",
     "yup": "^1.1.1"
   }
-  
 }
