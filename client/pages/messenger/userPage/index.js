@@ -1,9 +1,11 @@
 import React, { useState, useRef, useContext, useEffect } from "react";
 import { chatContext } from "../../../context/chatContext";
 import Head from "next/head";
-import { push } from "next/router";
+import { useRouter } from "next/router";
+import {useTranslation} from 'next-i18next'
 import styles from "./userPage.module.css";
 import { useMutation } from "react-query";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { updateUserDetails } from "../../../utils/apiUtils";
 import { exctractCredentials, onError } from "../../../utils/utils";
 import { useGetUser } from "../../../hooks/useUser";
@@ -22,6 +24,9 @@ import Modal from "../../../components/Modal/modal";
 const UserPage = ({ user, hasError }) => {
   const { dispatch } = useContext(chatContext);
   const { showBoundary } = useErrorBoundary();
+  const {push,locale} = useRouter()
+  const dir = locale === 'he'?'rtl' : 'ltr'
+  const {t} = useTranslation('userDetails')
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
@@ -114,19 +119,19 @@ const UserPage = ({ user, hasError }) => {
   return (
     <section className={styles.userPageWrapper}>
       <Head>
-        <title>{`${data?.name}'s page`}</title>
+        <title>{t('header', {data})}</title>
       </Head>
       <article>
         {isLoading ? (
           <section className="center">
-            <h2>Loading</h2>
+            <h2>{t('loading')}</h2>
             <Loader />
           </section>
         ) : (
           <section className={styles.mainUserPage} role="region">
             <ReturnIcon onClick={() => push("/messenger")} />
             <header className={styles.userPageHeader} role="heading">
-              <h2>{data?.name} details</h2>
+              <h2>{t('header', {data})}</h2>
             </header>
             <main className={styles.formWrapper} role="form">
               <form onSubmit={handleSubmit} className={styles.userPageForm}>
@@ -143,7 +148,7 @@ const UserPage = ({ user, hasError }) => {
                   />
                   <section className={styles.chooseImageWrapper}>
                     <span className={styles.chooseImagePopup}>
-                      Choose image
+                      {t('chooseImage')}
                     </span>
                     <BsFillCameraFill onClick={handleInputFileClick} />
                     <Input
@@ -161,11 +166,12 @@ const UserPage = ({ user, hasError }) => {
                   <Input
                     type="text"
                     name="name"
-                    placeholder="Name"
-                    textAlign
+                    placeholder={t('placeholders.name')}
+                    textAlign='center'
                     fontSize="large"
                     width={40}
                     height={30}
+                    dir={dir}
                     value={values.name || ""}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -178,11 +184,12 @@ const UserPage = ({ user, hasError }) => {
                   <Input
                     type="text"
                     name="lastName"
-                    placeholder="Lastname"
-                    textAlign
+                    placeholder={t('placeholders.Lastname')}
+                    textAlign='center'
                     fontSize="large"
                     width={40}
                     height={30}
+                    dir={dir}
                     value={values.lastName || ""}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -196,10 +203,11 @@ const UserPage = ({ user, hasError }) => {
                     type="text"
                     name="email"
                     placeholder="Email"
-                    textAlign
+                    textAlign='center'
                     fontSize="large"
                     width={40}
                     height={30}
+                    dir={dir}
                     value={values.email || ""}
                     disabled={true}
                   />
@@ -208,7 +216,7 @@ const UserPage = ({ user, hasError }) => {
                   ) : null}
                 </article>
                 <Button
-                  text={load ? "Loading..." : "Save"}
+                  text={load ? t("loading") : t("saveButton")}
                   className="secondaryBtn"
                   disabled={!file && !dirty}
                   width={12}
@@ -242,7 +250,7 @@ const UserPage = ({ user, hasError }) => {
   );
 };
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, locale }) {
 
   const user = exctractCredentials(req);
   if (user == 'No cookie') {
@@ -250,7 +258,8 @@ export async function getServerSideProps({ req }) {
   }
 
   return {
-    props: { user }
+    props: { user:user.user,
+      ...(await serverSideTranslations(user.locale || locale , ['userDetails']))  }
   };
 }
 
