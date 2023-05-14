@@ -117,7 +117,7 @@ export const forwardMessage = async (req, resp, next) => {
        let savedMessage = await newMessage.populate({
         path: "conversation",select: excludeFields});
        
-       if(savedMessage?.message?.image){
+       if(body?.message?.file){
           //Adding to chat media
           await Conversation.updateOne({_id:conversation}, {
             $set: { lastActive: new Date() },
