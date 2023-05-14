@@ -83,7 +83,11 @@ const Messenger = ({ hasError, user }) => {
         <section className={styles.messangerWrapper}>
           <Head><title>Chat-Me</title></Head>
           <header className={styles.navbarWrapper}>
-          <Navbar title={t('title')} placeholder={t('placeholder')} dir={dir}/>
+          <Navbar 
+          placeholder={t('placeholders.navbarSearch')} 
+          personal={t('sideMenu.private')}
+          logout={t('sideMenu.logout')}
+          dir={dir}/>
           </header>
           <main className={styles.innerWrapper}>
             <div
@@ -115,31 +119,39 @@ const Messenger = ({ hasError, user }) => {
 
               {openCreateGroup ? (
                 <article>
-                  <CreateGroup onSwitch={handleCloseCreateGroup} />
+                  <CreateGroup 
+                  onSwitch={handleCloseCreateGroup}
+                  title={t("createGroup.title")}
+                  placeholder={t("createGroup.placeholder")}
+                  button={t('createGroup.button')} />
                 </article>
               ) : (
                 <article>
                   <h2>{t('conversations')}</h2>
                   <br />
-                  <Conversations sortBy={isSorted} placeholder={t('serach-chat')} dir={dir} />
+                  <Conversations 
+                  sortBy={isSorted} 
+                  placeholder={t('search-chat')} 
+                  dir={dir} />
                 </article>
               )}
             </div>
 
             <div className={styles.chatWrapper}>
               {currentChat ? (
-                <Chat />
+                <Chat placeholder={t('chat.placeholder')}
+                sendBtn={t('chat.button')} />
               ) : (
                 <div className={styles.noChatDiv}>
-                  Open chat to start talk...
+                  {t('placeholders.noChat')}
                 </div>
               )}
             </div>
 
             <div className={styles.onlineWrapper}>
-              <h2>Online</h2>
+              <h2>{t('online')}</h2>
               <br />
-              <OnlineList />
+              <OnlineList/>
             </div>
           </main>
         </section>
@@ -169,8 +181,8 @@ export async function getServerSideProps({ req,locale }) {
   }
   
   return {
-    props: { user, 
-      ...(await serverSideTranslations(locale , ['common'])) }
+    props: { user:user.user, 
+      ...(await serverSideTranslations(user.locale || locale, ['common'])) }
   };
 }
 
