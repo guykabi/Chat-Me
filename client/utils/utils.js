@@ -34,7 +34,7 @@ export const exctractCredentials = (req) => {
   if(!req?.headers?.cookie)return 'No cookie'
   let Cookie = cookie.parse(req?.headers?.cookie);
   if(Cookie.token == 'none' || Cookie.userData == 'none')return 'No cookie'
-  let user = JSON.parse(Cookie?.userData);
+  let user = {user:JSON.parse(Cookie?.userData),locale:Cookie?.NEXT_LOCALE}
   return user;
 };
 
