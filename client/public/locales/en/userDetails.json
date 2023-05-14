@@ -1,0 +1,10 @@
+{
+    "header":"{{data.name}} details",
+    "saveButton":"Save",
+    "loading":"loading...",
+    "placeholders":{
+        "name":"Name",
+        "lastname":"Lastname"
+    },
+    "chooseImage":"Choose image"
+}

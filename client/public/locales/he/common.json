@@ -1,6 +1,34 @@
 {
-    "placeholder":"חפש חברים חדשים",
+    "placeholders":{
+        "navbarSearch":"התחל שיחה או הוסף חברים",
+        "noChat":"פתח שיחה כדי להתחיל לשוחח"
+    },
     "conversations":"שיחות",
-    "serach-chat":"חפש שיחה",
-    "search-user":"חפש משתמש"
+    "createGroup":{
+            "title":"צור קבוצה",
+            "placeholder":"שם הקבוצה",
+            "button":"צור קבוצה"
+        },
+    "search-chat":"חפש שיחה",
+    "search-user":"חפש משתמש",
+    "forward":"העבר ל",
+    "online":"מחוברים",
+    "chatDetails":{
+        "buttons":{
+            "save":"שמור",
+            "addMember":"הוסף משתתף",
+            "leaveGroup":"צא מהקבוצה"
+        },
+        "placeholder":"שם הקבוצה",
+        "media":"מדיה",
+        "main":"ראשי"
+    },
+    "sideMenu":{
+        "private":"אישי",
+        "logout":"התנתק"
+    },
+    "chat":{
+        "placeholder":"...הקלד הודעה",
+        "button":"שלח"
+    }
 }

@@ -1,0 +1,10 @@
+{
+    "header":"{{data.name}} הפרטים של",
+    "saveButton":"שמור",
+    "loading":"...טוען",
+    "placeholders":{
+        "name":"שם",
+        "lastname":"שם משפחה"
+    },
+    "chooseImage":"בחר תמונה"
+}

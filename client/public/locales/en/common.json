@@ -1,6 +1,34 @@
 {
-    "placeholder":"Find new friends to chat with",
+    "placeholders":{
+            "navbarSearch":"Find new friends to chat with",
+            "noChat":"Open a chat to start talk"
+         },
     "conversations":"Conversations",
+    "createGroup":{
+        "title":"Create a group",
+        "placeholder":"Group name",
+        "button":"Create group"
+    },
     "serach-chat":"Search a chat",
-    "search-user":"Search a user"
+    "search-user":"Search a user",
+    "forward":"Forward to",
+    "online":"Online",
+    "chatDetails":{
+        "buttons":{
+            "save":"Save",
+            "addMember":"Add member",
+            "leaveGroup":"Leave group"
+        },
+        "placeholder":"Group Name",
+        "media":"Media",
+        "main":"Main"
+    },
+    "sideMenu":{
+        "private":"Private",
+        "logout":"Logout"
+    },
+    "chat":{
+        "placeholder":"Type a message...",
+        "button":"Send"
+    }
 }
