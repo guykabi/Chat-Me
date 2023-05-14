@@ -9,7 +9,7 @@ import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import {useErrorBoundary} from 'react-error-boundary'
 import Picker from "../picker/picker";
 
-const CreateGroup = ({ onSwitch }) => {
+const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
   const { currentUser, Socket } = useContext(chatContext);
   const {showBoundary} = useErrorBoundary()
   const [allUsers, setAllUsers] = useState([]);
@@ -52,12 +52,12 @@ const CreateGroup = ({ onSwitch }) => {
 
   return (
     <section className={styles.createGroupMainSection}>
-      <h2 aria-label="Create a group">Create a group</h2>
+      <h2 aria-label="Create a group">{title}</h2>
       <section>
         <form className={styles.newGroupForm} onSubmit={handleGroupSubmit}>
           <div className={styles.groupNameInputWrapper}>
             <Input
-              placeholder="Group name"
+              placeholder={placeholder}
               aria-label='Insert a group name'
               width={100}
               height={15}
@@ -76,7 +76,7 @@ const CreateGroup = ({ onSwitch }) => {
             className={"primaryBtn"}
             width={15}
             height={25}
-            text="Create group"
+            text={button}
             arialable="Create group button"
             type="submit"
           />
