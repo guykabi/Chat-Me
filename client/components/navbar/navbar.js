@@ -1,12 +1,11 @@
 import React, {
-  useState,
-  useContext,
-  useMemo,
-  useEffect,
-  useCallback,
+  useState,useContext,
+  memo,useMemo,
+  useEffect,useCallback,
 } from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
+import cookie from 'react-cookies'
 import noAvatar from "../../public/images/no-avatar.png";
 import { GrLanguage } from "react-icons/gr";
 import Button from "@mui/material/Button";
@@ -24,7 +23,8 @@ import Notification from "../notification/notification";
 import NotificationIcon from "../UI/notificationIcon/notificationIcon";
 import { useGetUser } from "../../hooks/useUser";
 
-const Navbar = ({ placeholder, dir }) => {
+
+const Navbar = ({ placeholder, dir,personal,logout }) => {
   const { currentUser, Socket, dispatch } = useContext(chatContext);
   const { locales, push } = useRouter();
   const { showBoundary } = useErrorBoundary();
@@ -38,6 +38,7 @@ const Navbar = ({ placeholder, dir }) => {
   const [openNotifications, setOpenNotifications] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  
 
   const { mutate: search, isLoading } = useMutation(searchUser, {
     onSuccess: (data) => {
@@ -146,7 +147,12 @@ const Navbar = ({ placeholder, dir }) => {
   };
   const handleCloseLanguageMenu = () => {
     setAnchorEl(null);
-  };
+  }; 
+
+  const handleLocaleChoose = (l) =>{
+    cookie.save('NEXT_LOCALE', l)
+    push("/", undefined, { locale: l })
+  }
 
   const handleNotification = () => {
     setOpenNotifications(!openNotifications);
@@ -236,7 +242,9 @@ const Navbar = ({ placeholder, dir }) => {
         )}
       </div>
 
-      <div className={styles.translateMenu}>
+      <div 
+      className={styles.translateMenu}
+      aria-label="translate">
         <Button
           id="basic-button"
           style={{ backgroundColor: "transparent" }}
@@ -253,7 +261,7 @@ const Navbar = ({ placeholder, dir }) => {
           {locales.map((l) => (
             <MenuItem
               key={l}
-              onClick={() => push("/", undefined, { locale: l })}
+              onClick={()=>handleLocaleChoose(l)}
             >
               {l}
             </MenuItem>
@@ -287,10 +295,10 @@ const Navbar = ({ placeholder, dir }) => {
       {isVisible && (
         <div className={styles.isMenuDiv} ref={visibleRef}>
           <div role="link" onClick={() => push("messenger/userPage")}>
-            Private
+            {personal}
           </div>
           <div role="link" onClick={refetch}>
-            Logout
+            {logout}
           </div>
         </div>
       )}
@@ -298,4 +306,4 @@ const Navbar = ({ placeholder, dir }) => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);
