@@ -16,7 +16,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import { FiCamera } from "react-icons/fi";
 import Image from "next/image";
 
-const Chat = () => {
+const Chat = ({placeholder,sendBtn}) => {
   const { currentChat, currentUser, Socket, dispatch } = useContext(chatContext);
   const [showModal, setShowModal] = useState(false);
   const { showBoundary } = useErrorBoundary();
@@ -211,7 +211,7 @@ const Chat = () => {
                 onChange={setNewMessage}
                 width={40}
                 height={15}
-                placeholder="Type a message..."
+                placeholder={placeholder}
                 borderRadius={10}
               />
             </div>
@@ -240,7 +240,7 @@ const Chat = () => {
               className={"secondaryBtn"}
               width={4}
               height={35}
-              text="Send"
+              text={sendBtn}
               disabled={!newMessage.trim().length}
               arialable="Send message"
               onClick={handleNewMessage}
