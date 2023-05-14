@@ -1,5 +1,7 @@
 import React,{useState,useCallback,useMemo, useEffect} from 'react'
 import styles from './picker.module.css'
+import {useTranslation} from 'next-i18next'
+import {useRouter} from 'next/router'
 import { BiSend } from "react-icons/bi";
 import {BiMailSend} from 'react-icons/bi'
 import {BiSearchAlt} from 'react-icons/bi'
@@ -13,7 +15,9 @@ import {Loader} from '../UI/clipLoader/clipLoader'
 
  //Used globally to pick users/chats 
  const Picker = ({items,type,onChange,onFinalPick,isLoad}) => {
- 
+  const {locale} = useRouter()
+  const dir = locale === 'he'?'rtl' : 'ltr'
+  const {t} = useTranslation('common')
   const [listOfPicked,setListOfPicked]=useState([])
   const [query,setQuery]=useState('') 
 
@@ -100,7 +104,8 @@ const itemsToPick = (
             <Input
               width="50"
               height="30"
-              placeholder={type==='cons'?"Search a chat":'Search a user'}
+              dir={dir}
+              placeholder={type==='cons'?t("search-chat"):t('search-user')}
               onChange={(e) => setQuery(e.target.value)}
             />
             <p className={styles.searchIcon}>
