@@ -5,6 +5,7 @@ import styles from "./chatDetails.module.css";
 import Image from "next/image";
 import Video from "../UI/video/video";
 import { useErrorBoundary } from "react-error-boundary";
+import {useTranslation} from 'next-i18next'
 import noAvatar from "../../public/images/no-avatar.png";
 import noAvatarGroup from "../../public/images/no-avatarGroup.png";
 import { chatContext } from "../../context/chatContext";
@@ -28,6 +29,7 @@ import {updateConversation,addGroupMember,deleteConversation,
 const ChatDetails = ({ onReturn }) => {
   const { currentChat, currentUser, Socket, dispatch } = useContext(chatContext);
   const { showBoundary } = useErrorBoundary();
+  const {t} = useTranslation('common')
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isGroup, setIsGroup] = useState(false);
@@ -259,7 +261,7 @@ const ChatDetails = ({ onReturn }) => {
               <Button
                 width="6"
                 height="10"
-                text={loadSubmit?<Loader size={12}/>:"Save"}
+                text={loadSubmit?<Loader size={12}/>:t("chatDetails.buttons.save")}
                 className="secondaryBtn"
                 type="submit"
                 disabled={!file && !dirty}
@@ -272,7 +274,7 @@ const ChatDetails = ({ onReturn }) => {
                   width="50"
                   name="chatName"
                   defaultValue={currentChat.chatName}
-                  placeholder="Group name"
+                  placeholder={t("chatDetails.placeholder")}
                   textAlign="center"
                   fontSize="x-large"
                   fontWeight="bold"
@@ -350,14 +352,14 @@ const ChatDetails = ({ onReturn }) => {
           className={styles.switcherBtn}
           role="button"
         >
-          <strong>Main</strong>
+          <strong>{t('chatDetails.main')}</strong>
         </div>
         <div
           onClick={() => setchatMedia(true)}
           className={styles.switcherBtn}
           role="button"
         >
-          <strong>Media</strong>
+          <strong>{t('chatDetails.media')}</strong>
         </div>
       </section>
 
@@ -370,14 +372,14 @@ const ChatDetails = ({ onReturn }) => {
                 <Button
                   width="8"
                   height="25"
-                  text="Leave group"
+                  text={t("chatDetails.buttons.leaveGroup")}
                   className="secondaryBtn"
                   onClick={handleMemberRemoval}
                 />
                 <Button
                   width="8"
                   height="25"
-                  text="Add member"
+                  text={t("chatDetails.buttons.addMember")}
                   //Only manager can add
                   disabled={
                     !currentChat?.manager.some((m) => m._id === currentUser._id)
