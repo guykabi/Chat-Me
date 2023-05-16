@@ -4,7 +4,11 @@
     margin: 0 auto;
     text-align: center;
     align-items: center;
-    background: linear-gradient(90deg, rgb(234, 235, 229) 25%, rgb(193, 194, 176) 75%);
+    overflow:hidden;
+    background: 
+	linear-gradient(74deg, rgba(67,241,139,0.93), rgba(0,0,0,0)),
+	conic-gradient(from 209deg at 56% 9%, rgba(89,179,134,1), rgba(0,0,0,0)),
+	conic-gradient(from 118deg at 37% 46%, rgba(185,224,196,1), rgba(255,0,255,0));
 } 
 
 .signUpInnerWrapper{
