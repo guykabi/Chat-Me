@@ -3,7 +3,7 @@ import '../styles/globals.css'
 import { ChatContextProvider } from '../context/chatContext'
 import {QueryClient,QueryClientProvider} from 'react-query'
 import {ErrorBoundary} from 'react-error-boundary'
-import ErrorFallBack from '../components/error/error'
+import ErrorFallBack from '../components/errors/error/error'
 import { appWithTranslation } from 'next-i18next'
 
 
