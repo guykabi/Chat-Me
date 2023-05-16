@@ -1,6 +1,7 @@
 import styles from "./chat.module.css";
 import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { handleDateDividing } from "../../utils/utils";
+import { useTranslation } from "next-i18next";
 import { chatContext } from "../../context/chatContext";
 import { useQuery, useMutation } from "react-query";
 import { getMessages, sendNewMessage, getConversation } from "../../utils/apiUtils";
@@ -16,10 +17,11 @@ import { useErrorBoundary } from "react-error-boundary";
 import { FiCamera } from "react-icons/fi";
 import Image from "next/image";
 
-const Chat = ({placeholder,sendBtn}) => {
+const Chat = () => {
   const { currentChat, currentUser, Socket, dispatch } = useContext(chatContext);
   const [showModal, setShowModal] = useState(false);
   const { showBoundary } = useErrorBoundary();
+  const {t} = useTranslation('common')
   const [newMessage, setNewMessage] = useState("");
   const [file, setFile] = useState(null);
   const [messages, setMessages] = useState(null);
@@ -115,6 +117,7 @@ const Chat = ({placeholder,sendBtn}) => {
 
   const handleNewMessage = useCallback(
     (fileObj = null) => {
+      
       if (!newMessage && newMessage.trim().length === 0 && !file) return;
 
       //If there is file/image
@@ -198,7 +201,7 @@ const Chat = ({placeholder,sendBtn}) => {
 
             {isLoading && (
               <div className={styles.loadingMessages}>
-                <div>Loading messages...</div>
+                <div>{t('chat.loadMessages')}</div>
                 <Loader size={20} />
               </div>
             )}
@@ -209,9 +212,10 @@ const Chat = ({placeholder,sendBtn}) => {
               <InputEmoji
                 value={newMessage}
                 onChange={setNewMessage}
+                onEnter={handleNewMessage}
                 width={40}
                 height={15}
-                placeholder={placeholder}
+                placeholder={t('chat.placeholder')}
                 borderRadius={10}
               />
             </div>
@@ -240,7 +244,7 @@ const Chat = ({placeholder,sendBtn}) => {
               className={"secondaryBtn"}
               width={4}
               height={35}
-              text={sendBtn}
+              text={t('chat.button')}
               disabled={!newMessage.trim().length}
               arialable="Send message"
               onClick={handleNewMessage}

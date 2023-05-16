@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./fileForm.module.css";
 import { chatContext } from "../../../context/chatContext";
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Button from "../../UI/Button/button";
 import InputEmoji from "react-input-emoji";
@@ -8,6 +9,7 @@ import Video from "../../UI/video/video";
 
 const FileForm = ({ file, onFile, loading }) => {
   const { currentChat, currentUser } = useContext(chatContext);
+  const {t} = useTranslation('common')
   const [fileMessage, setFileMessage] = useState("");
   const [preview, setPreview] = useState(null);
   const [fileType, setFileType] = useState(null);
@@ -39,7 +41,9 @@ const FileForm = ({ file, onFile, loading }) => {
     <>
       <section className={styles.fileFormWrapper}>
         <header>
-          {fileType == "image" ? <h3>Your Image</h3> : <h3>Your Video</h3>}
+          {fileType == "image" ? 
+          <h3>{t('chat.fileForm.titleImage')}</h3> : 
+          <h3>{t('chat.fileForm.titleVideo')}</h3>}
         </header>
         <main className={styles.formWrapper}>
           <form onSubmit={handleFileForm} className={styles.form}>
@@ -69,14 +73,16 @@ const FileForm = ({ file, onFile, loading }) => {
                 onChange={setFileMessage}
                 width={60}
                 height={5}
-                placeholder="Type a message..."
+                placeholder={t('chat.fileForm.placeholder')}
                 borderRadius={10}
               />
             </div>
             <div className={styles.submitBtnWrapper}>
               <Button
                 className="secondaryBtn"
-                text={loading ? "Loading..." : "Send"}
+                text={loading ?
+                   t('chat.fileForm.loading') :
+                   t('chat.fileForm.saveBtn')}
                 type="submit"
                 width={8}
                 height={10}
