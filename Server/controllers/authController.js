@@ -65,16 +65,11 @@ import {verify} from 'jsonwebtoken'
 
   
   export const logOut = async(req,resp)=>{
-    resp.cookie('token', 'none', {
-        expires: new Date(Date.now() + 5 * 1000),
-        httpOnly: true,
-    }) 
-    resp.cookie('userData', 'none', {
-        expires: new Date(Date.now() + 5 * 1000),
-        httpOnly: true,
-    })
-    resp
-    .status(200)
+
+    resp.clearCookie('token');
+    resp.clearCookie('userData');
+    
+    resp.status(200)
     .json({ success: true, message: 'User logged out successfully' })
   }
   
