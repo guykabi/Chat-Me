@@ -28,35 +28,21 @@ export const handleSeenTime = (date) =>{
  }
 } 
 
-
+ 
+export const checkDevice = (userAgent) =>{
+  return Boolean(userAgent.match(
+    /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
+  )) 
+}
 
 export const exctractCredentials = (req) => {
-  if(!req?.headers?.cookie)return 'No cookie'
   let Cookie = cookie.parse(req?.headers?.cookie);
-  if(Cookie.token == 'none' || Cookie.userData == 'none')return 'No cookie'
-  let user = {user:JSON.parse(Cookie?.userData),locale:Cookie?.NEXT_LOCALE}
+  if(!Cookie || 
+    Cookie?.NEXT_LOCALE && Object.keys(Cookie).length == 1
+    ) return 'No cookie'
+
+  let user = JSON.parse(Cookie?.userData)
   return user;
-};
-
-
-export const onError = (title) => {
-  const { reload } = useRouter();
-  return (
-    <Modal show={true} isError={true}>
-      <div className="center">
-        {title ? <h1>{title}</h1> : null}
-        <p>Cannot load page!</p>
-        <Button
-          className="primaryBtn"
-          text="Refresh"
-          width="8"
-          height="10"
-          arialable="Refresh button"
-          onClick={() => reload()}
-        />
-      </div>
-    </Modal>
-  );
 };
 
 
