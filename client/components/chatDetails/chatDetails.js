@@ -267,8 +267,9 @@ const ChatDetails = ({ onReturn }) => {
                 disabled={!file && !dirty}
               />
             </section>
+            
+            <section className={styles.inputField}>
             <h2>
-              <section className={styles.inputField}>
                 <Input
                   height="20"
                   width="50"
@@ -284,8 +285,9 @@ const ChatDetails = ({ onReturn }) => {
                 {touched.chatName && errors.chatName ? (
                   <span>{errors.chatName}</span>
                 ) : null}
+              </h2>
               </section>
-            </h2>
+            
             <article className={styles.chatImageWrapper}>
               <section>
                 <Image
