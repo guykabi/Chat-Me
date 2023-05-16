@@ -1,6 +1,8 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
 import Head from "next/head";
 import Modal from "../../components/Modal/modal";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Button from "../../components/UI/Button/button";
 import styles from "./login.module.css";
 import Input from "../../components/UI/Input/Input";
@@ -15,6 +17,7 @@ const Login = () => {
   //Check on return to login without logout!!!!
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const {t} = useTranslation('login')
   const [loginMessage, setLoginMessage] = useState(null);
   const [userName, setUserName] = useState(null);
   const [isResetPassword, setIsResetPassword] = useState(false);
@@ -53,7 +56,7 @@ const Login = () => {
   const {mutate:handleEmail,isLoading:loadEmail} = useMutation(emailToReset,{
     onSuccess:data=>{
       if (data === "Email does not exist") {
-        resetRef.current.value = "Email not exists";
+        resetRef.current.value = t('emailNot');
         let timer = setTimeout(() => {
           resetRef.current.value = null;
         }, 3000);
@@ -111,11 +114,11 @@ const Login = () => {
   return (
     <div className={styles.mainLoginWrapper}>
       <Head>
-        <title>Chat Me login</title>
+        <title>{t('title')}</title>
       </Head>
       <div className={styles.loginWrapper} aria-label="Login form">
-        <header>
-          <h2>Login</h2>
+        <header className={styles.header}>
+          <h2>{t('h2')}</h2>
         </header>
         <main className={styles.formWrapper}>
           <form onSubmit={sendCredentials} className={styles.loginForm}>
@@ -126,8 +129,10 @@ const Login = () => {
               width={100}
               height={30}
               value={email}
-              placeholder="Email..."
+              placeholder={t('placeholders.email')}
               type="email"
+              textAlign='center'
+              fontSize='medium'
               require
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -139,8 +144,10 @@ const Login = () => {
               width={100}
               height={30}
               value={password}
-              placeholder={"Password..."}
+              placeholder={t('placeholders.password')}
               type="password"
+              textAlign='center'
+              fontSize='medium'
               require
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -151,21 +158,21 @@ const Login = () => {
               </section>
             ) : null}
             {loginMessage ? <span>{loginMessage}</span> : null}
-            {isError ? <span>Something went wrong!</span> : null}
+            {isError ? <span>{t('error.connection')}</span> : null}
             <section className={styles.btnsWrapper}>
               <Button
                 type="submit"
-                text="Login"
+                text={t('buttons.login')}
                 className="primaryBtn"
-                width={12}
-                height={25}
+                width={14}
+                height={30}
                 disabled={userName}
               />
               <Button
-                text="Home"
+                text={t('buttons.home')}
                 className="primaryBtn"
-                width={12}
-                height={25}
+                width={14}
+                height={30}
                 onClick={() => push("/")}
                 disabled={userName}
               />
@@ -173,10 +180,10 @@ const Login = () => {
           </form>
           <div
             className={styles.forgotPassword}
-            role="button"
+            role="link"
             onClick={() => setIsResetPassword(true)}
           >
-            Forgot password ?
+            {t('forgotPassword')}
           </div>
         </main>
 
@@ -186,48 +193,49 @@ const Login = () => {
               className={styles.resetPasswordWrapper}
               onSubmit={handleResetPasswordSubmit}
             >
-              <h3>Enter your email</h3>
+              <h3>{t('h3')}</h3>
               <Input
-                placeholder="Email"
+                placeholder={t('placeholders.email')}
                 width="50"
                 height="15"
                 type="email"
+                textAlign='center'
                 ref={resetRef}
                 require
                 onChange={(e) => setEmailForReset(e.target.value)}
               />
               <Button
                 className="primaryBtn"
-                text={loadEmail?<Loader size={10}/>:"Send"}
+                text={loadEmail?<Loader size={10}/>:t('buttons.send')}
                 width="8"
                 height="15"
                 disabled={counter > 0 && counter < 60}
                 type="submit"
               />
               {counter > 0 && counter < 60 ? (
-                <p>Resend in: {counter}s</p>
+                <p>{`${t('resend')} ${counter}`}</p>
               ) : null}
             </form>
           ) : (
             <section>
-              <h2>Check your email</h2>
+              <h2>{t('checkEmail')}</h2>
             </section>
           )}
         </Modal>
 
         <Modal show={showStayConnect}>
           <section className={styles.stayConnect}>
-            <h3>{`${userName}, do you want to stay connect?`}</h3>
+            <h3>{`${userName}, ${t('stayConnect')}`}</h3>
             <section className={styles.modalBtns}>
               <Button
                 width={6}
-                text="Yes"
+                text={t('buttons.yes')}
                 className="primaryBtn"
                 onClick={handleStayConnect}
               />
               <Button
                 width={6}
-                text="No"
+                text={t('buttons.no')}
                 className="primaryBtn"
                 onClick={handleNotStayConnect}
               />
@@ -238,5 +246,14 @@ const Login = () => {
     </div>
   );
 };
+
+export async function getServerSideProps({ req,locale }) {
+ 
+
+  return {
+    props: {  
+      ...(await serverSideTranslations(locale, ['login'])) }
+  };
+}
 
 export default Login;
