@@ -6,8 +6,9 @@ import React, {
   forwardRef,
   useCallback,
 } from "react";
-import { chatContext } from "../../context/chatContext";
 import styles from "./message.module.css";
+import { chatContext } from "../../context/chatContext";
+import { useTranslation } from "next-i18next";
 import { getMessageTime, searchPastMember } from "../../utils/utils";
 import useClickOutSide from "../../hooks/useClickOutside";
 import { useMutation } from "react-query";
@@ -26,6 +27,7 @@ import Picker from "../picker/picker";
   const Message = forwardRef(({ message, own }, ref) => {
   const { currentChat, currentUser, Socket } = useContext(chatContext);
   const {showBoundary} = useErrorBoundary()
+  const {t} = useTranslation()
   const [memeberName, setMemberName] = useState(null);
   const [showMessageDetailsModal, setShowMessageDetailsModal] = useState(false);
   const [showImage, setShowImage] = useState(false);
@@ -36,7 +38,6 @@ import Picker from "../picker/picker";
   const conversations = useGetCacheQuery("conversations");
 
    
-
   const { mutate: switchToSeen } = useMutation(seenMessage,{
     onError:error=>showBoundary(error)
   });
@@ -119,7 +120,7 @@ import Picker from "../picker/picker";
           role="button"
           onClick={() => setToggleDetailsMenu(true)}
         >
-          <h3>Seen</h3>
+          <h3>{t('modal.seen')}</h3>
         </div>
         <div
           className={
@@ -128,7 +129,7 @@ import Picker from "../picker/picker";
           role="button"
           onClick={() => setToggleDetailsMenu(false)}
         >
-          <h3>Likes</h3>
+          <h3>{t('modal.likes')}</h3>
         </div>
       </header>
       <main className={styles.mainContentDetails}>
@@ -252,14 +253,14 @@ import Picker from "../picker/picker";
           <Modal 
           show={showMessageDetailsModal} 
           onClose={closeMessageDetailsModal} 
-          title="Message Details">
+          title={t('modal.messageDetails')}>
             {messageDetails}
           </Modal>
 
           <Modal
             show={showForward}
             onClose={closeForward}
-            title="Forward to..."
+            title={t('chat.messageMenu.forward')}
           >
             <Picker
               items={conversations}
