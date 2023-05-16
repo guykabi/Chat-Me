@@ -14,7 +14,7 @@ import Conversations from "../../components/conversations/conversations";
 import Navbar from "../../components/navbar/navbar";
 import OnlineList from "../../components/onlineList/online";
 import { exctractCredentials} from "../../utils/utils";
-import {getAllusers} from '../../utils/apiUtils'
+import {getAllUsers} from '../../utils/apiUtils'
 import { useGetUser } from "../../hooks/useUser";
 import CreateGroup from "../../components/createGroup/createGroup";
 import ReturnIcon from "../../components/UI/returnIcon/returnIcon";
@@ -27,30 +27,38 @@ const Messenger = ({ hasError, user }) => {
   const dir = locale === 'he'?'rtl' : 'ltr'
   const {t} = useTranslation('common')
   const { currentUser, currentChat, Socket, dispatch } = useContext(chatContext);
-  const { data,error } = useGetUser(user?._id);
   const {showBoundary} = useErrorBoundary()
   const { visibleRef, isVisible, setIsVisible } = useClickOutside(false)
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [isSorted,setIsSorted]=useState(true) 
  
-  const {refetch} = useQuery(['users'],getAllusers,{
+  const onError = (error) => {showBoundary(error)};
+
+  const { data } = useGetUser(user?._id,true,null,onError);
+
+  const {refetch:fetchUsers} = useQuery(['users'],getAllUsers,{
     //For later use - example => identify user that left group
     //Only fetching once 
-    onError:error=>{
-      showBoundary(error)
-    },
+    onError,
     enabled:false,
     refetchOnWindowFocus:false
-  })
+  }) 
+
+  useEffect(()=>{
+     if(hasError) showBoundary(hasError)
+  },[])
  
   useEffect(() => {
-    if (!currentUser && data) {
-      dispatch({ type: "CURRENT_USER", payload: data });
-    }
+    if(hasError)return
 
+    if (!currentUser && data)
+      dispatch({ type: "CURRENT_USER", payload: data });
+    
+    
     if (!currentUser) return;
     Socket?.emit("addUser", user._id);
-    refetch()
+    fetchUsers()
+
   }, [data, currentUser]); 
 
   
@@ -73,13 +81,9 @@ const Messenger = ({ hasError, user }) => {
   }; 
 
 
-  if (hasError || error) {  
-       showBoundary()
-  }
-
   return (
     <>
-      {currentUser && Socket ? (
+      {!hasError && currentUser && Socket ? (
         <section className={styles.messangerWrapper}>
           <Head><title>Chat-Me</title></Head>
           <header className={styles.navbarWrapper}>
@@ -109,10 +113,12 @@ const Messenger = ({ hasError, user }) => {
               {isVisible && (
                 <div className={styles.popupMenuConversations} ref={visibleRef}>
                   <div onClick={handleOpenCreateGroup} role="button">
-                    Create group
+                    {t('conversationsOptions.createGroup')}
                   </div>
                   <div onClick={()=>setIsSorted(!isSorted)} role="button">
-                    {isSorted?'Sort by unseen':'Sort by latest' }
+                    {isSorted?
+                    t('conversationsOptions.sortUnseen'):
+                    t('conversationsOptions.sortLatest') }
                   </div>
                 </div>
               )}
@@ -139,8 +145,7 @@ const Messenger = ({ hasError, user }) => {
 
             <div className={styles.chatWrapper}>
               {currentChat ? (
-                <Chat placeholder={t('chat.placeholder')}
-                sendBtn={t('chat.button')} />
+                <Chat />
               ) : (
                 <div className={styles.noChatDiv}>
                   {t('placeholders.noChat')}
@@ -174,15 +179,14 @@ const Messenger = ({ hasError, user }) => {
 };
 
 export async function getServerSideProps({ req,locale }) {
-
+  
   const user = exctractCredentials(req);
-  if (user === 'No cookie') {
-    return { props: { hasError: true } };
-  }
+  
+  if (user === 'No cookie') return { props: { hasError: user } }
   
   return {
-    props: { user:user.user, 
-      ...(await serverSideTranslations(user.locale || locale, ['common'])) }
+    props: { user, 
+      ...(await serverSideTranslations(locale, ['common'])) }
   };
 }
 
