@@ -5,7 +5,6 @@ import React, {
 } from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
-import cookie from 'react-cookies'
 import noAvatar from "../../public/images/no-avatar.png";
 import { GrLanguage } from "react-icons/gr";
 import Button from "@mui/material/Button";
@@ -63,7 +62,7 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
     onSuccess
   );
 
-  const { refetch } = useQuery(["logout"], logOut, {
+  const { refetch:disconnect } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
       if (data.message === "User logged out successfully") {
         Socket.close();
@@ -145,12 +144,13 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   const handleLanguageMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleCloseLanguageMenu = () => {
     setAnchorEl(null);
   }; 
 
   const handleLocaleChoose = (l) =>{
-    cookie.save('NEXT_LOCALE', l)
+    document.cookie = `NEXT_LOCALE=${l}; max-age=3153876000;`
     push("/", undefined, { locale: l })
   }
 
@@ -179,7 +179,7 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   }, [notifications, numOfNotifications]);
 
   const handleSideMenu = () => {
-    setIsVisible(!isVisible);
+    setIsVisible(prev => !prev);
     if (!openNotifications) return;
 
     let unSavedNotifications = notifications.filter(
@@ -190,6 +190,11 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
     setNumOfNotifications(0);
     setOpenNotifications(false);
   };
+
+  const handlePrivate = () =>{
+    setIsVisible(prev => !prev)
+     push("messenger/userPage")
+  } 
 
   const memoUsers = useMemo(
     () =>
@@ -294,10 +299,10 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
 
       {isVisible && (
         <div className={styles.isMenuDiv} ref={visibleRef}>
-          <div role="link" onClick={() => push("messenger/userPage")}>
+          <div role="link" onClick={handlePrivate}>
             {personal}
           </div>
-          <div role="link" onClick={refetch}>
+          <div role="link" onClick={disconnect}>
             {logout}
           </div>
         </div>
