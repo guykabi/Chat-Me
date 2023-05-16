@@ -158,7 +158,7 @@ export const seenMessage = async ({messageId,userId}) =>{
 }
 
 
- export const getAllusers = async() =>{
+ export const getAllUsers = async() =>{
   const {data:res} = await Axios('users')
   return res
  }
