@@ -31,17 +31,12 @@ const UserPage = ({ user, hasError }) => {
   const [preview, setPreview] = useState(null);
 
   
-  const onError = (error) => {
-    showBoundary(error);
-  };
-  const { data, refetch, isLoading } = useGetUser(
-    user?._id,
-    false,
-    null,
-    onError
-  );
-  const [isChanged, setIsChanged] = useState(false);
+  const onError = (error) => {showBoundary(error)};
 
+  const { data, refetch:fetchUser, isLoading } = 
+     useGetUser(user?._id,false,null,onError);
+
+  const [isChanged, setIsChanged] = useState(false);
   const fileRef = useRef();
 
   const { mutate: update, isLoading: load } = useMutation(updateUserDetails, {
@@ -54,7 +49,8 @@ const UserPage = ({ user, hasError }) => {
   });
 
   useEffect(() => {
-    refetch();
+    if(hasError) return showBoundary(hasError)
+    fetchUser()
   }, []);
 
   const handleInputFileClick = () => {
@@ -112,20 +108,21 @@ const UserPage = ({ user, hasError }) => {
     setPreview(null);
   };
 
-  if (hasError) {
-    return onError(hasError);
-  }
 
   return (
+    <>
+    {!hasError&&data && 
     <section className={styles.userPageWrapper}>
       <Head>
-        <title>{t('header', {data})}</title>
+        {hasError?
+        <title>undefined</title>:
+        <title>{t('header', {data})}</title>}
       </Head>
       <article>
         {isLoading ? (
           <section className="center">
             <h2>{t('loading')}</h2>
-            <Loader />
+            <Loader size={40}/>
           </section>
         ) : (
           <section className={styles.mainUserPage} role="region">
@@ -233,10 +230,11 @@ const UserPage = ({ user, hasError }) => {
                   height={160}
                   style={{ objectFit: "contain", borderRadius: "5%" }}
                   alt="preview"
+                  priority={true}
                 />
                 <Button
                   className="secondaryBtn"
-                  text="This is the one"
+                  text={t('modalBtn')}
                   width={8}
                   height={15}
                   onClick={() => setIsChanged(false)}
@@ -246,20 +244,19 @@ const UserPage = ({ user, hasError }) => {
           </section>
         )}
       </article>
-    </section>
+    </section>}
+    </>
   );
 };
 
 export async function getServerSideProps({ req, locale }) {
 
   const user = exctractCredentials(req);
-  if (user == 'No cookie') {
-    return { props: { hasError: true } };
-  }
+  if (user == 'No cookie') return { props: { hasError: user } }
 
   return {
-    props: { user:user.user,
-      ...(await serverSideTranslations(user.locale || locale , ['userDetails']))  }
+    props: { user,
+      ...(await serverSideTranslations( locale , ['userDetails']))  }
   };
 }
 
