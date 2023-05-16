@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/IntroductionPage.module.css";
-import { exctractCredentials } from "../utils/utils";
+import { checkDevice, exctractCredentials } from "../utils/utils";
 import { tokenValidation } from "../utils/apiUtils";
 import { useMutation } from "react-query";
 import { Loader } from "../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";
 import Link from "next/link";
 import { useErrorBoundary } from "react-error-boundary";
+import Mobile from "../components/errors/mobile/mobile";
 
-const Introduction = ({ isLoggedIn }) => {
+const Introduction = ({ isMobile,isLoggedIn }) => {
   const { showBoundary } = useErrorBoundary();
   const [isConnect, setIsConnect] = useState(null);
-  const { mutate, error, isLoading } = useMutation(tokenValidation, {
-    onSuccess: () => {
-      push("/messenger");
-    },
-  });
 
+  const { mutate:authCheck, error, isLoading } = useMutation(tokenValidation, {
+    onSuccess: () => { push("/messenger") } 
+  });
+   
   useEffect(() => {
     let connect = localStorage.getItem("connect");
 
@@ -24,16 +24,22 @@ const Introduction = ({ isLoggedIn }) => {
       setIsConnect(true);
       return;
     }
-    if (isLoggedIn == undefined && connect === "true") {
-      mutate();
+    if (isLoggedIn && connect === "true") {
+      authCheck();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn]); 
+
+  if(isMobile){
+    return(
+      <Mobile/>
+    )
+  }
 
   if (isLoading) {
     return (
       <div className="center">
         <h2>Loading...</h2>
-        <Loader />
+        <Loader size={40} />
       </div>
     );
   }
@@ -65,17 +71,18 @@ const Introduction = ({ isLoggedIn }) => {
 };
 
 export async function getServerSideProps({ req }) {
-  const user = exctractCredentials(req);
 
-  if (user == "No cookie") {
-    return {
-      props: { isLoggedIn: false },
-    };
-  }
+  let isMobile = checkDevice(req.headers['user-agent'])
+
+  if(isMobile) return {props : {isMobile : 'mobile'}} 
+    
+  const user = exctractCredentials(req);
+  if (user === "No cookie") return {props: { isLoggedIn: false } }
 
   return {
-    props: { userName: user.user.name },
-  };
+    props:{ isLoggedIn:true }
+  }
+
 }
 
 export default Introduction;
