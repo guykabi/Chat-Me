@@ -6,5 +6,6 @@
         "name":"שם",
         "lastname":"שם משפחה"
     },
-    "chooseImage":"בחר תמונה"
+    "chooseImage":"בחר תמונה",
+    "modalBtn":"זאת הבחירה שלי"
 }

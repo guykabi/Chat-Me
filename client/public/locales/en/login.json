@@ -1,0 +1,24 @@
+{
+    "title":"Chat Me login",
+    "h2":"Login",
+    "h3":"Enter your email",
+    "stayConnect":"do you want to stay connect?",
+    "forgotPassword":"Forgot password?",
+    "resend":"Resend in:",
+    "emailNot":"Email not exists",
+    "checkEmail":"Check your email",
+    "placeholders":{
+        "email":"Email",
+        "password":"Password"
+    },
+    "buttons":{
+        "login":"Login",
+        "home":"Home",
+        "send":"Send",
+        "yes":"Yes",
+        "no":"No"
+    },
+    "error":{
+        "connection":"Something went wrong!"
+    }
+}

@@ -6,5 +6,6 @@
         "name":"Name",
         "lastname":"Lastname"
     },
-    "chooseImage":"Choose image"
+    "chooseImage":"Choose image",
+    "modalBtn":"This is the one"
 }

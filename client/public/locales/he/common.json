@@ -4,6 +4,11 @@
         "noChat":"פתח שיחה כדי להתחיל לשוחח"
     },
     "conversations":"שיחות",
+    "conversationsOptions":{
+        "createGroup":"צור קבוצה",
+        "sortUnseen":"לפי לא נקרא",
+        "sortLatest":"החדש ביותר"
+      },
     "createGroup":{
             "title":"צור קבוצה",
             "placeholder":"שם הקבוצה",
@@ -29,6 +34,24 @@
     },
     "chat":{
         "placeholder":"...הקלד הודעה",
-        "button":"שלח"
+        "button":"שלח",
+        "loadMessages":"...טוען הודעות",
+        "messageMenu":{
+            "details":"פרטים",
+            "forward":"העבר אל",
+            "delete":"מחק הודעה"
+        },
+        "fileForm":{
+            "titleImage":"התמונה שלך",
+            "titleVideo":"הסרטון שלך",
+            "placeholder":"...הקלד הודעה",
+            "saveBtn":"שלח",
+            "loading":"...טוען"
+        }
+    },
+    "modal":{
+        "messageDetails":"פרטי הודעה",
+        "seen":"נראה",
+        "likes":"לייקים"
     }
 }

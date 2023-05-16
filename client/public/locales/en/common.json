@@ -4,12 +4,17 @@
             "noChat":"Open a chat to start talk"
          },
     "conversations":"Conversations",
+    "conversationsOptions":{
+      "createGroup":"Create group",
+      "sortUnseen":"Sort by unseen",
+       "sortLatest":"Sort by latest"
+    },
     "createGroup":{
         "title":"Create a group",
         "placeholder":"Group name",
         "button":"Create group"
     },
-    "serach-chat":"Search a chat",
+    "search-chat":"Search a chat",
     "search-user":"Search a user",
     "forward":"Forward to",
     "online":"Online",
@@ -29,6 +34,25 @@
     },
     "chat":{
         "placeholder":"Type a message...",
-        "button":"Send"
+        "button":"Send",
+        "loadMessages":"Loading messages...",
+        "messageMenu":{
+            "details":"Details",
+            "forward":"Forward to",
+            "delete":"Delete message"
+        },
+        "fileForm":{
+            "titleImage":"Your Image",
+            "titleVideo":"Your Video",
+            "placeholder":"Type a message...",
+            "saveBtn":"Send",
+            "loading":"Loading..."
+        }
+    },
+    "modal":{
+        "messageDetails":"Message details",
+        "seen":"Seen",
+        "likes":"Likes"
     }
+    
 }

@@ -1,0 +1,24 @@
+{
+    "title":"Chat Me - כניסה",
+    "h2":"כניסה",
+    "h3":"הכנס אימייל",
+    "stayConnect":"תרצה להישאר מחובר?",
+    "forgotPassword":"?שכחת סיסמא",
+    "resend":"שלח שוב בעוד:",
+    "checkEmail":"בדוק את האימייל",
+    "emailNot":"אימייל לא קיים",
+    "placeholders":{
+        "email":"אימייל",
+        "password":"סיסמא"
+    },
+    "buttons":{
+        "login":"כניסה",
+        "home":"דף הבית",
+        "send":"שלח",
+        "yes":"כן",
+        "no":"לא"
+    },
+    "error":{
+        "connection":"!משהו השתבש"
+    }
+}
