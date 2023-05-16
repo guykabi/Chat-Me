@@ -102,6 +102,7 @@ const SignUp = () => {
                     width='90'
                     height='45'
                     fontSize='large'
+                    textAlign='center'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
                     </div>
@@ -118,6 +119,7 @@ const SignUp = () => {
                     width='90'
                     height='45'
                     fontSize='large'
+                    textAlign='center'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
                     </div>
@@ -135,6 +137,7 @@ const SignUp = () => {
                     width='90'
                     height='45'
                     fontSize='large'
+                    textAlign='center'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
                     </div>
@@ -151,6 +154,7 @@ const SignUp = () => {
                     type='password'
                     width='90'
                     height='45'
+                    textAlign='center'
                     fontSize='large'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
@@ -168,6 +172,7 @@ const SignUp = () => {
                     width='90'
                     height='45'
                     fontSize='large'
+                    textAlign='center'
                     onChange={handleChange}
                     onBlur={handleBlur}/>
                     </div>
