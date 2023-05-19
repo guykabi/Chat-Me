@@ -33,12 +33,11 @@ const Messenger = ({ hasError, user }) => {
   const [isSorted,setIsSorted]=useState(true) 
  
   const onError = (error) => {showBoundary(error)};
-
+  
   const { data } = useGetUser(user?._id,true,null,onError);
-
+ 
   const {refetch:fetchUsers} = useQuery(['users'],getAllUsers,{
     //For later use - example => identify user that left group
-    //Only fetching once 
     onError,
     enabled:false,
     refetchOnWindowFocus:false
@@ -46,20 +45,18 @@ const Messenger = ({ hasError, user }) => {
 
   useEffect(()=>{
      if(hasError) showBoundary(hasError)
-  },[])
- 
+     if(currentUser)return
+     dispatch({ type: "CURRENT_USER", payload: data });
+  },[data])
+  
   useEffect(() => {
     if(hasError)return
-
-    if (!currentUser && data)
-      dispatch({ type: "CURRENT_USER", payload: data });
-    
     
     if (!currentUser) return;
     Socket?.emit("addUser", user._id);
     fetchUsers()
 
-  }, [data, currentUser]); 
+  }, [currentUser]); 
 
   
   useEffect(()=>{
@@ -181,13 +178,13 @@ const Messenger = ({ hasError, user }) => {
 export async function getServerSideProps({ req,locale }) {
   
   const user = exctractCredentials(req);
-  
-  if (user === 'No cookie') return { props: { hasError: user } }
-  
+  if (user === "No cookie" || user === "No token")  
+       return { props: { hasError: user } }
+
   return {
     props: { user, 
       ...(await serverSideTranslations(locale, ['common'])) }
   };
 }
 
-export default Messenger;
+export default  Messenger;
