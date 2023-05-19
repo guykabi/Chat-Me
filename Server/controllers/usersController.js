@@ -1,4 +1,4 @@
-import {User} from '../models/messagesModel.js'
+import {User} from '../models/userModel.js'
 import bcrypt from 'bcryptjs'
 import {approveFriend} from '../utils/utils.js'
 import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'

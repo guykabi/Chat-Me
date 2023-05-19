@@ -27,9 +27,13 @@
 
 .dropMenuSignOtherImage{
   position: absolute;
-  z-index: 10;
+  z-index: 2;
   display: none;
   right: 0;
+  background-color: rgba(150, 114, 185, 1);
+  border-radius:2px;
+  padding:4px;
+  transition: 0.5s;
 }
 
 .ownMessage{
@@ -100,7 +104,15 @@
   }   
 
   .otherMessage:hover{
-    background-color: rgba(150, 114, 185, 0.818);
+    background-color: rgba(150, 114, 185, 1);
+  } 
+
+  .otherMessage:hover .dropMenuSignOtherImage{
+    display: block;
+    color: white;
+    font-size: large;
+    margin-top: 1.6rem;
+    transform: scale(1.1);
   }
 
   .otherMessage span{

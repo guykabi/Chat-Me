@@ -65,12 +65,12 @@ const MessageOperations = ({
             {ownLike ? (
               <>
                 <AiOutlineDislike />
-                UnLike message
+                {t('chat.messageMenu.unlike')}
               </>
             ) : (
               <>
                 <AiOutlineLike />
-                Like message
+                {t('chat.messageMenu.like')}
               </>
             )}
           </div>

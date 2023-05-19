@@ -1,10 +1,7 @@
 import React, {
-  memo,
-  useEffect,
-  useState,
-  useContext,
-  forwardRef,
-  useCallback,
+   memo, useEffect,
+  useState, useContext,
+  forwardRef,useCallback,
 } from "react";
 import styles from "./message.module.css";
 import { chatContext } from "../../context/chatContext";
@@ -53,13 +50,16 @@ import Picker from "../picker/picker";
 
   
   useEffect(() => {
-    //Checks if message is unseen
+
+    //Checks if message is a banner's type message
     if (message?.banner) return;
+    
+    //Checks if message is unseen
     if (!own && !message.seen.some((s) => s.user === currentUser._id)) {
       switchToSeen({ messageId: message._id, userId: currentUser._id });
     }
      
-
+    //Only other user's message on a group chat
     if (!currentChat.chatName || message.sender === currentUser._id) return;
     let member = currentChat.participants.find((p) => p._id === message.sender);
     setMemberName(
@@ -110,6 +110,7 @@ import Picker from "../picker/picker";
     setShowImage(false)
   }
 
+
   const messageDetails = (
     <section className={styles.messageDetailsWrapper}>
       <header className={styles.messageDetailsHeader}>
@@ -159,10 +160,10 @@ import Picker from "../picker/picker";
   ); 
 
 
-  const image = (
+  const file = (
     message?.image?.video?  
-      <Video video={message.image.url} openVideo={showImage}/>
-      :<Image
+      <Video video={message.image.url} openVideo={showImage}/>:
+      <Image
       fill
       sizes="(max-width: 368px) 100vw"
       style={{ objectFit:showImage?"contain":"cover"}}
@@ -179,49 +180,55 @@ import Picker from "../picker/picker";
         <article className={styles.mainMessageDiv} ref={ref}>
           <main className={styles.contentWrapper} ref={visibleRef}>
             <div className={own ? styles.ownMessage : styles.otherMessage}>
-              {currentChat.chatName && (
+
+              {currentChat.chatName ? (
                 <header className={styles.topOfMessage}>
+
+                  {!own?
                   <div aria-label={memeberName}>
                     <strong>{memeberName}</strong>
-                  </div>
-                  {message?.image ? (
-                    <div
-                      className={own?styles.dropMenuSignImage:styles.dropMenuSignOtherImage}
-                      onClick={handleMessageOperationMenu}
-                    >
-                      <AiOutlineDown />
-                    </div>
-                  ) : (
-                    <div
-                      className={styles.dropMenuSign}
-                      onClick={handleMessageOperationMenu}
-                    >
-                      <AiOutlineDown />
-                    </div>
-                  )}
-                </header>
-              )}
+                  </div>:null}
 
-              {!currentChat.chatName && (
-                <header className={styles.topOfMessage}>
                   <div
-                    className={styles.dropMenuSign}
+                    className={
+                    message?.image?
+                    styles.dropMenuSignImage:
+                    styles.dropMenuSign}
                     onClick={handleMessageOperationMenu}
                   >
                     <AiOutlineDown />
                   </div>
+          
+                </header>
+              ):(
+                <header className={styles.topOfMessage}>
+                 
+                  <div
+                    className={message?.image?
+                    styles.dropMenuSignOtherImage:
+                    styles.dropMenuSign
+                    }
+                    onClick={handleMessageOperationMenu}
+                  >
+                    <AiOutlineDown />
+                  </div>
+                 
                 </header>
               )}
+
               {message.image ? (
-                <div className={styles.messageImageWrapper} onClick={openImage}>
-                  {image}
+                <div 
+                className={styles.messageImageWrapper} 
+                onClick={openImage}>
+                  {file}
                 </div>
               ) : null}
-              {message.text && (
+
+              {message.text ? (
                 <div dir="auto" className={styles.messageTextDiv}>
                   {message.text}
                 </div>
-              )}
+              ):null}
 
               <div className={styles.timeBatch}>
                 {getMessageTime(message.createdAt)}
@@ -250,6 +257,7 @@ import Picker from "../picker/picker";
               )}
             </div>
           </main>
+
           <Modal 
           show={showMessageDetailsModal} 
           onClose={closeMessageDetailsModal} 
@@ -276,13 +284,16 @@ import Picker from "../picker/picker";
             isFileMessage={true}
           >
             <div className={styles.modalImageMessage}>
-              {image}
+              {file}
             </div>
           </Modal>
+
         </article>
       ) : (
         <article className={styles.bannerUnSeen} ref={ref}>
-          <div className={styles.bannerContentWrapper}>{message.banner}</div>
+          <div className={styles.bannerContentWrapper}>
+            {message.banner}
+          </div>
         </article>
       )}
     </>

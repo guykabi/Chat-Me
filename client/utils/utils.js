@@ -1,9 +1,5 @@
 import * as cookie from "cookie";
-import { push, useRouter } from "next/router";
-import Modal from "../components/Modal/modal";
-import Button from "../components/UI/Button/button";
 import {format,intervalToDuration,formatRelative,addDays} from 'date-fns'
-
 
 
 export const getMessageTime = (date) => {
@@ -36,10 +32,9 @@ export const checkDevice = (userAgent) =>{
 }
 
 export const exctractCredentials = (req) => {
-  let Cookie = cookie.parse(req?.headers?.cookie);
-  if(!Cookie || 
-    Cookie?.NEXT_LOCALE && Object.keys(Cookie).length == 1
-    ) return 'No cookie'
+  if(!req.headers.cookie) return 'No cookie'
+  let Cookie = cookie?.parse(req?.headers?.cookie);
+  if(!Cookie.userData || !Cookie?.token) return 'No token'
 
   let user = JSON.parse(Cookie?.userData)
   return user;
@@ -111,7 +106,8 @@ export const searchPastMember = (userId,data) =>{
 //Dividing the messages to dates regions
 //Example of the first item from previous rendered messages,
 //To check if it's the same date
-export const handleDateDividing = (messages,example=null) =>{
+export const handleDateDividing = (messages,example) =>{
+
     let datedMessages = []
     let currentDateGroup;
 

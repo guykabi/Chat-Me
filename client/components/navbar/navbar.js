@@ -4,6 +4,7 @@ import React, {
   useEffect,useCallback,
 } from "react";
 import styles from "./navbar.module.css";
+import {googleLogout} from '@react-oauth/google'
 import Image from "next/image";
 import noAvatar from "../../public/images/no-avatar.png";
 import { GrLanguage } from "react-icons/gr";
@@ -32,12 +33,13 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   const [searchedUser, setSearchedUser] = useState();
   const [allUsers, setAllUsers] = useState(null);
   const [noUserFound, setNoUserFound] = useState(false);
-  const [notifications, setNotifications] = useState();
+  const [notifications, setNotifications] = useState([]);
   const [numOfNotifications, setNumOfNotifications] = useState(0);
   const [openNotifications, setOpenNotifications] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   
+  const onError = (error) => showBoundary(error)
 
   const { mutate: search, isLoading } = useMutation(searchUser, {
     onSuccess: (data) => {
@@ -48,10 +50,10 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
       }
       setAllUsers(data);
     },
-    onError: (error) => showBoundary(error),
+    onError
   });
-
-  const onSuccess = () => {
+   
+  const onSuccess = (data) => {
     if (!currentUser) return;
     dispatch({ type: "CURRENT_USER", payload: data });
   };
@@ -59,24 +61,26 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   const { data, refetch: getUserData } = useGetUser(
     currentUser?._id,
     false,
-    onSuccess
+    onSuccess,
+    onError
   );
 
   const { refetch:disconnect } = useQuery(["logout"], logOut, {
     onSuccess: (data) => {
       if (data.message === "User logged out successfully") {
-        Socket.close();
-        dispatch({ type: "CURRENT_USER", payload: null }), push("/login");
+        googleLogout(), Socket.emit('logout')
+        dispatch({ type: "CURRENT_USER", payload:null })
+        push("/login");
       }
     },
-    onError: (error) => showBoundary(error),
+    onError,
     enabled: false,
   });
 
   useEffect(() => {
     setNotifications(currentUser.notifications);
-    setNumOfNotifications(currentUser.notifications.length);
-  }, []);
+    setNumOfNotifications(currentUser.notifications?.length);
+  }, [currentUser.notifications]);
 
   useEffect(() => {
     if (noUserFound) setNoUserFound(false);
@@ -97,7 +101,9 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
 
   useEffect(() => {
     const eventHandler = (data) => {
+
       getUserData();
+
       //Removing the friendship request notification
       if (data.message === "Request has been removed!") {
         let filteredNotifications = notifications.filter(
@@ -125,7 +131,9 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
 
     Socket?.on("incoming-notification", eventHandler);
     return () => Socket?.off("incoming-notification", eventHandler);
+
   }, [Socket, notifications, currentUser]);
+
 
   const serachInputOnFocus = () => {
     getUserData();
@@ -151,7 +159,7 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
 
   const handleLocaleChoose = (l) =>{
     document.cookie = `NEXT_LOCALE=${l}; max-age=3153876000;`
-    push("/", undefined, { locale: l })
+    push("/messenger", undefined, { locale: l })
   }
 
   const handleNotification = () => {
@@ -192,7 +200,7 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   };
 
   const handlePrivate = () =>{
-    setIsVisible(prev => !prev)
+     setIsVisible(prev => !prev)
      push("messenger/userPage")
   } 
 

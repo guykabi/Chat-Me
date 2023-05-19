@@ -35,16 +35,16 @@ useEffect(()=>{
 
 
    //When a new friend added - add him (if he is connect) to the online list!    
-   const handleNotifyEvent = ({users,message,sender}) =>{
-     
-    if(message !== 'The Friend approval has been done')return 
+   const handleNotifyEvent =  ({users,message}) =>{
     
-    let allOnLinUsers = users?.
+    if(message !== 'The Friend approval has been done')return 
+
+    let allOnLineUsers = users?.
     filter(f=>f.userId !== currentUser._id)
     .map(u=>u.userId)
     
     let onlineFriends = currentUser?.friends
-    ?.filter(f=> allOnLinUsers.includes(f._id))
+    ?.filter(f=> allOnLineUsers?.includes(f._id))
     
     setOnlineUsers(onlineFriends)
    } 
@@ -52,17 +52,16 @@ useEffect(()=>{
    Socket.on('incoming-notification',handleNotifyEvent)
    return () => Socket.off('incoming-notification',handleNotifyEvent)
   
- },[Socket])
+ },[Socket, currentUser])
 
 
 
  useEffect(()=>{
   //When there is a change on the user's friends
-  if(!onlineUsers)return 
-     
-     let allOnLinUsers = onlineUsers?.map(u=>u._id)
+
+     let allOnLineUsers = onlineUsers?.map(u=>u._id)
      let onlineFriends =  currentUser.friends
-     ?.filter(f=> allOnLinUsers.includes(f._id))
+     ?.filter(f=> allOnLineUsers.includes(f._id))
      
      setOnlineUsers(onlineFriends)
 

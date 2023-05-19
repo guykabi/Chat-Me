@@ -32,6 +32,11 @@ const onGroupPick = (e) =>{
 const getUserName = ()=> {
   let user = group.participants.find(p=>p._id !== currentUser._id)
   return user.name
+} 
+
+const getUserImage = () =>{
+  let user = group.participants.find(p=>p._id !== currentUser._id)
+  return user?.image
 }
 
   return (
@@ -53,7 +58,7 @@ const getUserName = ()=> {
            width={70}
            height={70}
            style={{borderRadius:'50%',objectFit:'cover'}}
-           src={group?.image?.url?group.image.url:noAvatar}
+           src={getUserImage()?getUserImage().url:noAvatar}
            placeholder={group?.image?.base64?'blur':'empty'}
            blurDataURL={group?.image?.base64}
            alt={getUserName()}

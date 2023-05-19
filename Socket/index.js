@@ -24,12 +24,12 @@ io.on('connection', socket=>{
    
     //On user connect - add to the connected users
     socket.on("addUser",(userId)=>{
-        
         let exists = getUser(userId)
          //Checking if the socket exists
         if(exists)return
 
         let users = addUsers(userId,socket.id)
+       
         io.emit('getUsers',users)
     })   
     
@@ -44,15 +44,14 @@ io.on('connection', socket=>{
         
         if(message === 'The Friend approval has been done'){ 
             let users = getAllUsers()
-            
             io.to(result?.socketId)
             .emit('incoming-notification',{sender,reciever,message,users})
             return
         }
-
+           
         io.to(result?.socketId)
         .emit('incoming-notification',{sender,reciever,message})            
-        
+            
     }) 
 
     socket.on('new-conversation',(conversation=undefined)=>{    
@@ -98,6 +97,11 @@ io.on('connection', socket=>{
         socket.join(room)
 
         console.log(`User ${socket.id} joined to room ${room}`);
+    }) 
+
+    socket.on('logout',()=>{
+        let users = removeUser(socket.id)
+        io.emit("getUsers",users)
     })
 
     socket.on('disconnect',()=>{
