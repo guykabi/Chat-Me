@@ -38,6 +38,8 @@
         "loadMessages":"...טוען הודעות",
         "messageMenu":{
             "details":"פרטים",
+            "like":"תן לייק",
+            "unlike":"הסר לייק",
             "forward":"העבר אל",
             "delete":"מחק הודעה"
         },

@@ -38,6 +38,8 @@
         "loadMessages":"Loading messages...",
         "messageMenu":{
             "details":"Details",
+            "like":"Like message",
+            "unlike":"UnLike message",
             "forward":"Forward to",
             "delete":"Delete message"
         },
