@@ -47,12 +47,12 @@
 }
 
 .numOfUnSeen{
-    width: 1rem;
+    width: fit-content;
     border-radius: 50%;
     background-color: rgb(97, 182, 97);
     color: white;
     margin-left: 40%;
-    padding: 0.1rem;
+    padding: 0.2rem;
     align-items: center;
 } 
 
