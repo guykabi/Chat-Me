@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect,useContext } from "react";
 import Head from "next/head";
-import SignInForm from "../../components/signIn/signInForm/signInForm";
+import SignInForm from "../../components/signInForm/signInForm";
 import Modal from "../../components/Modal/modal";
 import {chatContext} from '../../context/chatContext'
 import { useTranslation } from "next-i18next";
