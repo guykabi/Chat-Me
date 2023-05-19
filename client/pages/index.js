@@ -1,33 +1,39 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/IntroductionPage.module.css";
 import { checkDevice, exctractCredentials } from "../utils/utils";
-import { tokenValidation } from "../utils/apiUtils";
-import { useMutation } from "react-query";
+import { tokenValidation, logOut } from "../utils/apiUtils";
+import { useQuery, useMutation } from "react-query";
 import { Loader } from "../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";
 import Link from "next/link";
 import { useErrorBoundary } from "react-error-boundary";
 import Mobile from "../components/errors/mobile/mobile";
+import Head from "next/head";
 
 const Introduction = ({ isMobile,isLoggedIn }) => {
   const { showBoundary } = useErrorBoundary();
-  const [isConnect, setIsConnect] = useState(null);
-
+   
   const { mutate:authCheck, error, isLoading } = useMutation(tokenValidation, {
-    onSuccess: () => { push("/messenger") } 
+    onSuccess: () => { push("/messenger") },
+    onError: (error) => showBoundary(error) 
+  }); 
+   
+  const { refetch:clear } = useQuery(["clear"], logOut, {
+    onError: (error) => showBoundary(error),
+    enabled: false,
   });
    
   useEffect(() => {
     let connect = localStorage.getItem("connect");
 
-    if (connect === "false" || isLoggedIn === false) {
-      setIsConnect(true);
+    if (connect === "false" || !isLoggedIn) {
+      if(isLoggedIn) clear()
       return;
     }
-    if (isLoggedIn && connect === "true") {
-      authCheck();
-    }
-  }, [isLoggedIn]); 
+    
+    authCheck();
+
+  }, []); 
 
   if(isMobile){
     return(
@@ -36,10 +42,11 @@ const Introduction = ({ isMobile,isLoggedIn }) => {
   }
 
   if (isLoading) {
+    
     return (
       <div className="center">
         <h2>Loading...</h2>
-        <Loader size={40} />
+        <Loader size={50} />
       </div>
     );
   }
@@ -50,7 +57,11 @@ const Introduction = ({ isMobile,isLoggedIn }) => {
 
   return (
     <>
-      {isConnect && (
+    <Head>
+      <title>Chat - Me</title>
+      <meta property="og:title" content="Chat Me title" key="title" />
+    </Head>
+      {!isLoggedIn&& (
         <section className={styles.homePageWrapper}>
           <main className={styles.mainHomeDiv}>
             <h1>Chat-Me</h1>
@@ -76,8 +87,9 @@ export async function getServerSideProps({ req }) {
 
   if(isMobile) return {props : {isMobile : 'mobile'}} 
     
-  const user = exctractCredentials(req);
-  if (user === "No cookie") return {props: { isLoggedIn: false } }
+  const result = exctractCredentials(req);
+  if (result === "No cookie" || result === "No token") 
+        return {props: { isLoggedIn: false } }
 
   return {
     props:{ isLoggedIn:true }
