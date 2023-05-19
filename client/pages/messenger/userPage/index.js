@@ -252,7 +252,8 @@ const UserPage = ({ user, hasError }) => {
 export async function getServerSideProps({ req, locale }) {
 
   const user = exctractCredentials(req);
-  if (user == 'No cookie') return { props: { hasError: user } }
+  if (user === "No cookie" || user === "No token") 
+        return { props: { hasError: user } }
 
   return {
     props: { user,
