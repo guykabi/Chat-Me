@@ -34,10 +34,10 @@ const Messenger = ({ hasError, user }) => {
  
   const onError = (error) => {showBoundary(error)};
   
-  const { data } = useGetUser(user?._id,true,null,onError);
- 
+  const { data, refetch } = useGetUser(user?._id,false,null,onError);
+  
   const {refetch:fetchUsers} = useQuery(['users'],getAllUsers,{
-    //For later use - example => identify user that left group
+    //For later use - example => identify user that left a group
     onError,
     enabled:false,
     refetchOnWindowFocus:false
@@ -45,10 +45,11 @@ const Messenger = ({ hasError, user }) => {
 
   useEffect(()=>{
      if(hasError) showBoundary(hasError)
-     if(currentUser)return
+     if(data?._id !== user?._id) refetch()
+     if(currentUser || data?._id !== user?._id )return
      dispatch({ type: "CURRENT_USER", payload: data });
   },[data])
-  
+
   useEffect(() => {
     if(hasError)return
     

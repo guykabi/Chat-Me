@@ -6,6 +6,7 @@ import styles from './conversation.module.css'
 import { useErrorBoundary } from "react-error-boundary";
 import { chatContext } from '../../context/chatContext'
 import {useQuery} from 'react-query'
+import {formatISO} from 'date-fns'
 import { handleSeenTime } from '../../utils/utils'
 import {getConversation} from '../../utils/apiUtils'
 
@@ -16,6 +17,8 @@ const Conversation = ({con,newMessage}) => {
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
   const [numsOfUnSeen,setNumOfUnseen]=useState()
   const [isCurrentOne,setIsCurrentOne]=useState(false)
+  const [seenTime,setSeenTime]=useState(null)
+
 
   const {refetch:fetchChatData} = useQuery(['conversation'],
      ()=>getConversation(con._id,currentUser._id,true),{
@@ -26,30 +29,38 @@ const Conversation = ({con,newMessage}) => {
      enabled:false
   })
 
-  
+   
 useEffect(()=>{
+
   setNumOfUnseen(con.unSeen)
+  setSeenTime(handleSeenTime(con.lastActive))
+
   //If not a group chat
   if(con.chatName)return
   if(con?.friend) return setFriend(con.friend)
     let friend = con?.participants?.find(p=>p._id !== currentUser?._id)
     setFriend(friend)  
-},[con])
+
+},[]) 
 
 
 useEffect(()=>{
-  if(!newMessage)return
-  setNumOfUnseen(prev=>prev+=1)
-},[newMessage]) 
+   if(!newMessage)return
+   setSeenTime(handleSeenTime(formatISO(new Date())))
+   if(con._id !== currentChat?._id || !currentChat) setNumOfUnseen(prev=>prev+=1)
+
+},[newMessage])
 
 
 useEffect(()=>{
-  setIsCurrentOne(false)
   if(currentChat?._id === con._id){
     setIsCurrentOne(true)
     if(numsOfUnSeen)setNumOfUnseen(0)
+    return
   }
+  if(isCurrentOne) setIsCurrentOne(false)
 },[currentChat])
+
 
 const selectedConversation = ()=>{
   //Preventing from the same conversation to be picked again!
@@ -94,10 +105,10 @@ const selectedConversation = ()=>{
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
-        {!isCurrentOne&&con.lastActive?<div 
+        {!isCurrentOne&&seenTime?<div 
         className={styles.lastActiveDate}
         role='timer'>
-          {handleSeenTime(con.lastActive)}
+          {seenTime}
         </div>:null}
         {numsOfUnSeen?
         <div className={styles.numOfUnSeen}>

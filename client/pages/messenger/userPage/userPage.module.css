@@ -8,13 +8,16 @@
 
 .userPageWrapper::before{   
         content: "";
-        background-image: url('/images/details-bg.webp');
+        background: 
+        linear-gradient(61deg, rgba(117,164,137,1), rgba(0,0,0,0)),
+        conic-gradient(from 62deg at 10% 41%, rgba(160,206,160,1), rgba(0,0,255,0)),
+        conic-gradient(from 242deg at 124% 47%, rgba(104,109,104,1), rgba(98,92,162,0));
         position: absolute;
         top: 0px;
         right: 0px;
         bottom: 0px;
         left: 0px;
-        opacity: 0.45;
+      
 }
 
 .mainUserPage{
@@ -30,6 +33,7 @@
     min-width: 28rem;
     background-color: rgb(254, 253, 253);
     box-shadow: 0px 4px 4px 0px rgba(57, 55, 55, 0.692);
+    border-radius: 8px;
 }
 
 .formWrapper{
@@ -49,6 +53,13 @@
     margin:  0 auto;
     width: 12rem;
     height: 12rem;
+    border-radius: 50%;
+    box-shadow: 0px 4px 4px 0px rgba(57, 55, 55, 0.492);
+    transition: 0.5s;
+} 
+
+.userImageWrapper:hover{
+    transform: scale(1.08);
 }
 
 .chooseImageWrapper{

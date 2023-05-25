@@ -1,6 +1,6 @@
 import styles from "./chat.module.css";
-import { useEffect, useState, useContext, useRef, useCallback } from "react";
-import { handleDateDividing } from "../../utils/utils";
+import { useEffect, useState, useContext, useRef, useCallback, Suspense } from "react";
+import { handleDateDividing, handleJoiningDate } from "../../utils/utils";
 import { useTranslation } from "next-i18next";
 import { chatContext } from "../../context/chatContext";
 import { useQuery, useMutation } from "react-query";
@@ -30,11 +30,16 @@ const Chat = () => {
   const [typingText, setTypingText] = useState(null);
   const [isEditGroup, setIsEditGroup] = useState(false);
   const fileRef = useRef(null);
+  
 
   const { isLoading } = useQuery(
     ["messages", currentChat],
-    () => getMessages(currentChat?._id),
-    {
+    () => getMessages(  
+           currentChat?._id,
+           handleJoiningDate(currentChat,currentUser._id),
+           null,currentChat?.unSeen + 30 || 30
+          ),
+      {
       onSuccess: (data) => {
         if (!data.length) setMessages([]);
         setMessages(handleDateDividing(data));
@@ -48,10 +53,10 @@ const Chat = () => {
   const {refetch:fetchAllChatData} = useQuery('full-conversation',
       ()=>getConversation(currentChat._id,currentUser._id),{
         onSuccess:({conversation})=>{
-          setIsEditGroup(true)
           dispatch({type:'CURRENT_CHAT',payload:conversation})
         },
-        enabled:false
+        enabled:false,
+        staleTime:2000
       })
 
   const { mutate: sendMessage, isLoading: messageLoad } = useMutation(
@@ -105,6 +110,7 @@ const Chat = () => {
 
   const handleOpenChatDetails = () =>{
     fetchAllChatData()
+    setIsEditGroup(true)
   }
 
   const handleInputFileClick = useCallback(() => {
@@ -175,8 +181,8 @@ const Chat = () => {
             <div className={styles.modalImageWrapper}>{handleImage}</div>
           </Modal>
 
-          {isEditGroup? (
-            <section className={styles.editGroupSection}>
+          {isEditGroup ? (    
+            <section className={styles.editGroupSection}>   
               <EditGroup onReturn={() => setIsEditGroup(false)} />
             </section>
           ) : (
@@ -197,14 +203,16 @@ const Chat = () => {
           )}
 
           <main className={styles.chatBoxDiv}>
-            {messages ? <Messages messages={messages} /> : null}
 
-            {isLoading && (
+            {isLoading ? (
               <div className={styles.loadingMessages}>
-                <div>{t('chat.loadMessages')}</div>
-                <Loader size={20} />
+                <div>
+                  <b>{t('chat.loadMessages')}</b>
+                </div>
+                <Loader size={30} />
               </div>
-            )}
+            ):
+            messages ? <Messages messages={messages} /> : null}
           </main>
 
           <footer className={styles.chatBoxBottom}>
@@ -214,7 +222,7 @@ const Chat = () => {
                 onChange={setNewMessage}
                 onEnter={handleNewMessage}
                 width={40}
-                height={15}
+                maxLength={80}
                 placeholder={t('chat.placeholder')}
                 borderRadius={10}
               />

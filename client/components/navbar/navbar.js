@@ -92,11 +92,13 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
     }
 
     setIsSearching(true); //To show all the search results
+
     let obj = { userName: searchedUser, userId: currentUser._id };
     const timer = setTimeout(() => {
       search(obj);
     }, 400);
     return () => clearTimeout(timer);
+    
   }, [searchedUser]);
 
   useEffect(() => {

@@ -59,7 +59,6 @@ import Picker from "../picker/picker";
       switchToSeen({ messageId: message._id, userId: currentUser._id });
     }
      
-    //Only other user's message on a group chat
     if (!currentChat.chatName || message.sender === currentUser._id) return;
     let member = currentChat.participants.find((p) => p._id === message.sender);
     setMemberName(
@@ -192,7 +191,8 @@ import Picker from "../picker/picker";
                   <div
                     className={
                     message?.image?
-                    styles.dropMenuSignImage:
+                    own?styles.dropMenuSignImage:
+                    styles.dropMenuSign:
                     styles.dropMenuSign}
                     onClick={handleMessageOperationMenu}
                   >
@@ -205,6 +205,7 @@ import Picker from "../picker/picker";
                  
                   <div
                     className={message?.image?
+                    own?styles.dropMenuSignImage:
                     styles.dropMenuSignOtherImage:
                     styles.dropMenuSign
                     }

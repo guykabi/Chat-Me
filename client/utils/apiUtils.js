@@ -65,10 +65,12 @@ export const logOut =async () =>{
 }  
 
 
-export const getMessages = async(conversationId,amount=0,limit=30)=> {
+export const getMessages = async(conversationId, joiningDate, skip=0,limit=30)=> {
+   
     const {data:res} = await Axios('messages/'+conversationId,{
       headers:{
-        'load-more':amount,
+        'joining-date':joiningDate,
+        'skip':skip,
         'limit':limit
       }
     })
@@ -119,6 +121,11 @@ export const createConversation = async ({userId,friendId=null}) =>{
   return res
 }
 
+export const createGroup =async (group) =>{
+  const {data:res} = await Axios.post('conversation',group)
+  return res
+}
+
 export const updateConversation = async ({conId,body}) =>{
   const {data:res} = await Axios.patch('conversation/'+conId,body)
   return res
@@ -162,12 +169,6 @@ export const seenMessage = async ({messageId,userId}) =>{
   const {data:res} = await Axios('users')
   return res
  }
-
-
-export const createGroup =async (group) =>{
-  const {data:res} = await Axios.post('conversation',group)
-  return res
-}
 
 
 export const handleLikeMessage = async ({messageId,userId}) =>{
