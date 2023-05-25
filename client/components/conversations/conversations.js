@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext, memo } from "react";
+import React, { useEffect, useMemo, useState, useContext, memo, Suspense } from "react";
 import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
@@ -17,7 +17,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
   const [query, setQuery] = useState("");
   const [incomingMessage, setIncomingMessage] = useState(null);
 
-  const { isLoading, refetch } = useQuery(
+  const { isLoading,refetch:refetchConversations } = useQuery(
     ["conversations"],
     () => getConversations(currentUser._id),
     {
@@ -26,12 +26,17 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
       },
       onError: (error) => showBoundary(error),
       staleTime: 2000,
+      refetchOnWindowFocus:false
     }
-  );
+  ); 
+
+ 
 
   useEffect(() => {
+
     Socket.removeAllListeners("background-message");
-    Socket?.on("background-message", (message) => {
+    Socket?.on("background-message",(message) => {
+
       if (!allConversations.length) return;
 
       //Check if there is already such conversation
@@ -39,35 +44,36 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
         (con) => con._id === message.conversation._id
       );
 
-      //For adding to the counter of unseen messages
-      if (
-        message.conversation._id !== currentChat?._id &&
-        message.sender !== currentUser._id
-      ) {
-        setIncomingMessage(message.conversation._id);
-      }
 
-      if (message.sender === currentUser._id || latestConversation) {
+      if (latestConversation) {
+
+        //For unseen messages counter
+        setIncomingMessage(message.conversation._id)
+
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
-        tempArr.splice(index, 1), tempArr.unshift(latestConversation);
-        setAllConversations(tempArr);
+        latestConversation.incomingMessage = true
+        if(index !== 0){
+          tempArr.splice(index, 1), tempArr.unshift(latestConversation);
+          setAllConversations(tempArr);
+        }
 
         //Only the reciever will hear the new message's sound
         if (message.sender === currentUser._id) return;
-
-        new Audio("/assets/notifySound.mp3").play();
+        
+           new Audio("/assets/notifySound.mp3").play();
       }
 
-      //Fetching new conversations when a message from a new chat is recieved
+      //When a message from a new private chat is recieved
       if (
         message.conversation.participants.includes(currentUser._id) &&
         message.sender !== currentUser._id
       ) {
         //Only the user who isn't the sender will get this refetch of conversations
-        refetch();
+        refetchConversations();
       }
     });
+   
 
     //When a new chat is created
     Socket.on("arrival-conversation", (conversation) => {
@@ -129,6 +135,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
     setQuery("");
   }, [currentChat]);
 
+
   useEffect(() => {
     //Sorting conversations by the amount of unseen messages
     if (sortBy === false) {
@@ -138,19 +145,19 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
       return;
     }
     //Return to sort by date/last active
-    refetch();
+    refetchConversations();
   }, [sortBy]);
 
   const filteredConversations = useMemo(
     () => handleFilterCons(allConversations, query),
-    [allConversations, query]
+    [allConversations,query]
   );
 
   const memoCons = filteredConversations?.map((con) => (
     <Conversation
       key={con._id}
       con={con}
-      newMessage={incomingMessage === con._id}
+      newMessage={con?.incomingMessage&&incomingMessage}
     />
   ));
 
