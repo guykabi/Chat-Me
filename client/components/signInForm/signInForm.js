@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useTranslation } from "next-i18next";
-import Button from "../../../components/UI/Button/button";
+import Button from "../../components/UI/Button/button";
 import styles from "./signInForm.module.css";
-import Input from "../../../components/UI/Input/Input";
-import { checkUser } from "../../../utils/apiUtils";
-import {decodeGoogleCredentials} from '../../../utils/authUtils'
+import Input from "../../components/UI/Input/Input";
+import { checkUser } from "../../utils/apiUtils";
+import {decodeGoogleCredentials} from '../../utils/authUtils'
 import { useMutation } from "react-query";
 import {GoogleLogin} from '@react-oauth/google'
-import { Loader } from "../../../components/UI/clipLoader/clipLoader";
+import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { useRouter } from "next/router";
 import {AiOutlineMail} from 'react-icons/ai'
 import {RiLockPasswordLine} from 'react-icons/ri'
@@ -22,7 +22,6 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
   const [userName, setUserName] = useState(null);
   const [isResetPassword, setIsResetPassword] = useState(false);
   
-
 
   const {
     mutate: authUser,
