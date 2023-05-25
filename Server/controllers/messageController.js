@@ -5,22 +5,26 @@ import {
   removeFromCloudinary,
 } from "../services/cloudinary.js";
 import { getPlaiceholder } from "plaiceholder";
+import {formatISO} from 'date-fns'
 
 const excludeFields =
   "-media -lastActive -__v";
 
-export const getMessageByConId = async (req, resp, next) => {
+export const getMessagesByConId = async (req, resp, next) => {
   const { conversation } = req.params;
-
-  //The amount of documents to skip
-  const amount = req.headers["load-more"];
-  const limit = req.headers["limit"]
   
+  const joiningDate = req.headers["joining-date"]
+  const skip = req.headers["skip"]
+  const limit = req.headers["limit"]
+ 
   try {
-    const messages = await Message.find({ conversation })
+    const messages = await Message.find({ 
+          conversation , 
+          createdAt:{$gte: formatISO(new Date(joiningDate))} 
+       })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .skip(amount)//Change condition
+      .skip(skip)
       .select("-__v");
      
     resp.status(200).json(messages);
