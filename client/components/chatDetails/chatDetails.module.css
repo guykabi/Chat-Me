@@ -66,6 +66,7 @@
     transition: 0.5s;
     cursor: pointer;
 }
+
 .mediaSwitcherBtn div:hover{
   color: rgb(77, 75, 75);
 }
@@ -102,43 +103,10 @@
     flex-wrap: wrap;
     overflow-y: scroll;
 } 
+
 .mainMediaWrapper::-webkit-scrollbar{
     display: none;
 }
-
-
-
-.groupMembers{
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    width: 60%;
-    height: 80%;
-    max-height: 16rem;
-    min-width:15rem;
-    overflow-y: scroll;
-} 
-
-.groupMembers::-webkit-scrollbar{
-    display: none;
-} 
-
-.jointGroupsWrapper{
-    margin: 0 auto;
-    margin-bottom: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    width: 60%;
-    height:50%;
-    min-width:15rem;
-    overflow-y: scroll;
-    box-shadow: -2px 0px 1px -1px rgba(51, 49, 49, 0.492);
-
-}
-
-.jointGroupsWrapper::-webkit-scrollbar{
-    display: none;
-} 
 
 
 .saveChangesBtn{
@@ -147,14 +115,6 @@
     width: 10%;
 }
 
-.buttonsWrapper{
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    width: 80%;
-    margin-top: 1.5rem;
-    margin-bottom:1rem;
-}
 
 .imagePreview{
     width: 100%;
