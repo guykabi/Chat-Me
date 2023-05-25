@@ -80,7 +80,6 @@ export const handleChatFriendField = (conversation, userId) => {
 
 
 export const handleFilterCons = (allConversations, query) => {
- 
   return allConversations?.filter((con) => {
     return (
       con.chatName?.toLowerCase().includes(query?.trim().toLowerCase()) ||
@@ -88,7 +87,7 @@ export const handleFilterCons = (allConversations, query) => {
         (con.participants[0].name
           .toLowerCase()
           .includes(query?.trim().toLowerCase()) ||
-          con.participants[1].name
+          con.participants[1]?.name
             .toLowerCase()
             .includes(query?.trim().toLowerCase())))
     );
@@ -143,7 +142,7 @@ export const handleDateDividing = (messages,example) =>{
       }
 
      
-      if(currentDateGroup > format(new Date(messages[i-1]?.createdAt),'yyyy/MM/dd')){
+      if(currentDateGroup > format(new Date(messages[i-1]?.createdAt||0),'yyyy/MM/dd')){
         let dateMessage = {_id:Math.random(),type:'date',date:dateCondition}
         datedMessages.push(m)
         datedMessages.splice(-1,0,dateMessage)
@@ -167,5 +166,10 @@ export const handleUnSeenMessages = (messages,index) =>{
       messagesWithUnSeen.splice((messages.length) - index,0,unSeenLine)
       return messagesWithUnSeen
 } 
+
+export const handleJoiningDate = (chat,userId) =>{
+  if(chat.chatName) return chat.joining.find(j=>j.user === userId)?.createdAt
+  return 0
+}
 
 
