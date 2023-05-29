@@ -1,0 +1,14 @@
+.muteWrapper{
+    position: absolute;
+    margin:  0 auto;
+    cursor: pointer;
+    top: 1;
+    right: 0;
+    width: 5rem;
+    margin-right: 5%;
+    transition: 0.5s;
+}
+
+.muteWrapper:hover{
+    transform: scale(1.08);
+}
