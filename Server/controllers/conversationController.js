@@ -155,42 +155,40 @@ export const addNewConversation = async (req, resp, next) => {
 };
 
 export const updateConversation = async (req, resp, next) => {
+  
   const { id } = req.params;
   const { body } = req;
   let editConversation;
 
   try {
-    if (req?.file?.path) {
-      const data = await uploadToCloudinary(req.file, "group-images",next);
-      const {base64} = await getPlaiceholder(data.url)
+
+    if (req?.file) {
+      const file = await uploadToCloudinary(req.file, "group-images",next);
+      const {base64} = await getPlaiceholder(file.url)
       
       const newBody = {...body}
       if(body?.chatName)newBody.chatName = body.chatName
-      data.base64 = base64
-      newBody.image = data
+      file.base64 = base64
+      newBody.image = file
 
       if (body.removeImage) {
         await removeFromCloudinary(body.removeImage);
       }
       
       editConversation = await Conversation.findByIdAndUpdate(
-        id,
-        newBody,
-        { new: true }
+        id, newBody,{ new: true }
       )
         .populate({ path: "manager", select: excludeFields })
         .populate({ path: "participants", select: excludeFields })
         .populate({ path: "media", select:'-likes -seen'});
-       
+
         return resp
         .status(200)
         .json({ message: "Update", conversation: editConversation });
     }
 
      editConversation = await Conversation.findByIdAndUpdate(
-      id,
-      body,
-      { new: true }
+      id,body,{ new: true }
     )
       .populate({ path: "manager", select: excludeFields })
       .populate({ path: "participants", select: excludeFields })
@@ -299,7 +297,8 @@ export const removeMember = async (req, resp, next) => {
   } catch (err) {
     next(err);
   }
-};
+}; 
+
 
 export const deleteConversation = async (req, resp, next) => {
   const { id } = req.params;

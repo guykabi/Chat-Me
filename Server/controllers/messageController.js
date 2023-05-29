@@ -37,27 +37,47 @@ export const getMessagesByConId = async (req, resp, next) => {
 
 export const addNewMessage = async (req, resp, next) => {
   
-  let newMessage = null;
+  let newMessage;
   const { body } = req;
   let fileType = req?.file?.mimetype.includes('video')
   
   try {
+
     if (req?.file?.path) {
+
       const folder = fileType?'chat-videos':'chat-images'
-      const data = await uploadToCloudinary(req.file, folder,next);
+      const file = await uploadToCloudinary(req.file, folder,next);
       
       if(!fileType){
-        const { base64 } = await getPlaiceholder(data.url);
-        data.base64 = base64;
+        const { base64 } = await getPlaiceholder(file.url);
+        file.base64 = base64;
       } 
+
       const newBody = { ...body };
-      newBody.image = data;
+      newBody.image = file;
 
       newMessage = new Message(newBody);
-    } else {
-      newMessage = new Message(body);
-    }
+      await newMessage.save();
 
+      let savedMessage = await newMessage.populate({
+        path: "conversation",
+        select: excludeFields,
+      });
+
+       //Updating last time conversation was active + add to the conversation's media
+       await Conversation.updateOne(
+        { _id: newMessage.conversation }, {
+        $set: { lastActive: new Date() },
+        $push: { media: savedMessage._id },
+      });
+     
+      return resp
+        .status(200)
+        .json({ message: "New message just added", data: savedMessage });
+
+    } 
+
+    newMessage = new Message(body);
     await newMessage.save();
 
     let savedMessage = await newMessage.populate({
@@ -65,28 +85,17 @@ export const addNewMessage = async (req, resp, next) => {
       select: excludeFields,
     });
 
-    if (savedMessage?.image?.url) {
-    
-      //Updating last time conversation was active + add to the conversation's media
-      await Conversation.updateOne(
-        { _id: newMessage.conversation }, {
-        $set: { lastActive: new Date() },
-        $push: { media: savedMessage._id },
-      });
-      return resp
-        .status(200)
-        .json({ message: "New message just added", data: savedMessage });
-    }
-
+  
     //Updating last time conversation was active
     await Conversation.updateOne(
       { _id: newMessage.conversation },
       { $set: { lastActive: new Date() } }
     );
 
-    resp
+      resp
       .status(200)
       .json({ message: "New message just added", data: savedMessage });
+
   } catch (err) {
     next(err);
   }
@@ -94,15 +103,17 @@ export const addNewMessage = async (req, resp, next) => {
 
 
 export const forwardMessage = async (req, resp, next) => {
+
   const {body} = req
   let fileType = body?.message?.file?.includes('mp4')
   const folder = fileType?'chat-videos':'chat-images'
+  let newMessage;
   
   try{
     let allForwardMessages = []
     await Promise.all(body.receivers.slice(0,4).map(async (conversation)=>{
 
-      let newMessage = new Message(body.message);
+      newMessage = new Message(body.message);
       newMessage.conversation = conversation
         
        //Stores each message's file to cloudinary
@@ -201,6 +212,7 @@ export const handleSeenMessage = async (req, resp, next) => {
 export const deleteMessage = async (req, resp, next) => {
   const { id } = req.params;
   try {
+    
     let deleted = await Message.findByIdAndDelete(id).populate({
       path: "conversation",
       select: "_id",
