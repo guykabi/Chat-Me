@@ -19,6 +19,7 @@ import { BsFillCameraFill } from "react-icons/bs";
 import {Loader} from '../UI/clipLoader/clipLoader'
 import {updateConversation} from "../../utils/apiUtils";
 import MainContent from "./mainContent/mainContent";
+import Mute from "./mute/mute";
 
 const ChatDetails = ({ onReturn }) => {
   const { currentChat, Socket, dispatch } = useContext(chatContext);
@@ -97,13 +98,15 @@ const ChatDetails = ({ onReturn }) => {
   return (
     <main className={styles.mainEditGroup}>
       <ReturnIcon onClick={onReturn} /> 
+      
       {isGroup ? (
         <header className={styles.headerWrapper}>
+          <Mute/>
           <form onSubmit={handleSubmit}>
             <section className={styles.saveChangesBtn}>
               <Button
-                width="6"
-                height="10"
+                width="7"
+                height="22"
                 text={loadSubmit?<Loader size={12}/>:t("chatDetails.buttons.save")}
                 className="secondaryBtn"
                 type="submit"
