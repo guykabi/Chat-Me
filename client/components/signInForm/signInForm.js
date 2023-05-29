@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import Button from "../../components/UI/Button/button";
 import styles from "./signInForm.module.css";
 import Input from "../../components/UI/Input/Input";
-import { checkUser } from "../../utils/apiUtils";
+import { checkUser } from "../../utils/authUtils";
 import {decodeGoogleCredentials} from '../../utils/authUtils'
 import { useMutation } from "react-query";
 import {GoogleLogin} from '@react-oauth/google'
@@ -11,6 +11,8 @@ import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { useRouter } from "next/router";
 import {AiOutlineMail} from 'react-icons/ai'
 import {RiLockPasswordLine} from 'react-icons/ri'
+import { toast } from 'react-toastify';
+
 
 const SignIn = ({onStayConnect, onResetPassword}) => {
   
@@ -18,33 +20,32 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const {t} = useTranslation('login')
-  const [loginMessage, setLoginMessage] = useState(null);
   const [userName, setUserName] = useState(null);
-  const [isResetPassword, setIsResetPassword] = useState(false);
   
 
   const {
     mutate: authUser,
-    isLoading,
-    isError
+    isLoading
   } = useMutation(checkUser, {
     onSuccess: (data) => {
       //If invalid details was inserted - present the error message
       if (typeof data === "string") {
-        setLoginMessage(data);
-        let timer = setTimeout(() => {
-          setLoginMessage(null);
-        }, 3000);
-
-        return () => {
-          clearTimeout(timer);
-        };
+        toast.error(data,{
+          position:'top-center',
+          theme:'colored'
+        })
       }
 
       if (data.message !== "User got authorized") return;
       setUserName(data.userData.name);
       onStayConnect({open:true,userName:data.userData.name})
     },
+    onError:error=>{
+      toast.error(error.message,{
+        position:'top-center',
+        theme:'colored'
+      })
+    }
   }); 
 
 
@@ -69,7 +70,6 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
   }
 
   const handleResetPassword = () =>{
-    setIsResetPassword(true)
     onResetPassword(true)
   }
 
@@ -112,20 +112,12 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
               onChange={(e) => setPassword(e.target.value)}
             />
             </section>
-
-            {isLoading && !isResetPassword ? (
-              <section className={styles.loaderWrapper}>
-                <Loader size={22} />
-              </section>
-            ) : null}
-
-            {loginMessage ? <span>{loginMessage}</span> : null}
-            {isError ? <span>{t('error.connection')}</span> : null}
+      
 
             <section className={styles.btnsWrapper}>
               <Button
                 type="submit"
-                text={t('buttons.login')}
+                text={isLoading?<Loader size={15} color="black" />:t('buttons.login')}
                 className="primaryBtn"
                 width={14}
                 height={30}
