@@ -81,7 +81,7 @@ const Messenger = ({ hasError, user }) => {
 
   return (
     <>
-      {!hasError && currentUser && Socket ? (
+      {!hasError && currentUser ? (
         <section className={styles.messangerWrapper}>
           <Head><title>Chat-Me</title></Head>
           <header className={styles.navbarWrapper}>
@@ -163,10 +163,9 @@ const Messenger = ({ hasError, user }) => {
           <div className={styles.innerLoadingWrapper}>
            <h2>Loading your chats...</h2>
            <Loader size={50}/><br/>
-           <div>
+           <div className={styles.iconsWrapper}>
            <FaRunning/>
-           &nbsp;&nbsp;
-           ... &nbsp;
+           ...
            <BsChatDots/>
            </div>
           </div>
