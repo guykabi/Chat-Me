@@ -6,7 +6,7 @@
     flex-direction: row;
     align-items: center;
     gap: 3rem;
-    background-color: rgb(229, 230, 215);
+    background-color:var(--beige_uni)
 } 
 
 .logo{
@@ -29,7 +29,7 @@
     border: none;
     border-radius: 4px;
     min-height: 2.6rem;
-    background-color: whitesmoke;
+    background-color: rgb(255, 255, 255);
     padding-left: 0.4rem;
     font-size: medium;
 }  
@@ -106,7 +106,7 @@
     box-shadow: 0px 2px 2px 0px rgba(57, 55, 55, 0.692);
 } 
 .isMenuDiv div{
-    background-color: rgb(229, 230, 215);
+    background-color:var(--beige_uni);
     height: 1.7rem;
     padding: 0.1rem;
     cursor: pointer;
@@ -120,8 +120,9 @@
 
 @media screen and (max-width:780px)
 {
-    .searchInput input{
-        width: 20rem;
-        margin-right: 2rem;
+    .searchInput{
+         width: 20rem;
+         margin-right: 2rem;
     }
+
 }
