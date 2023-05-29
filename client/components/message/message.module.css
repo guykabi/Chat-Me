@@ -86,7 +86,7 @@
     flex-direction: column;
     gap: 0.1rem;
     max-width: 15rem;
-    min-width: 2rem;
+    min-width: 3rem;
     float: right;
     cursor: pointer;
     background-color: rgba(176, 149, 201, 0.818);
