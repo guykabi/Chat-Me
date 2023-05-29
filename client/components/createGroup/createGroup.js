@@ -2,12 +2,14 @@ import React, { useState, useContext, useEffect } from "react";
 import styles from "./createGroup.module.css";
 import { useMutation, useQuery } from "react-query";
 import { createGroup } from "../../utils/apiUtils";
+import { handleToast } from "../../utils/utils";
 import { chatContext } from "../../context/chatContext";
 import Input from "../UI/Input/Input";
 import Button from "../UI/Button/button";
 import { useGetCacheQuery } from "../../hooks/useGetQuery";
 import {useErrorBoundary} from 'react-error-boundary'
 import Picker from "../picker/picker";
+import {Loader} from '../UI/clipLoader/clipLoader'
 
 const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
   const { currentUser, Socket } = useContext(chatContext);
@@ -17,7 +19,7 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
   const [pickedUsers, setPickedUsers] = useState([]);
   const users = useGetCacheQuery("users");
 
-  const { mutate: addGroup } = useMutation(createGroup, {
+  const { mutate: addGroup, isLoading } = useMutation(createGroup, {
     onSuccess: (data) => {
       if (data.message !== "New conversation made") return;
       setGroupName(null);
@@ -40,7 +42,9 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
   const handleGroupSubmit = (e) => {
     e.preventDefault();
 
-    if (!pickedUsers.length) return;
+    if(!groupName) return handleToast('warning','Must choose group name')
+    if (!pickedUsers.length) return handleToast('warning','Must choose at least on member')
+    
     let group = {};
     group.chatName = groupName;
     group.participants = pickedUsers;
@@ -76,9 +80,11 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
             className={"primaryBtn"}
             width={15}
             height={25}
-            text={button}
+            text={isLoading ? <Loader size={15}/> :button}
             arialable="Create group button"
             type="submit"
+            fontWeight='600'
+            disabled={isLoading}
           />
         </form>
       </section>
