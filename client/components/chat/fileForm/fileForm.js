@@ -73,6 +73,7 @@ const FileForm = ({ file, onFile, loading }) => {
                 onChange={setFileMessage}
                 width={60}
                 height={5}
+                maxLength={80}
                 placeholder={t('chat.fileForm.placeholder')}
                 borderRadius={10}
               />
@@ -86,6 +87,8 @@ const FileForm = ({ file, onFile, loading }) => {
                 type="submit"
                 width={8}
                 height={10}
+                fontWeight='600'
+                disabled={loading}
               />
             </div>
           </form>
