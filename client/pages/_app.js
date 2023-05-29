@@ -6,7 +6,8 @@ import {ErrorBoundary} from 'react-error-boundary'
 import ErrorFallBack from '../components/errors/error/error'
 import { appWithTranslation } from 'next-i18next'
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App = ({ Component, pageProps })=> { 
@@ -17,6 +18,7 @@ const App = ({ Component, pageProps })=> {
           <ErrorBoundary FallbackComponent={ErrorFallBack}>
             <QueryClientProvider client={queryClient}>
               <Component {...pageProps} />
+              <ToastContainer/>
             </QueryClientProvider>
            </ErrorBoundary>
           </GoogleOAuthProvider>
