@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/IntroductionPage.module.css";
 import { checkDevice, exctractCredentials } from "../utils/utils";
-import { tokenValidation, logOut } from "../utils/apiUtils";
+import { tokenValidation } from "../utils/authUtils";
+import {logOut} from '../utils/apiUtils'
 import { useQuery, useMutation } from "react-query";
 import { Loader } from "../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";
