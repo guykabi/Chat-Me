@@ -7,6 +7,7 @@
     height: 80%;
     max-height: 16rem;
     min-width:15rem;
+    box-shadow: -2px 0px 1px -1px rgba(51, 49, 49, 0.492);
     overflow-y: scroll;
 } 
 
