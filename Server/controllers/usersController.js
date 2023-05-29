@@ -249,24 +249,34 @@ export const resetPassword = async (req, resp, next) => {
 
 
 export const updateUser = async(req,resp,next) => {
+
   const {id} = req.params
   const body = req.body
   
 try{
 
-  if(req?.file?.path){
-    const data = await uploadToCloudinary(req.file,'user-images',next)
-    const { base64 } = await getPlaiceholder(data.url);
+  if(req?.file){
+
+    const file = await uploadToCloudinary(req.file,'user-images',next)
+    const { base64 } = await getPlaiceholder(file.url);
     const newBody = {...body} 
 
-    data.base64 = base64;
-    newBody.image = data
+    file.base64 = base64;
+    newBody.image = file
 
     if (body.removeImage) {
       await removeFromCloudinary(body.removeImage);
     }
     
     let editUser = await User.findByIdAndUpdate(id,newBody,{new:true})
+    .populate({ path: "friends", select: excludeFields })
+    .populate({ path: "friendsWaitingList", select: excludeFields })
+    .populate({
+      path: "notifications",
+      select: excludeFields,
+      populate: { path: "sender", select: excludeFields },
+    }); 
+    
     return resp.status(200).json({message:'Updated successfully',editUser}) 
 
   }
@@ -285,6 +295,43 @@ try{
 }catch(error){
   next(error)
  }
+}
+
+
+export const muteChats = async(req, resp, next) =>{
+  const {id} = req.params
+  const {mute} = req.body
+
+     try{
+      
+        let isMuted = await User.find({_id:id, mute: { $in: [mute] }})
+        if(isMuted.length){
+          let user = await User.findByIdAndUpdate(id,{$pull:{mute}},{new:true})
+          .populate({ path: "friends", select: excludeFields })
+          .populate({ path: "friendsWaitingList", select: excludeFields })
+          .populate({
+            path: "notifications",
+            select: excludeFields,
+            populate: { path: "sender", select: excludeFields },
+          }); 
+
+          return resp.status(200).json({user,mute:false})
+        } 
+
+        let user = await User.findByIdAndUpdate(id,{$push:{mute}},{new:true})
+        .populate({ path: "friends", select: excludeFields })
+        .populate({ path: "friendsWaitingList", select: excludeFields })
+        .populate({
+            path: "notifications",
+            select: excludeFields,
+            populate: { path: "sender", select: excludeFields },
+          }); 
+
+        return resp.status(200).json({user,mute:true})
+
+     }catch(err){
+      next(err)
+     }
 }
 
 
