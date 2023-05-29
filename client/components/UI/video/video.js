@@ -1,11 +1,11 @@
-import React, { memo,useEffect,useRef, useState } from 'react'
+import React, { memo, useState } from 'react'
 import styles from './video.module.css'
 import {BsFillPlayCircleFill} from 'react-icons/bs'
 import {Loader} from '../clipLoader/clipLoader'
 
 const Video = ({video,openVideo,preview}) => {
   const [finishedLoad,setFinishedLoad]=useState(false)
-  const placeHolder = '/images/blue-blur-backdrop.jpg'
+  
   return (
    <>
     <section className={styles.videoWrapper}>
@@ -26,7 +26,6 @@ const Video = ({video,openVideo,preview}) => {
       <video 
       className={styles.video}
       preload='auto'
-      poster={finishedLoad?null:placeHolder}
       autobuffer="true"
       controls={openVideo}
       autoPlay={openVideo||preview}
