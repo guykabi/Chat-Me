@@ -29,6 +29,7 @@ export const UserSchema = new Schema({
       createdAt: { type: String, default: createdAt },
     },
   ],
+  mute:[String]
 });
 
 //Crypt the new user password
