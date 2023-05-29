@@ -10,6 +10,14 @@ body {
     font-size: 17px;
   }   
 
+
+:root {
+    --error-bg:
+    conic-gradient(from 67deg at 44% 56%, rgba(11,255,60,0.71), rgba(0,0,0,0)),
+    linear-gradient(270deg, rgba(44,206,134,1), rgba(255,255,0,0));
+    --beige_uni: rgb(235, 236, 224);
+  }
+
 input::placeholder{
     letter-spacing: 0.8px;
 }
