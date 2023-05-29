@@ -9,6 +9,7 @@ import {useQuery} from 'react-query'
 import {formatISO} from 'date-fns'
 import { handleSeenTime } from '../../utils/utils'
 import {getConversation} from '../../utils/apiUtils'
+import {GoMute} from 'react-icons/go'
 
 
 const Conversation = ({con,newMessage}) => {
@@ -18,6 +19,7 @@ const Conversation = ({con,newMessage}) => {
   const [numsOfUnSeen,setNumOfUnseen]=useState()
   const [isCurrentOne,setIsCurrentOne]=useState(false)
   const [seenTime,setSeenTime]=useState(null)
+  const [isMute,setIsMute]=useState(false)
 
 
   const {refetch:fetchChatData} = useQuery(['conversation'],
@@ -33,7 +35,8 @@ const Conversation = ({con,newMessage}) => {
 useEffect(()=>{
 
   setNumOfUnseen(con.unSeen)
-  setSeenTime(handleSeenTime(con.lastActive))
+  setSeenTime(handleSeenTime(con?.lastActive || formatISO(new Date()) ))
+  if(currentUser?.mute?.some(chat=>chat === con._id)) setIsMute(true)   
 
   //If not a group chat
   if(con.chatName)return
@@ -45,9 +48,13 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-   if(!newMessage)return
+   if(newMessage?.conversation._id !== con._id)return
    setSeenTime(handleSeenTime(formatISO(new Date())))
-   if(con._id !== currentChat?._id || !currentChat) setNumOfUnseen(prev=>prev+=1)
+   
+   if(
+      newMessage.sender !== currentUser._id ||
+      !currentChat
+     ) setNumOfUnseen(prev=>prev+=1)
 
 },[newMessage])
 
@@ -60,6 +67,17 @@ useEffect(()=>{
   }
   if(isCurrentOne) setIsCurrentOne(false)
 },[currentChat])
+
+
+useEffect(()=>{
+   if(
+      currentUser?.mute?.some(chat=>chat === con._id) &&
+      con._id === currentChat._id
+      ) return setIsMute(true) 
+
+   if(isMute)  setIsMute(false)
+   
+},[currentUser])
 
 
 const selectedConversation = ()=>{
@@ -115,6 +133,7 @@ const selectedConversation = ()=>{
           {numsOfUnSeen}
         </div>:
         null}
+        {isMute?<GoMute/>:null}
     </article>
     </>
   )

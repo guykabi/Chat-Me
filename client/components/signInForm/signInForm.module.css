@@ -26,6 +26,7 @@
 }
 
 .loginForm{
+    position: relative;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -58,6 +59,9 @@
 
 .loaderWrapper{
     margin: 0 auto;
+    position: absolute;
+    z-index: 10;
+    margin-left: 45%;
 } 
 
 .forgotPassword{

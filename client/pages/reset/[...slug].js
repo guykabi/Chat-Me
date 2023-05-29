@@ -6,7 +6,7 @@ import {useRouter} from 'next/router'
 import {push} from 'next/router'
 import {useMutation} from 'react-query'
 import { useErrorBoundary } from "react-error-boundary";
-import {checkResetLink, resetPassword} from '../../utils/apiUtils'
+import {checkResetLink, resetPassword} from '../../utils/authUtils'
 import Input from '../../components/UI/Input/Input'
 import Button from '../../components/UI/Button/button'
 import {RiLockPasswordLine} from 'react-icons/ri'

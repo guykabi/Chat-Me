@@ -1,10 +1,5 @@
 import Axios from '../pages/api/api_instance'
 
-export const checkUser = async (credentials)=>{
-  const {data} = await Axios.post('auth',credentials)
-  return data
-} 
-
 
 export const getConversations = async (userId)=>{
   const {data:res} = await Axios('conversation/'+userId)
@@ -27,21 +22,7 @@ export const getUserDetails = async (userId)=>{
   return res
 }  
 
-export const emailToReset =async (details) =>{
-  const {data:res} = await Axios.post('users/email',details)
-  return res
-}
 
-export const checkResetLink =async (credentials) =>{
-  const {data:res} = await Axios.post('auth/validate-reset',credentials)
-  return res
-} 
-
-
-export const resetPassword = async({id,body}) =>{
-  const {data:res} = await Axios.patch('users/reset-password/'+id,body)
-  return res
-}
 
 export const addUser =async (user) =>{
   const {data:res} = await Axios.post('users',user)
@@ -53,11 +34,7 @@ export const updateUserDetails =async ({userId,body}) => {
   return res
 }
 
-
-export const tokenValidation = async ()=>{
-  const {data:res} = await Axios.post('auth/validation') 
-  return res
-}  
+ 
 
 export const logOut =async () =>{
   const {data:res} =  await Axios('auth/logout')
@@ -129,7 +106,7 @@ export const createGroup =async (group) =>{
 export const updateConversation = async ({conId,body}) =>{
   const {data:res} = await Axios.patch('conversation/'+conId,body)
   return res
-} 
+}  
 
 
 export const addGroupMember = async ({conId,obj}) =>{
@@ -153,6 +130,10 @@ export const removeManager = async ({conId,obj}) =>{
   return res
 } 
 
+export const muteConversation = async({userId,body}) =>{
+  const {data:res} = await Axios.patch('users/mute-chat/'+userId,body)
+  return res
+}
 
 export const deleteConversation = async (conversationId)=>{
   const {data:res} = await Axios.delete('conversation/'+conversationId)

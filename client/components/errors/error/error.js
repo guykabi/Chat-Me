@@ -19,10 +19,6 @@ useEffect(()=>{
     }
 },[]) 
 
-const directToLogin = () =>{
-  resetErrorBoundary()
-  push("/login")
-}
 
 
   return (
@@ -36,24 +32,17 @@ const directToLogin = () =>{
        <section className={styles.errorWrapper}>
         <header>
          <h2>Sorry</h2>
-         <h3> its seems that something went wrong</h3>
+         <h3> It seems that something went wrong</h3>
         </header>
         <section className={styles.btnsWrapper}>
         <Button
-          className="primaryBtn"
+          className="secondaryBtn"
           text="Try again"
-          width="8"
-          height="10"
+          width="10"
+          height="25"
+          fontWeight='600'
           arialable="Refresh button"
           onClick={()=>reload()}
-        />
-        <Button
-          className="primaryBtn"
-          text="Login page"
-          width="8"
-          height="10"
-          arialable="Direct to login button"
-          onClick={directToLogin}
         />
         </section>
        </section>}

@@ -8,7 +8,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Button from "../../components/UI/Button/button";
 import styles from "./login.module.css";
 import Input from "../../components/UI/Input/Input";
-import { emailToReset } from "../../utils/apiUtils";
+import { emailToReset } from "../../utils/authUtils";
 import { useMutation } from "react-query";
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";

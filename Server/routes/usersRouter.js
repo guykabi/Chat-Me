@@ -15,6 +15,7 @@ import {
       friendApproval,
       removeFriend,
       unapproveFriend,
+      muteChats,
       resetPassword,
       deleteUser} from '../controllers/usersController.js'
 
@@ -34,6 +35,7 @@ router
 .patch('/add-friend/:id',Auth,friendApproval)
 .patch('/remove-friend/:id',Auth,removeFriend)
 .patch('/unapprove-request/:id',Auth,unapproveFriend)
+.patch('/mute-chat/:id',Auth,muteChats)
 .patch('/reset-password/:id',resetPassword) 
 
 

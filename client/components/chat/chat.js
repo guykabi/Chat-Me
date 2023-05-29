@@ -227,7 +227,7 @@ const Chat = () => {
                 borderRadius={10}
               />
             </div>
-            <Modal show={file} onClose={() => setFile(null)}>
+            <Modal show={file} onClose={messageLoad? null : () => setFile(null)}>
               <FileForm
                 file={file}
                 onFile={handleNewMessage}

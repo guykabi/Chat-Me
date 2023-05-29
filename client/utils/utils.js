@@ -1,5 +1,6 @@
 import * as cookie from "cookie";
 import {format,intervalToDuration,formatRelative,addDays} from 'date-fns'
+import {toast} from 'react-toastify'
 
 
 export const getMessageTime = (date) => {
@@ -170,6 +171,31 @@ export const handleUnSeenMessages = (messages,index) =>{
 export const handleJoiningDate = (chat,userId) =>{
   if(chat.chatName) return chat.joining.find(j=>j.user === userId)?.createdAt
   return 0
+} 
+
+export const handleToast = (type,text) =>{
+  const valid = ['error','warning','success']
+  if(!valid.includes(type)) return
+
+  switch(type) {
+    case 'error':
+      return toast.error(text,{
+        position:'top-center'
+      })
+     
+    case 'warning':
+      return toast.warning(text,{
+        position:'top-left'
+      })
+      
+    case 'success':
+      return toast.success(text,{
+        position:'top-center'
+      })
+      
+    default:
+      return null
+  }
 }
 
 

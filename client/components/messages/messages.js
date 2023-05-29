@@ -141,7 +141,7 @@ const Messages = ({ messages }) => {
           let newMessages = [...allMessages];
 
           //If it is the first message of particular date - delete also the date banner
-          if(newMessages[index-1].type && newMessages?.[index+1]?.type){
+          if(newMessages[index-1]?.type){
             newMessages.splice(index-1, 2);
             return setAllMessages(newMessages);
           }

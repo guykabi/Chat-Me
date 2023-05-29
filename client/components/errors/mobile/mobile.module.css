@@ -2,9 +2,7 @@
     margin: 0 auto;
     width: 100%;
     height: 100vh;
-    background: 
-	conic-gradient(from 67deg at 44% 56%, rgba(11,255,60,0.71), rgba(0,0,0,0)),
-	linear-gradient(270deg, rgba(44,206,134,1), rgba(255,255,0,0));
+    background:var(--error-bg);
     overflow-y: scroll;
     text-align: center;
     background-size: auto;

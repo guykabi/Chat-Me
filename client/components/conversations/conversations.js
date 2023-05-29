@@ -48,7 +48,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
       if (latestConversation) {
 
         //For unseen messages counter
-        setIncomingMessage(message.conversation._id)
+        setIncomingMessage(message)
 
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
@@ -61,6 +61,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
         //Only the reciever will hear the new message's sound
         if (message.sender === currentUser._id) return;
         
+        if(currentUser.mute.some(m=>m === message.conversation._id)) return
            new Audio("/assets/notifySound.mp3").play();
       }
 
@@ -77,6 +78,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
 
     //When a new chat is created
     Socket.on("arrival-conversation", (conversation) => {
+
       if (conversation?.message === "Conversation deleted!") {
         //When a new conversation with no messages was deleted
         let updatedConversations = [...allConversations];
@@ -111,8 +113,8 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
         return;
       }
 
-      if (!conversation.participants.find((p) => p._id === currentUser._id))
-        return;
+      if (!conversation.participants.find((p) => p._id === currentUser._id))return;
+      
       setAllConversations((prev) => [conversation, ...prev]);
 
       if (
