@@ -44,16 +44,22 @@
     float: left;
     font-weight: bold;
     width: 30%;
+    min-width: 7rem;
 }
 
 .numOfUnSeen{
     width: fit-content;
+    height: fit-content;
+    min-width: 21px;
+    min-height: 21px;
+    align-items: center;
     border-radius: 50%;
     background-color: rgb(97, 182, 97);
     color: white;
+    padding: 0.15rem;
     margin-left: 40%;
-    padding: 0.2rem;
     align-items: center;
+    font-size: medium;
 } 
 
 .lastActiveDate{
@@ -68,4 +74,12 @@
     font-weight: bold;
     color: rgb(95, 89, 89);
     font-size: 75%;
+}
+
+.conversationPopUps{
+    margin: 0 auto;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
 }

@@ -1,19 +1,21 @@
 .createGroupMainSection{
     margin: 0 auto;
     width: 100%;
-    height: 74%;
+    height:100%;
     text-align: center;
-} 
+}  
+
 .createGroupMainSection h2{
     text-shadow: 0px 1.2px #b3adad
 }
 
 .newGroupForm{
-    width: 90%;
-    height: 16rem;
+    width: 100%;
+    height:100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
 }   
 
 .newGroupForm input{
@@ -27,7 +29,9 @@
 .groupNameInputWrapper{
     margin: 0 auto;
     width: 50%;
-}
+} 
+
+
 
 
 
