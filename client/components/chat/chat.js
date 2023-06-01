@@ -51,9 +51,9 @@ const Chat = () => {
   ); 
 
   const {refetch:fetchAllChatData} = useQuery('full-conversation',
-      ()=>getConversation(currentChat._id,currentUser._id),{
+      ()=>getConversation(currentChat._id,currentUser._id,null,currentChat.joining),{
         onSuccess:({conversation})=>{
-          dispatch({type:'CURRENT_CHAT',payload:conversation})
+          dispatch({type:'CHAT_FIELD',payload:conversation})
         },
         enabled:false,
         staleTime:2000

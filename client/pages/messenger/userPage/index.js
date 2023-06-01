@@ -42,7 +42,7 @@ const UserPage = ({ user, hasError }) => {
   const { mutate: update, isLoading: load } = useMutation(updateUserDetails, {
     onSuccess: (data) => {
       if (data.message != "Updated successfully") return;
-      dispatch({ type: "CURRENT_USER", payload: data.editUser });
+      dispatch({ type: "USER_FIELD", payload: data.editUser });
       push("/messenger");
     },
     onError: (error) => showBoundary(error),

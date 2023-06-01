@@ -72,8 +72,8 @@ useEffect(()=>{
 
   return (
     <>
-    {isAuthenticated&&<section className='mainWrapper'>
-         {!isSuccessReset?<section className='innerWrapper'>
+    {isAuthenticated&&<section className={styles.resetMainWrapper}>
+         {!isSuccessReset?<section className={styles.resetInnerWrapper}>
             <header className='header'>
                 <h2>Reset password</h2>
             </header>

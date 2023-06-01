@@ -19,7 +19,7 @@ export const MessageSchema = new Schema(
       video: { type: Boolean },
     },
     likes: [userRef],
-    seen: [{ user: userRef, createdAt: { type: String, default: createdAt } }],
+    seen: [{ user: userRef, createdAt: { type: Date, default: createdAt } }],
   },
   { timestamps: true }
 );

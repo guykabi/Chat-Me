@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import styles from "./modal.module.css";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 
-const Modal = ({ show, onClose, children, title, isError, isFileMessage }) => {
+const Modal = ({ show, onClose, children, title, isFileMessage }) => {
   const [onMount, setOnMount] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Modal = ({ show, onClose, children, title, isError, isFileMessage }) => {
             </div>
           ) : null}
 
-          {!isError && !isFileMessage ? (
+          {!isFileMessage ? (
             <div
               className={styles.deleteModalSign}
               role="button"
@@ -38,7 +38,6 @@ const Modal = ({ show, onClose, children, title, isError, isFileMessage }) => {
           {title ? (
             <header className={styles.modalHeader}>{title}</header>
           ) : null}
-          {isError ? <span className={styles.errorMsg}>{isError}</span> : null}
           <main className={styles.modalContent}>{children}</main>
         </section>
       </article>

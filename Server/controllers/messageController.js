@@ -13,9 +13,9 @@ const excludeFields =
 export const getMessagesByConId = async (req, resp, next) => {
   const { conversation } = req.params;
   
-  const joiningDate = req.headers["joining-date"]
-  const skip = req.headers["skip"]
-  const limit = req.headers["limit"]
+  const joiningDate = req.headers["x-joining-date"]
+  const skip = req.headers["x-skip"]
+  const limit = req.headers["x-limit"]
  
   try {
     const messages = await Message.find({ 
@@ -25,9 +25,10 @@ export const getMessagesByConId = async (req, resp, next) => {
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
-      .select("-__v");
+      .select("-__v").lean()
      
     resp.status(200).json(messages);
+    
   } catch (err) {
     next(err);
   }
@@ -107,22 +108,22 @@ export const forwardMessage = async (req, resp, next) => {
   const {body} = req
   let fileType = body?.message?.file?.includes('mp4')
   const folder = fileType?'chat-videos':'chat-images'
-  let newMessage;
-  
+  let blur; let file;
+
   try{
     let allForwardMessages = []
     await Promise.all(body.receivers.slice(0,4).map(async (conversation)=>{
 
-      newMessage = new Message(body.message);
+      let newMessage = new Message(body.message);
       newMessage.conversation = conversation
         
        //Stores each message's file to cloudinary
        if(body?.message?.file){
-        const file = await uploadToCloudinary(body.message.file,folder,next);
+        file = await uploadToCloudinary(body.message.file,folder,next);
         if(!fileType){
           //Only image gets base64 - blure placeholder
-          const { base64 } = await getPlaiceholder(file.url);
-          file.base64 = base64;
+          blur = await getPlaiceholder(file.url);
+          file.base64 = blur.base64
         } 
         newMessage.image = file
        }
@@ -169,7 +170,7 @@ export const likeMessage = async (req, resp, next) => {
         { _id: id },
         { $pull: { likes: userId } },
         { new: true }
-      ).populate({
+      ).lean().populate({
         path: "conversation",
         select: "participants",
       });
@@ -183,7 +184,7 @@ export const likeMessage = async (req, resp, next) => {
       { _id: id },
       { $addToSet: { likes: userId } },
       { new: true }
-    ).populate({
+    ).lean().populate({
       path: "conversation",
       select: "_id",
     });
@@ -213,7 +214,9 @@ export const deleteMessage = async (req, resp, next) => {
   const { id } = req.params;
   try {
     
-    let deleted = await Message.findByIdAndDelete(id).populate({
+    let deleted = await Message.findByIdAndDelete(id)
+    .lean()
+    .populate({
       path: "conversation",
       select: "_id",
     });

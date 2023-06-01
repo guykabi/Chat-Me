@@ -57,8 +57,8 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
   return (
     <section className={styles.createGroupMainSection}>
       <h2 aria-label="Create a group">{title}</h2>
-      <section>
         <form className={styles.newGroupForm} onSubmit={handleGroupSubmit}>
+          
           <div className={styles.groupNameInputWrapper}>
             <Input
               placeholder={placeholder}
@@ -69,13 +69,11 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
               onChange={(e) => setGroupName(e.target.value)}
             />
           </div>
-          <br />
+          
           <section className={styles.pickerWrapper}>
             <Picker items={allUsers} type="users" onChange={addPickedUsers} />
           </section>
-          <br />
-          <br />
-
+         
           <Button
             className={"primaryBtn"}
             width={15}
@@ -86,8 +84,9 @@ const CreateGroup = ({ onSwitch,title,placeholder,button }) => {
             fontWeight='600'
             disabled={isLoading}
           />
+
         </form>
-      </section>
+     
     </section>
   );
 };

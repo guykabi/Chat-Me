@@ -13,7 +13,6 @@ export const UserSchema = new Schema({
   lastName: String,
   email: { type: String, unique: true },
   password: String,
-  sub: String, //Google Id
   image: {
     url: { type: String },
     cloudinary_id: { type: String },
@@ -26,13 +25,12 @@ export const UserSchema = new Schema({
       sender: userRef,
       message: String,
       seen: Boolean,
-      createdAt: { type: String, default: createdAt },
+      createdAt: { type: Date, default: createdAt },
     },
   ],
   mute:[String]
 });
 
-//Crypt the new user password
 UserSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await hash(this.password, 12);

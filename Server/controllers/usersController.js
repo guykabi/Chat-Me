@@ -8,11 +8,11 @@ const {hash,genSalt} = bcrypt
 
 
 const excludeFields =
-  "-password -friends -friendsWaitingList -notifications -__v";
+  "-password -friends -friendsWaitingList -notifications -mute -__v";
 
 export const getAllUsers = async (req, resp, next) => {
   try {
-    let users = await User.find({}).select(excludeFields);
+    let users = await User.find({}).select(excludeFields).lean()
     return resp.status(200).json(users);
   } catch (err) {
     return next(err);
@@ -24,14 +24,14 @@ export const getUser = async (req, resp, next) => {
 
   try {
     let user = await User.findById(id)
-      .select("-password")
+      .select("-password -__v").lean()
       .populate({ path: "friends", select: excludeFields })
       .populate({ path: "friendsWaitingList", select: excludeFields })
       .populate({
         path: "notifications",
         select: excludeFields,
         populate: { path: "sender", select: excludeFields },
-      }); 
+      })
      
 
     return resp.status(200).json(user);
@@ -45,7 +45,7 @@ export const handleEmailSending =async (req,resp,next) =>{
   const {body} = req
   
    try{
-      let user = await User.find({email:body.email})
+      let user = await User.find({email:body.email}).lean()
       if(!user.length)return resp.status(200).json('Email does not exist')
       
       let emailResult = await sendEmail(user[0],body.url,next)
@@ -76,7 +76,7 @@ export const searchUser = async (req, resp, next) => {
     let user = await User.find({
       _id:{$ne:body.userId},
       name: { $regex: `${body.userName}`, $options: "i" },
-    }).select("-password -notifications -__v");
+    }).select("-password -notifications -__v").lean()
 
     resp.status(200).json(user);
   } catch (err) {
@@ -121,11 +121,11 @@ export const friendApproval = async (req, resp, next) => {
   const { friendId, message } = req.body;
 
   try {
-    let isRequestExsit = await User.find({
+    let isRequestExist = await User.find({
       _id: id,
       friendsWaitingList: friendId,
     });
-    if (!isRequestExsit.length)
+    if (!isRequestExist.length)
       return resp.status(200).json("Request is not exsit");
 
     let result = await approveFriend(id, friendId, message, next);
@@ -152,14 +152,9 @@ export const removeFriend = async (req, resp, next) => {
       { $pull: { friends: friendId } },
       { new: true }
     )
-      .select("-password -__v")
+      .select("-password -friendsWaitingList -notifications -__v").lean()
       .populate({ path: "friends", select: excludeFields })
-      .populate({ path: "friendsWaitingList", select: excludeFields })
-      .populate({
-        path: "notifications",
-        select: excludeFields,
-        populate: { path: "sender", select: excludeFields },
-      });
+     
 
     return resp.status(200).json({ message: "Friend has been removed!", user });
   } catch (err) {
@@ -179,8 +174,7 @@ export const unapproveFriend = async (req, resp, next) => {
 
   try {
     let user = await User.findOneAndUpdate({ _id: id }, pull, { new: true })
-      .select("-password -__v")
-      .populate({ path: "friends", select: excludeFields })
+      .select("-password -friends -__v")
       .populate({ path: "friendsWaitingList", select: excludeFields })
       .populate({
         path: "notifications",
@@ -196,38 +190,6 @@ export const unapproveFriend = async (req, resp, next) => {
   }
 };
 
-export const handleSeenNotification = async (req, resp, next) => {
-  const { id } = req.params;
-
-  let update = { $set: { "notifications.$[elem].seen": true } };
-  let pull = {
-    $pull: { notifications: { message: { $in: ["Friend approval"] } } },
-  };
-  let filterSet = { arrayFilters: [{ "elem.seen": false }], multi: true };
-
-  try {
-    //Set all unseen friend-requests notifications to seen/true
-    await User.updateOne({ _id: id }, update, filterSet);
-
-    //Removing all friends approval-requests notifications
-    let user = await User.findByIdAndUpdate({ _id: id }, pull, {
-      multi: true,
-      new: true,
-    })
-      .select("-password")
-      .populate({ path: "friends", select: excludeFields })
-      .populate({ path: "friendsWaitingList", select: excludeFields })
-      .populate({
-        path: "notifications",
-        select: excludeFields,
-        populate: { path: "sender", select: excludeFields },
-      });
-
-    return resp.status(200).json({ message: "Notification has seen", user });
-  } catch (err) {
-    next(err);
-  }
-};
 
 
 export const resetPassword = async (req, resp, next) => {
@@ -269,26 +231,14 @@ try{
     }
     
     let editUser = await User.findByIdAndUpdate(id,newBody,{new:true})
-    .populate({ path: "friends", select: excludeFields })
-    .populate({ path: "friendsWaitingList", select: excludeFields })
-    .populate({
-      path: "notifications",
-      select: excludeFields,
-      populate: { path: "sender", select: excludeFields },
-    }); 
+    .select('-friends -friendsWaitingList -notifications').lean()
     
     return resp.status(200).json({message:'Updated successfully',editUser}) 
 
   }
   
   let editUser = await User.findByIdAndUpdate(id,body,{new:true})
-  .populate({ path: "friends", select: excludeFields })
-  .populate({ path: "friendsWaitingList", select: excludeFields })
-  .populate({
-    path: "notifications",
-    select: excludeFields,
-    populate: { path: "sender", select: excludeFields },
-  }); 
+  .select('-friends -friendsWaitingList -notifications').lean()
   
   resp.status(200).json({message:'Updated successfully',editUser})
 
@@ -307,25 +257,13 @@ export const muteChats = async(req, resp, next) =>{
         let isMuted = await User.find({_id:id, mute: { $in: [mute] }})
         if(isMuted.length){
           let user = await User.findByIdAndUpdate(id,{$pull:{mute}},{new:true})
-          .populate({ path: "friends", select: excludeFields })
-          .populate({ path: "friendsWaitingList", select: excludeFields })
-          .populate({
-            path: "notifications",
-            select: excludeFields,
-            populate: { path: "sender", select: excludeFields },
-          }); 
-
+          .select('-friends -friendsWaitingList -notifications').lean()
+        
           return resp.status(200).json({user,mute:false})
         } 
 
         let user = await User.findByIdAndUpdate(id,{$push:{mute}},{new:true})
-        .populate({ path: "friends", select: excludeFields })
-        .populate({ path: "friendsWaitingList", select: excludeFields })
-        .populate({
-            path: "notifications",
-            select: excludeFields,
-            populate: { path: "sender", select: excludeFields },
-          }); 
+        .select('-friends -friendsWaitingList -notifications').lean()
 
         return resp.status(200).json({user,mute:true})
 

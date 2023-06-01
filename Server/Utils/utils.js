@@ -5,7 +5,7 @@ const { compare } = bcrypt;
 const { sign } = jwt;
 
 const excludeFields =
-  "-password -friends -friendsWaitingList -notifications -__v";
+  "-password -friends -friendsWaitingList -notifications -mute -__v";
 
 export const generateInitialToken = async (data, password) => {
   if (password) {
@@ -52,8 +52,7 @@ export const approveFriend = async (id, friendId, next) => {
       },
       { new: true }
     )
-      .select("-password")
-      .populate({ path: "friends", select: excludeFields })
+      .select("-password -friends").lean()
       .populate({ path: "friendsWaitingList", select: excludeFields })
       .populate({ path: "notifications", select: excludeFields });
 
