@@ -16,7 +16,7 @@ export const ConversationSchema = new Schema({
         url:{type:String},
         cloudinary_id:{type:String},
         base64:{type:String}},
-    joining:[{user:String,createdAt: { type: String, default: createdAt } }],
+    joining:[{user:String,createdAt: { type: Date, default: createdAt } }],
     lastActive:Date
 },
     {timestamps:true}
