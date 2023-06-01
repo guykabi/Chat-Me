@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext, memo, Suspense } from "react";
+import React, { useEffect, useMemo, useState, useContext, memo } from "react";
 import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
@@ -7,7 +7,8 @@ import { useErrorBoundary } from "react-error-boundary";
 import { useQuery } from "react-query";
 import { handleFilterCons } from "../../utils/utils";
 import Input from "../UI/Input/Input";
-import { Loader } from "../UI/clipLoader/clipLoader";
+import CardSkeleton from "../UI/cardSkeleton/cardSkeleton";
+
 
 const Conversations = ({ sortBy, placeholder, dir }) => {
   const { currentUser, currentChat, dispatch, Socket } =
@@ -15,14 +16,20 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
   const [allConversations, setAllConversations] = useState([]);
   const { showBoundary } = useErrorBoundary();
   const [query, setQuery] = useState("");
+  const [isMoreConversations,setIsMoreConversations]=useState(true)
   const [incomingMessage, setIncomingMessage] = useState(null);
 
-  const { isLoading,refetch:refetchConversations } = useQuery(
+  const { isLoading,refetch:refetchConversations, isRefetching } = useQuery(
     ["conversations"],
-    () => getConversations(currentUser._id),
+    () => getConversations(currentUser._id,allConversations?.length),
     {
       onSuccess: (data) => {
-        setAllConversations(data);
+        if(data.length === 15){
+          setIsMoreConversations(true)
+          return setAllConversations(prev=> [...prev,...data]);
+        }
+         if(isMoreConversations)setIsMoreConversations(false)
+         return setAllConversations(prev=> [...prev,...data]);
       },
       onError: (error) => showBoundary(error),
       staleTime: 2000,
@@ -151,9 +158,18 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
   }, [sortBy]);
 
   const filteredConversations = useMemo(
-    () => handleFilterCons(allConversations, query),
+    () => handleFilterCons(allConversations, query,currentUser._id),
     [allConversations,query]
-  );
+  ); 
+
+
+  const handleScrolling = (e) =>{
+   const {scrollTop,scrollHeight,clientHeight} =  e.target
+
+    if(Math.floor(scrollHeight - scrollTop) === clientHeight && isMoreConversations){
+       return  refetchConversations()
+    }
+  }
 
   const memoCons = filteredConversations?.map((con) => (
     <Conversation
@@ -165,7 +181,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
 
   return (
     <>
-      <div className={styles.conversationsDiv}>
+      <div className={styles.conversationsDiv} >
         <div className={styles.searchInputWrapper}>
           <Input
             type="text"
@@ -180,14 +196,13 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
         </div>
         {isLoading ? (
           <section>
-            <strong>
-              <h3>Loading conversations...</h3>
-            </strong>
-            <Loader size={30} />
+             <CardSkeleton amount={5}/>
           </section>
         ) : (
-          <section className={styles.allConversationsWrapper}>
-            {memoCons.length ? memoCons : <h3>No conversations!</h3>}
+          <section className={styles.allConversationsWrapper} onScroll={handleScrolling}>
+            {isRefetching ? 
+            <CardSkeleton amount={5}/> : allConversations.length ?
+                 memoCons : <h3>No conversations!</h3>}
           </section>
         )}
       </div>
