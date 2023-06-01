@@ -8,7 +8,7 @@ import { chatContext } from '../../context/chatContext'
 import {useQuery} from 'react-query'
 import {formatISO} from 'date-fns'
 import { handleSeenTime } from '../../utils/utils'
-import {getConversation} from '../../utils/apiUtils'
+import { getConversation } from '../../utils/apiUtils'
 import {GoMute} from 'react-icons/go'
 
 
@@ -35,7 +35,9 @@ const Conversation = ({con,newMessage}) => {
 useEffect(()=>{
 
   setNumOfUnseen(con.unSeen)
-  setSeenTime(handleSeenTime(con?.lastActive || formatISO(new Date()) ))
+  if(con?.lastActive)setSeenTime(handleSeenTime(con?.lastActive))
+
+  if(!con?.lastActive)setSeenTime('New chat')
   if(currentUser?.mute?.some(chat=>chat === con._id)) setIsMute(true)   
 
   //If not a group chat
@@ -70,13 +72,12 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-   if(
-      currentUser?.mute?.some(chat=>chat === con._id) &&
-      con._id === currentChat._id
-      ) return setIsMute(true) 
-
-   if(isMute)  setIsMute(false)
-   
+   if(currentUser?.mute?.some(chat=>chat === con._id)) {
+     if(isMute) return
+     setIsMute(true) 
+   }
+   if(isMute) setIsMute(false)
+  
 },[currentUser])
 
 
@@ -123,17 +124,20 @@ const selectedConversation = ()=>{
         <div className={styles.conversationName}>
           {con.chatName?con.chatName:friend?.name}
         </div>
-        {!isCurrentOne&&seenTime?<div 
+        {!isCurrentOne&&seenTime?
+        <div 
         className={styles.lastActiveDate}
         role='timer'>
           {seenTime}
         </div>:null}
-        {numsOfUnSeen?
-        <div className={styles.numOfUnSeen}>
-          {numsOfUnSeen}
-        </div>:
-        null}
-        {isMute?<GoMute/>:null}
+        {numsOfUnSeen||isMute?
+         <div className={styles.conversationPopUps}>
+           {isMute?<GoMute/>:null}
+         {numsOfUnSeen?
+         <div className={styles.numOfUnSeen}>
+           {numsOfUnSeen>99?`99+`:numsOfUnSeen}
+         </div>:null}
+        </div>:null}
     </article>
     </>
   )
