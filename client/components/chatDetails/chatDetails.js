@@ -34,11 +34,16 @@ const ChatDetails = ({ onReturn }) => {
 
 
   const { mutate: update, isLoading:loadSubmit } = useMutation(updateConversation, {
-    onSuccess: (data) => {
-      if (data.message !== "Update") return;
-      Socket.emit("new-conversation", data.conversation);
+    onSuccess: ({message,conversation}) => {
+      if (message !== "Update") return;
+
+      let editCon = {...currentChat}
+      if(file) editCon.image = conversation.image
+      editCon.chatName = conversation.chatName
+
+      Socket.emit("new-conversation", editCon);
       setFile(null)
-      dispatch({ type: "CURRENT_CHAT", payload: data.conversation });
+      dispatch({ type: "CHAT_FIELD", payload: conversation });
     },
     onError: (error) => showBoundary(error),
   });
