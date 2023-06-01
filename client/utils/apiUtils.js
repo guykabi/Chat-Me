@@ -1,17 +1,25 @@
 import Axios from '../pages/api/api_instance'
 
 
-export const getConversations = async (userId)=>{
-  const {data:res} = await Axios('conversation/'+userId)
+export const getConversations = async (userId,skip)=>{
+  const {data:res} = await Axios('conversation/'+userId,{
+    headers:{
+      'x-skip':skip
+    }
+  })
   return res
 } 
 
-export const getConversation = async (conId,userId,partialDetails=null)=>{
+export const getConversation = async (conId,userId,partialDetails=null,joining=null)=>{
+
+  let joinDate = joining?.find(j=>j.user === userId)?.createdAt
+
   const {data:res} = await Axios('conversation/single/'+conId,{
     headers:{
-      'userid':userId,
+      'x-userid':userId,
       //Partial data only for messages presentation
-      'partialDetails':partialDetails
+      'x-partialDetails':partialDetails,
+      'x-joining-date':joinDate
     }
   })
   return res
@@ -46,9 +54,9 @@ export const getMessages = async(conversationId, joiningDate, skip=0,limit=30)=>
    
     const {data:res} = await Axios('messages/'+conversationId,{
       headers:{
-        'joining-date':joiningDate,
-        'skip':skip,
-        'limit':limit
+        'x-joining-date':joiningDate,
+        'x-skip':skip,
+        'x-limit':limit
       }
     })
     return res
