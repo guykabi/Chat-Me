@@ -35,18 +35,22 @@ useEffect(()=>{
 
 
    //When a new friend added - add him (if he is connect) to the online list!    
-   const handleNotifyEvent =  ({users,message}) =>{
+   const handleNotifyEvent =  ({users,message,sender}) =>{
     
-    if(message !== 'The Friend approval has been done')return 
+    if(message !== 'approved your friend request')return 
+    
+    let friends = [...currentUser.friends]
+    friends.push(sender)
 
     let allOnLineUsers = users?.
     filter(f=>f.userId !== currentUser._id)
     .map(u=>u.userId)
     
-    let onlineFriends = currentUser?.friends
+    let onlineFriends = friends
     ?.filter(f=> allOnLineUsers?.includes(f._id))
-    
+
     setOnlineUsers(onlineFriends)
+
    } 
 
    Socket.on('incoming-notification',handleNotifyEvent)
