@@ -57,9 +57,12 @@ const Person = ({ user, decreaseNotify }) => {
   const { mutate: approveRequest } = useMutation(approveFriend, {
     onSuccess: (data) => {
       if (data.message === "The Friend approval has been done") {
+
         //Checking the correct status of the fresh approved user
+        data.user.friends = currentUser?.friends
         setPersonStatus(setUserStatus(data.user, user));
-        dispatch({ type: "CURRENT_USER", payload: data.user });
+        
+        dispatch({ type: "USER_FIELD", payload: data.user });
 
         //Send back to navbar to remove approved request from list!
         decreaseNotify();
@@ -78,10 +81,14 @@ const Person = ({ user, decreaseNotify }) => {
 
   const { mutate: unapprove } = useMutation(unapproveFriend, {
     onSuccess: (data) => {
+
       if ((data.message = "Request has been decline!")) {
+          
+        data.user.friends = currentUser?.friends
         setPersonStatus(setUserStatus(data.user, user));
         setToDeclineRequest(false);
-        dispatch({ type: "CURRENT_USER", payload: data.user });
+
+        dispatch({ type: "USER_FIELD", payload: data.user });
         //Send back to navbar to remove rejected request from list!
         decreaseNotify();
 
@@ -99,9 +106,9 @@ const Person = ({ user, decreaseNotify }) => {
 
   const { mutate: remove } = useMutation(removeFriend, {
     onSuccess: (data) => {
-      if ((data.message = "Friend has been removed!")) {
+      if (data.message === "Friend has been removed!") {
         setPersonStatus("Add");
-        dispatch({ type: "CURRENT_USER", payload: data.user });
+        dispatch({ type: "USER_FIELD", payload: data.user });
       }
     },
     onError:error=>showBoundary(error)

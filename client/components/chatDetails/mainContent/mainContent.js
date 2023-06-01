@@ -10,6 +10,7 @@ import Group from '../../group/group';
 import GroupPerson from '../../group-person/groupPerson';
 import { useGetCacheQuery } from "../../../hooks/useGetQuery";
 import { useErrorBoundary } from "react-error-boundary";
+import { handleToast } from "../../../utils/utils";
 import {deleteConversation,addGroupMember,
     removeGroupMember,addManager,removeManager} from "../../../utils/apiUtils";
 
@@ -21,24 +22,22 @@ const MainContent = ({isGroup}) => {
     const {t} = useTranslation('common')
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [allUsers, setAllUsers] = useState([]);
-    const [addMemberErrorText, setAddMemberErrorText] = useState(null);
     const users = useGetCacheQuery("users");
 
 
     const { mutate: addMember } = useMutation(addGroupMember, {
         onSuccess: ({ message, conversation }) => {
           if (message !== "Member added") return;
-          Socket.emit("new-conversation", conversation);
+
+          let editCon = {...currentChat}
+          editCon.participants = conversation.participants
+
+          Socket.emit("new-conversation", editCon);
           setShowAddMemberModal(false)
-          dispatch({ type: "CURRENT_CHAT", payload: conversation });
+          dispatch({ type: "CHAT_FIELD", payload: conversation });
         },
-        onError:  (error) => {
-            setAddMemberErrorText("Unabled to add");
-            let timer = setTimeout(() => {
-              setAddMemberErrorText(null);
-              showBoundary(error);
-            }, 3000);
-            return () => clearTimeout(timer);
+        onError: () => {
+            handleToast('error','Unabled to add')
           },
       });
 
@@ -54,8 +53,12 @@ const MainContent = ({isGroup}) => {
       const { mutate: setManager } = useMutation(addManager, {
         onSuccess: ({ message, conversation }) => {
           if (message !== "Manager added") return;
-          Socket.emit("new-conversation", conversation);
-          dispatch({ type: "CURRENT_CHAT", payload: conversation });
+
+          let editCon = {...currentChat}
+          editCon.manager = conversation.manager
+
+          Socket.emit("new-conversation", editCon);
+          dispatch({ type: "CHAT_FIELD", payload: conversation });
         },
         onError: (error) => showBoundary(error),
       });
@@ -63,8 +66,12 @@ const MainContent = ({isGroup}) => {
       const { mutate: managerRemoval } = useMutation(removeManager, {
         onSuccess: ({ message, conversation }) => {
           if (message !== "Manager removed") return;
-          Socket.emit("new-conversation", conversation);
-          dispatch({ type: "CURRENT_CHAT", payload: conversation });
+
+          let editCon = {...currentChat}
+          editCon.manager = conversation.manager
+
+          Socket.emit("new-conversation", editCon);
+          dispatch({ type: "CHAT_FIELD", payload: conversation });
         },
         onError: (error) => showBoundary(error),
       }); 
@@ -220,7 +227,6 @@ const MainContent = ({isGroup}) => {
           <Modal
           show={showAddMemberModal}
           onClose={handleAddMembersModalClose}
-          isError={addMemberErrorText}
           >
             <Picker
             items={allUsers}

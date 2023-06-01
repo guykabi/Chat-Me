@@ -17,7 +17,7 @@ const Notification = ({ notification, decreaseNotify }) => {
     onSuccess: ({ message, user }) => {
       if (message !== "The Friend approval has been done") return;
 
-      dispatch({ type: "CURRENT_USER", payload: user });
+      dispatch({ type: "USER_FIELD", payload: user });
 
       //Send back to navbar to remove approved request from list!
       decreaseNotify();
@@ -36,7 +36,7 @@ const Notification = ({ notification, decreaseNotify }) => {
   const { mutate: unapprove } = useMutation(unapproveFriend, {
     onSuccess: ({ message, user }) => {
       if (message !== "Request has been decline!") return;
-      dispatch({ type: "CURRENT_USER", payload: user });
+      dispatch({ type: "USER_FIELD", payload: user });
 
       //Send back to navbar to remove declined request from list!
       decreaseNotify();
