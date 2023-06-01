@@ -6,24 +6,26 @@ import {formatISO} from 'date-fns'
 
 
 const excludeFields =
-  "-password -friends -friendsWaitingList -notifications -__v";
+  "-password -friends -friendsWaitingList -notifications -mute -__v";
 
 
 export const getSingleConversation =async (req,resp,next) =>{
     const {conId} = req.params
-    const userId = req.headers.userid
-    const partialDetails = req.headers?.partialdetails
-    
-     try{
+    const userId = req.headers?.["x-userid"]
+    const partialDetails = req.headers?.["x-partialdetails"]
+    const joinDate = req.headers?.["x-joining-date"]
+    let conversation; 
 
-       let conversation = await Conversation.findById(conId)
+     try{
+      
+      if(partialDetails){
+      
+       conversation = await Conversation.findById(conId).lean()
        .populate({ path: "participants",select: excludeFields })
        .populate({ path: "manager", select: `${excludeFields} -image` })
-      
-        let newCon = {...conversation._doc}
-
+        
         //Counts unseen message only from after the date user joined the group
-        let fromDate = newCon?.joining.find(j=>j.user === userId)?.createdAt
+        let fromDate = conversation?.joining.find(j=>j.user === userId)?.createdAt
         
         let count = await Message.count({
           conversation: conversation._id,
@@ -32,31 +34,36 @@ export const getSingleConversation =async (req,resp,next) =>{
           "seen.user": { $ne: userId }
         })
 
-        if(!newCon.chatName) newCon.friend = newCon.participants.find(f=> f._id != userId)
-        newCon.unSeen = count
+        if(!conversation.chatName) conversation.friend = conversation.participants.find(f=> f._id != userId)
+        conversation.unSeen = count
         
-        if(partialDetails !== undefined){
-          delete newCon.media
-          return resp.status(200).json({conversation:newCon})
-        }
-     
-        await conversation
-                .populate({ 
-                 path: "media",
-                 match:{ createdAt: { $gte: fromDate }},
-                 select:'-likes -seen'});
-           
+        let newCon = {...conversation}
+        delete newCon.media
+        return resp.status(200).json({conversation:newCon})
+    
+      }
+
+        conversation = await Conversation.findById(conId)
+              .select(' -manager').lean()
+              .populate({ 
+                path: "media",
+                match:{ createdAt: { $gte: joinDate }},
+                select:'-likes -seen'})  
+
         //Adding joints groups field (to privates chats only!)
-        if(!newCon.chatName){
+        if(!conversation.chatName){
           let jointGroups = await Conversation.find({
               chatName:{$exists:true},
-              participants: { $all: [userId,newCon.friend._id] }
+              participants: { $all: 
+                [userId,conversation.participants.find(p=>p !== userId)._id] }
               })
-              .select('_id chatName image')
-              newCon.jointGroups = jointGroups
+              .select('_id chatName image').lean()
+    
+              conversation.jointGroups = jointGroups
           }
-          
-          resp.status(200).json({conversation:newCon})
+           delete conversation.participants
+
+           resp.status(200).json({conversation:conversation})
 
      }catch(err){
       next(err)
@@ -65,25 +72,29 @@ export const getSingleConversation =async (req,resp,next) =>{
 
 export const getAllConversations = async (req, resp, next) => {
   const { id } = req.params;
-
+  const skip = req.headers?.['x-skip']
+  let fromDate; let count;
+ 
   try {
-    
     const allConversations = await Conversation.find({
       participants: { $in: { _id: id } }
     })
+    .skip(skip)
+    .limit(15)
     .sort({ lastActive: -1 })
-    .select('-manager -media')
+    .select('-manager -media -__v')
+    .lean()
     .populate({ path: 'participants',select: excludeFields})
-     
+  
       let all = await Promise.all(
       allConversations.map(async (con) => {
         
-        let newCon = { ...con._doc };
+       let newCon = { ...con };
 
         //Counts unseen message only from after the date user joined the group
-        let fromDate = newCon?.joining.find(j=>j.user === id)?.createdAt
+        fromDate = newCon?.joining.find(j=>j.user === id)?.createdAt
         
-        let count = await Message.count({
+        count = await Message.count({
          conversation: con._id,
          createdAt:{$gte: formatISO(new Date(fromDate))},
          sender: { $ne: id },
@@ -91,6 +102,7 @@ export const getAllConversations = async (req, resp, next) => {
         
         //Removing participants of group - unnecessary for the beginning
         if(con.chatName) delete newCon.participants
+        delete newCon.joining
         newCon.unSeen = count;
         return newCon;
       })
@@ -136,11 +148,12 @@ export const addNewConversation = async (req, resp, next) => {
         
       }
     
-      conversation = await new Conversation(req.body).save();
-
+      conversation = await new Conversation(req.body).save()
+       
       let addedConversation = await Conversation.findById(
         conversation._doc._id.toString()
       )
+      .lean()
       .populate({ path: "manager", select: excludeFields })
       .populate({ path: "participants", select: excludeFields });
 
@@ -177,11 +190,8 @@ export const updateConversation = async (req, resp, next) => {
       
       editConversation = await Conversation.findByIdAndUpdate(
         id, newBody,{ new: true }
-      )
-        .populate({ path: "manager", select: excludeFields })
-        .populate({ path: "participants", select: excludeFields })
-        .populate({ path: "media", select:'-likes -seen'});
-
+      ).select('-participants -manager -media').lean()
+   
         return resp
         .status(200)
         .json({ message: "Update", conversation: editConversation });
@@ -189,10 +199,7 @@ export const updateConversation = async (req, resp, next) => {
 
      editConversation = await Conversation.findByIdAndUpdate(
       id,body,{ new: true }
-    )
-      .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "participants", select: excludeFields })
-      .populate({ path: "media", select:'-likes -seen'});
+    ).select('-participants -manager -media').lean()
 
       resp
       .status(200)
@@ -214,10 +221,9 @@ export const addManager = async (req, resp, next) => {
       conId,
       { $push: { manager } },
       { new: true }
-    )
-      .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "participants", select: excludeFields });
-
+    ).select('-participants').lean()
+     .populate({ path: "manager", select: excludeFields })
+     
     return resp
       .status(200)
       .json({ message: "Manager added", conversation: updateConversation });
@@ -235,9 +241,8 @@ export const removeManager = async (req, resp, next) => {
       conId,
       { $pull: { manager } },
       { new: true }
-    )
-      .populate({ path: "manager", select: excludeFields })
-      .populate({ path: "participants", select: excludeFields });
+    ).select('-participants').lean()
+     .populate({ path: "manager", select: excludeFields })
 
     return resp
       .status(200)
@@ -261,7 +266,7 @@ export const addMember = async (req, resp, next) => {
 
     let updateConversation = await Conversation.findByIdAndUpdate(
       conId,{$pull: { participants: null}},{new:true})
-      .populate({ path: "manager", select: excludeFields })
+      .select('-manager').lean()
       .populate({ path: "participants", select: excludeFields });
 
     return resp
