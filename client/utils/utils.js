@@ -55,7 +55,7 @@ export const excludeFieldsUserData = (userData) => {
 };
 
 export const setUserStatus = (currentUser, user) => {
-  if (currentUser.friends.find((u) => u._id === user._id)) {
+  if (currentUser?.friends.find((u) => u._id === user._id)) {
     if (currentUser.friendsWaitingList.find((u) => u._id === user._id)) {
       return "Approve";
     }
@@ -80,18 +80,15 @@ export const handleChatFriendField = (conversation, userId) => {
 };
 
 
-export const handleFilterCons = (allConversations, query) => {
+export const handleFilterCons = (allConversations, query,userId) => {
   return allConversations?.filter((con) => {
     return (
       con.chatName?.toLowerCase().includes(query?.trim().toLowerCase()) ||
       (!con.chatName &&
-        (con.participants[0].name
+        con.participants.find(p=>p._id!== userId).name
           .toLowerCase()
-          .includes(query?.trim().toLowerCase()) ||
-          con.participants[1]?.name
-            .toLowerCase()
-            .includes(query?.trim().toLowerCase())))
-    );
+          .includes(query?.trim().toLowerCase())
+      ))
   });
 };  
 
