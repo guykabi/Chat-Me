@@ -52,7 +52,7 @@
     margin: 0 auto;
     text-align: center;
     overflow-y: scroll;
-
+    border-left: 0.8px solid rgba(71, 70, 70, 0.826);
 } 
 
 .ListToPick::-webkit-scrollbar{
