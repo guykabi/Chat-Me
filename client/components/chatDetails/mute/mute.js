@@ -15,9 +15,9 @@ const Mute = () => {
   const {mutate:muteChat} = useMutation(muteConversation,{
      onSuccess:data=>{
         setIsMute(data.mute)
-        dispatch({type:'CURRENT_USER',payload:data.user})
+        dispatch({type:'USER_FIELD',payload:data.user})
      },
-     onError: () => toast.error('Unable to mute',{
+     onError: () => toast.error('Unable to mute/unmute',{
         position:'top-center',
         theme:'colored'
       })
@@ -31,7 +31,6 @@ const Mute = () => {
 
 
 const handleMuteChat = () =>{
-  console.log('Here');
     let body = {mute:currentChat._id} 
     muteChat({userId:currentUser._id,body})
 }
