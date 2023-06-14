@@ -45,7 +45,9 @@ export const ChatContextProvider = ({children})=>{
    }) 
 
 useEffect(()=>{
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL) 
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL,{
+        path:'/socket'
+    }) 
     socket.on('connection')
     dispatch({type:'SOCKET',payload:socket})
     return ()=> socket.close()
