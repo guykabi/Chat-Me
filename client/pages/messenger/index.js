@@ -83,7 +83,15 @@ const Messenger = ({ hasError, user }) => {
     <>
       {!hasError && currentUser ? (
         <section className={styles.messangerWrapper}>
-          <Head><title>Chat-Me</title></Head>
+          <Head>
+            <title>Chat-Me</title>
+            <link
+             rel="icon"
+             href="/favicon.ico"
+             type="image/<generated>"
+             sizes="<generated>"
+            />
+            </Head>
           <header className={styles.navbarWrapper}>
           <Navbar 
           placeholder={t('placeholders.navbarSearch')} 
