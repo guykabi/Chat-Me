@@ -20,10 +20,10 @@ app.use(express.json());
 import './config/database.js'
 
 
-app.use('/users',usersRouter) 
-app.use('/messages',messagesRouter)
-app.use('/conversation',conversationRouter)
-app.use('/auth',authRouter)
+app.use('/api/users',usersRouter) 
+app.use('/api/messages',messagesRouter)
+app.use('/api/conversation',conversationRouter)
+app.use('/api/auth',authRouter)
 
 //Middleware for handling errors globaly
 app.use(errorHandler)

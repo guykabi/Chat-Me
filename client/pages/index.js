@@ -60,6 +60,12 @@ const Introduction = ({ isMobile,isLoggedIn }) => {
     <>
     <Head>
       <title>Chat - Me</title>
+      <link
+           rel="icon"
+           href="/favicon.ico"
+           type="image/<generated>"
+           sizes="<generated>"
+        />
       <meta property="og:title" content="Chat Me title" key="title" />
     </Head>
       {!isLoggedIn&& (

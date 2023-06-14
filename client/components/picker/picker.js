@@ -54,7 +54,7 @@ import {Loader} from '../UI/clipLoader/clipLoader'
      }
 
       
-    const memoItems = useMemo(()=> items,[items,query])
+    const memoItems = useMemo(()=> items,[items])
     let allToPick;
 
     if(type==='cons'){

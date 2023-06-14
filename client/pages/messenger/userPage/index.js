@@ -117,6 +117,12 @@ const UserPage = ({ user, hasError }) => {
         {hasError?
         <title>undefined</title>:
         <title>{t('header', {data})}</title>}
+        <link
+          rel="icon"
+          href="/favicon.ico"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
       </Head>
       <article>
         {isLoading ? (

@@ -13,7 +13,8 @@ const nextConfig = {
   compiler: {
    // Enables the styled-components SWC transform
    styledComponents: true
-  }
+  },
+  output:'standalone'
 }
 
 module.exports = nextConfig

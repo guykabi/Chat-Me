@@ -15,6 +15,7 @@ import FileForm from "./fileForm/fileForm";
 import Input from "../UI/Input/Input";
 import { useErrorBoundary } from "react-error-boundary";
 import { FiCamera } from "react-icons/fi";
+import {IoSendOutline,IoSend} from 'react-icons/io5'
 import Image from "next/image";
 
 const Chat = () => {
@@ -248,15 +249,23 @@ const Chat = () => {
               />
             </div>
 
-            <Button
-              className={"secondaryBtn"}
-              width={4}
-              height={35}
-              text={t('chat.button')}
-              disabled={!newMessage.trim().length}
-              arialable="Send message"
-              onClick={handleNewMessage}
-            />
+            <div 
+            className={
+              !newMessage.trim().length?
+              styles.disbaleSend:
+              styles.sendMessageBtn}
+              arialable="Send message">
+
+            {!newMessage.trim().length?
+            <IoSendOutline
+            size={30}
+            />:
+            <IoSend
+            onClick={handleNewMessage}
+            size={30}/>}
+
+            </div>
+             
           </footer>
         </main>
       </div>

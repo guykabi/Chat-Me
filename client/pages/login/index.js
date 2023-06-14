@@ -14,6 +14,7 @@ import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";
 
 
+
 const Login = () => {
   const {dispatch,currentChat} = useContext(chatContext)
   const {t} = useTranslation('login')
@@ -90,6 +91,12 @@ const Login = () => {
     <section className={styles.mainLoginWrapper}>
       <Head>
         <title>{t('title')}</title>
+        <link
+           rel="icon"
+           href="/favicon.ico"
+           type="image/<generated>"
+           sizes="<generated>"
+        />
       </Head>
       <section className={styles.signInWrapper}>
 
