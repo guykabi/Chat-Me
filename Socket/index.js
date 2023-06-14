@@ -11,8 +11,9 @@ app.use(cors());
 
 const server = http.createServer(app) 
 const io =new Server(server,{
+    path:'/socket',
     cors:{
-        origin:process.env.CLIENT_URL
+        origin:process.env.CLIENT_URL_DEV
     }
 })  
 
