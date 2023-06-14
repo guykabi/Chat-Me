@@ -1,0 +1,45 @@
+services:
+ client: 
+  image: chat-me-client
+  restart: always
+  build: 
+    context: ./client
+    dockerfile: docker-setup/nextjs/Dockerfile.production
+  networks:
+   - chat-me
+  environment:
+    - NODE_ENV=production
+  env_file: ./client/.env
+  ports:
+    - "3000:3000"
+  
+ server:
+  image: chat-me-server
+  restart: always
+  build: 
+    context: ./Server
+    dockerfile: docker-setup/Dockerfile.production
+  networks:
+   - chat-me
+  env_file: ./Server/.env
+  ports:
+   - "8000:8000"
+
+ 
+ socket:
+  image: chat-me-socket
+  restart: always
+  build: 
+    context: ./Socket
+    dockerfile: Dockerfile
+  networks:
+   - chat-me
+  env_file: ./Socket/.env
+  ports:
+   - "8001:8001"
+
+ 
+networks:
+ chat-me:
+  driver: bridge
+  
