@@ -51,7 +51,7 @@ COPY --from=BUILD_IMAGE --chown=nextjs:nodejs /app/.next ./.next
 
 USER nextjs
 
-EXPOSE 80
+EXPOSE 3000
 
 CMD [ "npm", "start" ]
 
@@ -59,28 +59,3 @@ CMD [ "npm", "start" ]
 
 
 
-# # Stage 1: Build the Next.js application
-# FROM node:14.17-alpine as build-stage
-
-# WORKDIR /app
-
-# COPY package*.json ./
-
-# RUN npm install --production
-
-# COPY . .
-
-# RUN npm run build
-
-# # Stage 2: Serve the Next.js application with Nginx
-# FROM nginx:1.21-alpine as production-stage
-
-# # Copy the built Next.js app from the previous stage
-# COPY --from=build-stage /app/.next /usr/share/nginx/html
-
-# # Copy Nginx configuration file
-# COPY /docker-setup/nginx/default.conf /etc/nginx/conf.d
-
-# EXPOSE 80
-
-# CMD ["nginx", "-g", "daemon off;"]

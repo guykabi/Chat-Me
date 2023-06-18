@@ -1,45 +1,63 @@
 services:
  client: 
-  image: chat-me-client
-  restart: always
-  build: 
-    context: ./client
-    dockerfile: docker-setup/nextjs/Dockerfile.production
-  networks:
-   - chat-me
-  environment:
-    - NODE_ENV=production
-  env_file: ./client/.env
-  ports:
-    - "3000:3000"
+   image: chat-me-client
+   restart: always
+   build: 
+     context: ./client
+     dockerfile: docker-setup/nextjs/Dockerfile.production
+   ports:
+   - "3000:3000"
+   networks:
+     - chat-me
+   environment:
+     - NODE_ENV=production
+   env_file: ./client/.env
   
  server:
-  image: chat-me-server
-  restart: always
-  build: 
-    context: ./Server
-    dockerfile: docker-setup/Dockerfile.production
-  networks:
-   - chat-me
-  env_file: ./Server/.env
-  ports:
-   - "8000:8000"
+   image: chat-me-server
+   restart: always
+   build: 
+     context: ./Server
+     dockerfile: docker-setup/Dockerfile.production
+   ports:
+     - "8000:8000"
+   networks:
+     - chat-me
+   env_file: ./Server/.env
 
  
  socket:
-  image: chat-me-socket
-  restart: always
-  build: 
-    context: ./Socket
-    dockerfile: Dockerfile
-  networks:
-   - chat-me
-  env_file: ./Socket/.env
-  ports:
-   - "8001:8001"
+   image: chat-me-socket
+   restart: always
+   build: 
+     context: ./Socket
+     dockerfile: Dockerfile
+   ports:
+     - "8001:8001"
+   networks:
+     - chat-me
+   env_file: ./Socket/.env
+
+ nginx:
+    image: nginx:latest
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+    networks:
+       - chat-me
+    depends_on:
+      - client
+      - server
+      - socket
 
  
 networks:
  chat-me:
-  driver: bridge
+   driver: bridge
   
