@@ -6,7 +6,7 @@ services:
      context: ./client
      dockerfile: docker-setup/nextjs/Dockerfile.production
    ports:
-   - "3000:3000"
+     - "3000:3000"
    networks:
      - chat-me
    environment:
