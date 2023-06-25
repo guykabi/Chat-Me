@@ -1,0 +1,51 @@
+services:
+ client: 
+  build:
+    context: ./client
+    dockerfile: docker-setup/nextjs/Dockerfile
+  image: chat-me-client-dev
+  environment:
+    - WDS_SOCKET_HOST=127.0.0.1 
+    - CHOKIDAR_USEPOLLING=true
+    - WATCHPACK_POLLING=true 
+  ports:
+    - "3000:3000"
+  volumes:
+    - ./client/:/app
+    - /app/node_modules
+  env_file:
+    - ./client/.env 
+  networks:
+    - chat-me
+  
+ 
+ server:
+  build:
+   context: ./Server/
+   dockerfile: docker-setup/Dockerfile
+  image: chat-me-server-dev
+  ports:
+    - "8000:8000"
+  env_file:
+    - ./Server/.env
+  networks:
+    - chat-me
+  volumes:
+    - ./Server/:/app
+    - /app/node_modules
+ 
+ socket:
+  build:
+   context: ./Socket/
+  image: chat-me-socket-dev
+  ports:
+   - "8001:8001"
+  networks:
+   - chat-me
+  env_file:
+   - ./Socket/.env
+
+networks:
+ chat-me:
+  driver: bridge
+  
