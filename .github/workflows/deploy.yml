@@ -37,7 +37,7 @@ jobs:
       - name: Build and push Docker images to ECR
         run: |
           docker-compose build
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com/chatme_ecr
+          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com
           docker-compose push
 
       - name: SSH into EC2 instance and deploy containers
