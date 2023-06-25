@@ -1,0 +1,47 @@
+name: CI/CD with Docker Compose, ECR, and EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: linux-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Install Docker Compose
+        run: |
+          sudo yum update -y
+          sudo amazon-linux-extras install docker -y
+          sudo service docker start
+          sudo usermod -a -G docker ec2-user
+
+      - name: Build and push Docker images to ECR
+        run: |
+          docker-compose.production build
+          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com/chatme_ecr
+          docker-compose.production push
+
+      - name: SSH into EC2 instance and deploy containers
+        uses: appleboy/ssh-action@master
+        with:
+          host: 16.170.238.243
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd Chat-Me
+            docker-compose.production down
+            docker stop nginx
+            docker-compose.production pull
+            docker-compose.production up -d
