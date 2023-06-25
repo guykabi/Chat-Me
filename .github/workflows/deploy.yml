@@ -33,7 +33,6 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            cd Chat-Me
             docker-compose down
             docker stop nginx
             docker-compose pull
