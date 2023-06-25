@@ -13,7 +13,10 @@ const server = http.createServer(app)
 const io =new Server(server,{
     path:'/socket',
     cors:{
-        origin:process.env.CLIENT_URL_DEV
+        origin: [
+            process.env.CLIENT_URL_PROD ,
+            process.env.CLIENT_URL
+          ]
     }
 })  
 
