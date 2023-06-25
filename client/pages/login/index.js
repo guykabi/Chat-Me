@@ -9,13 +9,15 @@ import Button from "../../components/UI/Button/button";
 import styles from "./login.module.css";
 import Input from "../../components/UI/Input/Input";
 import { emailToReset } from "../../utils/authUtils";
+import {checkDevice} from '../../utils/utils'
 import { useMutation } from "react-query";
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import { push } from "next/router";
+import Mobile from "../../components/errors/mobile/mobile";
 
 
 
-const Login = () => {
+const Login = ({isMobile}) => {
   const {dispatch,currentChat} = useContext(chatContext)
   const {t} = useTranslation('login')
   const [userName, setUserName] = useState(null);
@@ -63,7 +65,11 @@ const Login = () => {
   
   const handleResetPasswordSubmit = (e) => {
     e.preventDefault();
-    handleEmail({email:emailForReset,url:process.env.NEXT_PUBLIC_RESER_URL})
+    handleEmail({
+      email:emailForReset,
+      url:process.env.NODE_ENV === 'production' ? 
+         process.env.NEXT_PUBLIC_RESER_URL_PROD : 
+         process.env.NEXT_PUBLIC_RESER_URL })
   };
   
   const openStayConnectModal = (e) =>{
@@ -86,6 +92,12 @@ const Login = () => {
   const closeResetPasswordModal = () => {
     setIsResetPassword(false);
   };
+
+  if(isMobile){
+    return(
+      <Mobile/>
+    )
+  }
 
   return (
     <section className={styles.mainLoginWrapper}>
@@ -165,7 +177,11 @@ const Login = () => {
   );
 };
 
-export async function getServerSideProps({  locale }) {
+export async function getServerSideProps({ req , locale }) {
+
+  let isMobile = checkDevice(req.headers['user-agent'])
+
+  if(isMobile) return {props : {isMobile : 'mobile'}} 
  
   return {
     props: {  

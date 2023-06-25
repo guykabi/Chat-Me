@@ -7,7 +7,7 @@ import styles from "./userPage.module.css";
 import { useMutation } from "react-query";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { updateUserDetails } from "../../../utils/apiUtils";
-import { exctractCredentials, onError } from "../../../utils/utils";
+import { exctractCredentials, checkDevice } from "../../../utils/utils";
 import { useGetUser } from "../../../hooks/useUser";
 import { useErrorBoundary } from "react-error-boundary";
 import Input from "../../../components/UI/Input/Input";
@@ -15,13 +15,14 @@ import noAvatar from "../../../public/images/no-avatar.png";
 import Image from "next/image";
 import { BsFillCameraFill } from "react-icons/bs";
 import ReturnIcon from "../../../components/UI/returnIcon/returnIcon";
+import Mobile from "../../../components/errors/mobile/mobile";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Loader } from "../../../components/UI/clipLoader/clipLoader";
 import Button from "../../../components/UI/Button/button";
 import Modal from "../../../components/Modal/modal";
 
-const UserPage = ({ user, hasError }) => {
+const UserPage = ({ user, hasError, isMobile }) => {
   const { dispatch } = useContext(chatContext);
   const { showBoundary } = useErrorBoundary();
   const {push,locale} = useRouter()
@@ -107,6 +108,12 @@ const UserPage = ({ user, hasError }) => {
     setFile(null);
     setPreview(null);
   };
+
+  if(isMobile){
+    return(
+      <Mobile/>
+    )
+  }
 
 
   return (
@@ -256,6 +263,10 @@ const UserPage = ({ user, hasError }) => {
 };
 
 export async function getServerSideProps({ req, locale }) {
+
+  let isMobile = checkDevice(req.headers['user-agent'])
+
+  if(isMobile) return {props : {isMobile : 'mobile'}}
 
   const user = exctractCredentials(req);
   if (user === "No cookie" || user === "No token") 

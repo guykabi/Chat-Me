@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import Head from 'next/head'
 import {useRouter} from 'next/router'
 import {useTranslation} from 'next-i18next'
+import Mobile from "../../components/errors/mobile/mobile";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Loader } from "../../components/UI/clipLoader/clipLoader";
 import useClickOutside from '../../hooks/useClickOutside'
@@ -13,7 +14,7 @@ import Chat from "../../components/chat/chat";
 import Conversations from "../../components/conversations/conversations";
 import Navbar from "../../components/navbar/navbar";
 import OnlineList from "../../components/onlineList/online";
-import { exctractCredentials} from "../../utils/utils";
+import { exctractCredentials, checkDevice} from "../../utils/utils";
 import {getAllUsers} from '../../utils/apiUtils'
 import { useGetUser } from "../../hooks/useUser";
 import CreateGroup from "../../components/createGroup/createGroup";
@@ -22,7 +23,7 @@ import { useQuery } from "react-query";
 import {useErrorBoundary} from 'react-error-boundary'
 
 
-const Messenger = ({ hasError, user }) => {
+const Messenger = ({ hasError, user, isMobile }) => {
   const {locale} = useRouter()
   const dir = locale === 'he'?'rtl' : 'ltr'
   const {t} = useTranslation('common')
@@ -77,6 +78,12 @@ const Messenger = ({ hasError, user }) => {
     setOpenCreateGroup(false);
     setIsVisible(false);
   }; 
+
+  if(isMobile){
+    return(
+      <Mobile/>
+    )
+  }
 
 
   return (
@@ -184,7 +191,12 @@ const Messenger = ({ hasError, user }) => {
 };
 
 export async function getServerSideProps({ req,locale }) {
-  
+
+  let isMobile = checkDevice(req.headers['user-agent'])
+
+  if(isMobile) return {props : {isMobile : 'mobile'}} 
+ 
+ 
   const user = exctractCredentials(req);
   if (user === "No cookie" || user === "No token")  
        return { props: { hasError: user } }
