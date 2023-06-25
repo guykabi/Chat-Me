@@ -1,4 +1,4 @@
-name: CI/CD with Docker Compose, ECR, and EC2
+name: CI/CD with Docker-Compose, ECR, and EC2
 
 on:
   push:
