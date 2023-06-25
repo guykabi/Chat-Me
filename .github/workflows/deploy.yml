@@ -22,9 +22,9 @@ jobs:
 
       - name: Build and push Docker images to ECR
         run: |
-          docker-compose.production.yml build
+          docker-compose build
           aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com/chatme_ecr
-          docker-compose.production.yml push
+          docker-compose push
 
       - name: SSH into EC2 instance and deploy containers
         uses: appleboy/ssh-action@master
@@ -34,7 +34,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             cd Chat-Me
-            docker-compose.production.yml down
+            docker-compose down
             docker stop nginx
-            docker-compose.production.yml pull
-            docker-compose.production.yml up -d
+            docker-compose pull
+            docker-compose up -d
