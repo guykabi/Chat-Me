@@ -1,6 +1,10 @@
 import {createContext,useEffect,useReducer} from 'react'
 import {io} from 'socket.io-client'
 
+const sockerPath = process.env.NODE_ENV === 'production' ?
+    process.env.NEXT_PUBLIC_SOCKET_URL_PROD:
+    process.env.NEXT_PUBLIC_SOCKET_URL
+
 
 export const chatContext = createContext() 
 
@@ -45,7 +49,7 @@ export const ChatContextProvider = ({children})=>{
    }) 
 
 useEffect(()=>{
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL,{
+    const socket = io(sockerPath,{
         path:'/socket'
     }) 
     socket.on('connection')

@@ -54,12 +54,13 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
 
       if (latestConversation) {
 
-        //For unseen messages counter
-        setIncomingMessage(message)
-
         let tempArr = [...allConversations];
         let index = tempArr.indexOf(latestConversation);
-        latestConversation.incomingMessage = true
+       
+        if(message.conversation._id !== currentChat?._id){
+           latestConversation.incomingMessage = true
+           setIncomingMessage(message)
+         }
         if(index !== 0){
           tempArr.splice(index, 1), tempArr.unshift(latestConversation);
           setAllConversations(tempArr);
@@ -75,7 +76,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
       //When a message from a new private chat is recieved
       if (
         message.conversation.participants.includes(currentUser._id) &&
-        message.sender !== currentUser._id
+        !latestConversation
       ) {
         //Only the user who isn't the sender will get this refetch of conversations
         refetchConversations();

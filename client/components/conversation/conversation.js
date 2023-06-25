@@ -16,7 +16,7 @@ const Conversation = ({con,newMessage}) => {
   const { showBoundary } = useErrorBoundary();
   const [friend,setFriend]=useState(null)
   const {currentUser,currentChat,dispatch} = useContext(chatContext)
-  const [numsOfUnSeen,setNumOfUnseen]=useState()
+  const [numsOfUnSeen,setNumOfUnseen]=useState(0)
   const [isCurrentOne,setIsCurrentOne]=useState(false)
   const [seenTime,setSeenTime]=useState(null)
   const [isMute,setIsMute]=useState(false)
@@ -50,7 +50,7 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-   if(newMessage?.conversation._id !== con._id)return
+   if(newMessage?.conversation?._id !== con._id)return
    setSeenTime(handleSeenTime(formatISO(new Date())))
    
    if(
@@ -67,7 +67,10 @@ useEffect(()=>{
     if(numsOfUnSeen)setNumOfUnseen(0)
     return
   }
-  if(isCurrentOne) setIsCurrentOne(false)
+  if(isCurrentOne){
+  setIsCurrentOne(false)
+  setNumOfUnseen(0)
+  } 
 },[currentChat])
 
 
