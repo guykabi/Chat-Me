@@ -227,7 +227,7 @@ const Navbar = ({ placeholder, dir,personal,logout }) => {
   return (
     <nav className={styles.mainNav}>
       <div className={styles.logo} role="banner">
-        Chat-Me!
+        Chat-Me
       </div>
 
       <div className={styles.searchInput}>
