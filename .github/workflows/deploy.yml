@@ -46,8 +46,8 @@ jobs:
 
       - name: Build and push images
         run: |
-          docker build -t client ../../client
-          docker build -t server ../../Server
+          docker build -t client ../../client/docker-setup/nextjs
+          docker build -t server ../../Server/docker-setup
           docker build -t socket ../../Socket
 
           docker tag client chatme_ecr:client_latest
