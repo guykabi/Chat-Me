@@ -5,7 +5,7 @@ FROM node:16-alpine3.16 AS deps
 
 
 WORKDIR /app
-COPY ../../package*.json ./
+COPY ./client/package*.json ./
 RUN npm install --frozwn-lockfile
 
 # END DEPS IMAGE
