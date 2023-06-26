@@ -1,4 +1,59 @@
-name: CI/CD with Docker-Compose, ECR, and EC2
+# name: CI/CD with Docker-Compose, ECR, and EC2
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: eu-north-1
+
+#       - name: Install Docker Compose
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install docker-compose -y
+
+#       - name: Set frontend environment variables
+#         run: echo "${{ secrets.ENV_CLIENT }}" > client/.env
+
+#       - name: Set backend environment variables
+#         run: echo "${{ secrets.ENV_SERVER }}" > Server/.env
+
+#       - name: Set frontend environment variables
+#         run: echo "${{ secrets.ENV_SOCKET }}" > Socket/.env
+
+#       - name: Build and push Docker images to ECR
+#         run: |
+#           docker-compose build
+#           aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com
+#           docker-compose push
+
+#       - name: SSH into EC2 instance and deploy containers
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: 16.170.238.243
+#           username: ec2-user
+#           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+#           script: |
+#             cd Chat-Me
+#             docker-compose down
+#             docker stop nginx
+#             docker-compose pull
+#             docker-compose up -d
+
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,49 +61,34 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install docker-compose -y
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: guykabi/chat_me_client:${{ github.sha }}, guykabi/chat_me_server:${{ github.sha }},guykabi/chat_me_socket:${{ github.sha }}
 
-      - name: Set frontend environment variables
-        run: echo "${{ secrets.ENV_CLIENT }}" > client/.env
-
-      - name: Set backend environment variables
-        run: echo "${{ secrets.ENV_SERVER }}" > Server/.env
-
-      - name: Set frontend environment variables
-        run: echo "${{ secrets.ENV_SOCKET }}" > Socket/.env
-
-      - name: Build and push Docker images to ECR
-        run: |
-          docker-compose build
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 221971974735.dkr.ecr.eu-north-1.amazonaws.com
-          docker-compose push
-
-      - name: SSH into EC2 instance and deploy containers
+      - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: 16.170.238.243
+          host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: 22
           script: |
-            cd Chat-Me
-            docker-compose down
-            docker stop nginx
-            docker-compose pull
-            docker-compose up -d
+            docker-compose -f docker-compose.yml down
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml up -d
