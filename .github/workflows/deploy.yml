@@ -74,12 +74,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./docker-compose.yml
           push: true
-          tags: guykabi/chat_me_client:${{ github.sha }}, guykabi/chat_me_server:${{ github.sha }},guykabi/chat_me_socket:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/chatme:latest
 
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
