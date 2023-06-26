@@ -4,7 +4,7 @@ services:
    restart: always
    build:
      context: ./client
-     dockerfile: docker-setup/nextjs/Dockerfile.production
+     dockerfile: docker-setup/nextjs/Dockerfile
    container_name: client 
    ports:
      - "3000:3000"
@@ -19,7 +19,7 @@ services:
    restart: always
    build:
      context: ./Server
-     dockerfile: docker-setup/Dockerfile.production
+     dockerfile: docker-setup/Dockerfile
    container_name: server
    ports:
      - "8000:8000"

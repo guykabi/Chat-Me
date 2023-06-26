@@ -2,7 +2,7 @@ services:
  client: 
   build:
     context: ./client
-    dockerfile: docker-setup/nextjs/Dockerfile
+    dockerfile: docker-setup/nextjs/Dockerfile.dev
   image: chat-me-client-dev
   environment:
     - WDS_SOCKET_HOST=127.0.0.1 
@@ -22,7 +22,7 @@ services:
  server:
   build:
    context: ./Server/
-   dockerfile: docker-setup/Dockerfile
+   dockerfile: docker-setup/Dockerfile.dev
   image: chat-me-server-dev
   ports:
     - "8000:8000"
