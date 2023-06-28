@@ -58,7 +58,6 @@ useEffect(()=>{
 },[])
 
 
-   console.log("Chat state:",state)
    return(
     <chatContext.Provider value={{...state,dispatch}}>
        {children}
