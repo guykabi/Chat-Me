@@ -121,7 +121,7 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
                 className="primaryBtn"
                 width={14}
                 height={30}
-                disabled={userName}
+                disabled={userName || isLoading}
               />
               <Button
                 text={t('buttons.home')}
@@ -129,7 +129,7 @@ const SignIn = ({onStayConnect, onResetPassword}) => {
                 width={14}
                 height={30}
                 onClick={() => push("/")}
-                disabled={userName}
+                disabled={userName || isLoading}
               />
             </section>
           </form>
