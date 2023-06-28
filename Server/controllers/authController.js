@@ -16,7 +16,7 @@ export const checkUserCredentials = async (req, resp, next) => {
   const { email, password } = req.body;
 
   try {
-    let data = await User.findOne({ email })
+    let data = await User.findOne({ email }).lean()
 
     if (!data) {
       //Checks if signed in through google
@@ -42,6 +42,9 @@ export const checkUserCredentials = async (req, resp, next) => {
     const { accessToken, refreshToken, invalidPassword } =
       await generateInitialToken(data, password);
     if (invalidPassword) return resp.status(200).json(invalidPassword);
+     
+    let newData = {...data} 
+    delete newData.password
 
     resp
       .cookie(
@@ -52,13 +55,13 @@ export const checkUserCredentials = async (req, resp, next) => {
           httpOnly: true,
         }
       )
-
-      .cookie("userData", JSON.stringify(data), {
+      
+      .cookie("userData", JSON.stringify(newData), {
         maxAge: process.env.COOKIE_EXPIRE_IN,
         httpOnly: true,
       });
 
-    resp.status(200).json({ message: "User got authorized", userData: data });
+    resp.status(200).json({ message: "User got authorized", userData: newData });
   } catch (err) {
     next(err);
   }
