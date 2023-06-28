@@ -1,5 +1,5 @@
 # Chat-Me
-Chat platform for private and groups chatting - [ In build ]  
+Chat platform for private and groups chatting  
 
 ## Description
 Chat-Me is a chat web-app designed for desktop operating, enabling corresponding
