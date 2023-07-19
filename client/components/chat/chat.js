@@ -1,5 +1,5 @@
 import styles from "./chat.module.css";
-import { useEffect, useState, useContext, useRef, useCallback, Suspense } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { handleDateDividing, handleJoiningDate } from "../../utils/utils";
 import { useTranslation } from "next-i18next";
 import { chatContext } from "../../context/chatContext";
@@ -8,7 +8,6 @@ import { getMessages, sendNewMessage, getConversation } from "../../utils/apiUti
 import Messages from "../messages/messages";
 import { Loader } from "../UI/clipLoader/clipLoader";
 import InputEmoji from "react-input-emoji";
-import Button from "../UI/Button/button";
 import EditGroup from "../chatDetails/chatDetails";
 import Modal from "../Modal/modal";
 import FileForm from "./fileForm/fileForm";
