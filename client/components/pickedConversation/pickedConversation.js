@@ -19,13 +19,13 @@ const getUserName = ()=> {
     <article className={styles.pickedConShow}>
     {con?.chatName?
          <Image 
-         src={con?.image.url ? con.image.url : noAvatarGroup}
+         src={con?.image?.url ? con.image.url : noAvatarGroup}
          alt={con.chatName} 
          width={20}
          height={20}
          style={{borderRadius:'50%'}}/>:
          <Image
-         src={con?.image.url ? con.image.url : noAvatar}
+         src={con?.image?.url ? con.image.url : noAvatar}
          alt={getUserName()} 
          width={20}
          height={20}

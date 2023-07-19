@@ -98,7 +98,7 @@ import Picker from "../picker/picker";
     forwardMessage.text = message.text;
     forwardMessage.sender = currentUser._id;
     if (message?.image) {
-      forwardMessage.file = message.image.url;
+      forwardMessage.file = message.image?.url;
     }
      
     forward({ receivers: e, forwardMessage });
