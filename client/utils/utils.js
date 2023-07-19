@@ -79,8 +79,8 @@ export const handleChatFriendField = (conversation, userId) => {
   return newConversation;
 };
 
+export const handleFilterCons = (allConversations,query,userId) => {
 
-export const handleFilterCons = (allConversations, query,userId) => {
   return allConversations?.filter((con) => {
     return (
       con.chatName?.toLowerCase().includes(query?.trim().toLowerCase()) ||
@@ -90,7 +90,9 @@ export const handleFilterCons = (allConversations, query,userId) => {
           .includes(query?.trim().toLowerCase())
       ))
   });
-};  
+ 
+};   
+
 
 
 
