@@ -7,7 +7,9 @@
     "conversationsOptions":{
       "createGroup":"Create group",
       "sortUnseen":"Sort by unseen",
-       "sortLatest":"Sort by latest"
+      "sortLatest":"Sort by latest",
+      "noConversations":"No Conversations",
+      "noConversationsSub":"Search a user to start with"
     },
     "createGroup":{
         "title":"Create a group",
@@ -18,6 +20,7 @@
     "search-user":"Search a user",
     "forward":"Forward to",
     "online":"Online",
+    "non-online":"No connected friends",
     "chatDetails":{
         "buttons":{
             "save":"Save",

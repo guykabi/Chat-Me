@@ -7,7 +7,9 @@
     "conversationsOptions":{
         "createGroup":"צור קבוצה",
         "sortUnseen":"לפי לא נקרא",
-        "sortLatest":"החדש ביותר"
+        "sortLatest":"החדש ביותר",
+        "noConversations":"אין שיחות עדיין",
+        "noConversationsSub":"חפש משתמש להתחלת שיחה"
       },
     "createGroup":{
             "title":"צור קבוצה",
@@ -18,6 +20,7 @@
     "search-user":"חפש משתמש",
     "forward":"העבר ל",
     "online":"מחוברים",
+    "non-online":"אין חברים מחוברים",
     "chatDetails":{
         "buttons":{
             "save":"שמור",
