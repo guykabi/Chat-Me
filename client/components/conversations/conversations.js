@@ -2,12 +2,15 @@ import React, { useEffect, useMemo, useState, useContext, memo } from "react";
 import styles from "./conversations.module.css";
 import Conversation from "../conversation/conversation";
 import { chatContext } from "../../context/chatContext";
+import { useTranslation } from "next-i18next";
 import { getConversations } from "../../utils/apiUtils";
 import { useErrorBoundary } from "react-error-boundary";
 import { useQuery } from "react-query";
 import { handleFilterCons } from "../../utils/utils";
 import Input from "../UI/Input/Input";
 import CardSkeleton from "../UI/cardSkeleton/cardSkeleton";
+import NoResults from "./noResults/noResults";
+import {RiUserSearchLine} from 'react-icons/ri'
 
 
 const Conversations = ({ sortBy, placeholder, dir }) => {
@@ -16,6 +19,7 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
   const [allConversations, setAllConversations] = useState([]);
   const { showBoundary } = useErrorBoundary();
   const [query, setQuery] = useState("");
+  const {t} = useTranslation('common')
   const [isMoreConversations,setIsMoreConversations]=useState(true)
   const [incomingMessage, setIncomingMessage] = useState(null);
 
@@ -203,7 +207,11 @@ const Conversations = ({ sortBy, placeholder, dir }) => {
           <section className={styles.allConversationsWrapper} onScroll={handleScrolling}>
             {isRefetching ? 
             <CardSkeleton amount={5}/> : allConversations.length ?
-                 memoCons : <h3>No conversations!</h3>}
+                 memoCons : 
+                 <NoResults 
+                 text={t('conversationsOptions.noConversations')}
+                 subText={t('conversationsOptions.noConversationsSub')}
+                 icon={<RiUserSearchLine size={40}/>}/>}
           </section>
         )}
       </div>
