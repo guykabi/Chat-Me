@@ -2,12 +2,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import styles from './onlineList.module.css'
 import Online from '../online/online'
 import { chatContext } from '../../context/chatContext'
+import { useTranslation } from "next-i18next";
+import NoResults from '../conversations/noResults/noResults'
+import {FaUserFriends} from 'react-icons/fa'
 
 
 const OnlineList = () => {  
 
   const [onlineUsers,setOnlineUsers]=useState([])
   const {currentUser,Socket} = useContext(chatContext)
+  const {t} = useTranslation('common')
 
 useEffect(()=>{
  //When messanger page reload for the first time
@@ -74,9 +78,10 @@ useEffect(()=>{
 
   return (
     <div className={styles.onlineListWrapper}>
-      {onlineUsers?.map((user)=>(
+      {onlineUsers.length ? onlineUsers?.map((user)=>(
               <Online key={user._id} user={user}/>
-      ))}
+      )):
+      <NoResults text={t('non-online')} icon={<FaUserFriends size={30}/>} />}
         
     </div>
   )
