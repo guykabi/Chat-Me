@@ -1,8 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import {Message} from '../models/messagesModel.js'
 import { User } from "../models/userModel.js";
 const { compare } = bcrypt;
 const { sign } = jwt;
+import {formatISO} from 'date-fns'
+
 
 const excludeFields =
   "-password -friends -friendsWaitingList -notifications -mute -__v";
@@ -37,7 +40,39 @@ export const generateTokens = () => {
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRE }
   );
   return { accessToken, refreshToken };
-};
+}; 
+
+
+export const modifyConversation = async (conversations,id) =>{
+  
+  let count;
+  let fromDate;
+  
+  let allCons = await Promise.all(
+    conversations.map(async (con) => {
+      
+     let newCon = { ...con };
+
+      //Counts unseen message only from after the date user joined the group
+      fromDate = newCon?.joining.find(j=>j.user === id)?.createdAt
+      
+       count = await Message.count({
+       conversation: con._id,
+       createdAt:{$gte: formatISO(new Date(fromDate))},
+       sender: { $ne: id },
+       "seen.user": { $ne: id }});
+      
+      //Removing participants of group - unnecessary for the beginning
+      if(con.chatName) delete newCon.participants
+      delete newCon.joining
+      newCon.unSeen = count;
+      return newCon;
+    }))
+    return allCons
+  
+}
+
+
 
 export const approveFriend = async (id, friendId, next) => {
   try {
