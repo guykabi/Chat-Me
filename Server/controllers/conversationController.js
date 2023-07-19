@@ -1,5 +1,6 @@
 import {Conversation} from '../models/conversationModel.js'
 import {Message} from '../models/messagesModel.js'
+import { modifyConversation } from '../utils/utils.js'
 import {uploadToCloudinary,removeFromCloudinary} from '../services/cloudinary.js'
 import {getPlaiceholder} from 'plaiceholder'
 import {formatISO} from 'date-fns'
@@ -73,7 +74,6 @@ export const getSingleConversation =async (req,resp,next) =>{
 export const getAllConversations = async (req, resp, next) => {
   const { id } = req.params;
   const skip = req.headers?.['x-skip']
-  let fromDate; let count;
  
   try {
     const allConversations = await Conversation.find({
@@ -86,33 +86,15 @@ export const getAllConversations = async (req, resp, next) => {
     .lean()
     .populate({ path: 'participants',select: excludeFields})
   
-      let all = await Promise.all(
-      allConversations.map(async (con) => {
-        
-       let newCon = { ...con };
-
-        //Counts unseen message only from after the date user joined the group
-        fromDate = newCon?.joining.find(j=>j.user === id)?.createdAt
-        
-        count = await Message.count({
-         conversation: con._id,
-         createdAt:{$gte: formatISO(new Date(fromDate))},
-         sender: { $ne: id },
-         "seen.user": { $ne: id }});
-        
-        //Removing participants of group - unnecessary for the beginning
-        if(con.chatName) delete newCon.participants
-        delete newCon.joining
-        newCon.unSeen = count;
-        return newCon;
-      })
-    );
-
+     let all = await modifyConversation(allConversations,id)
+     
     return resp.status(200).json(all);
   } catch (err) {
     next(err);
   }
 };
+
+
 
 export const addNewConversation = async (req, resp, next) => {
   const { participants } = req.body;
