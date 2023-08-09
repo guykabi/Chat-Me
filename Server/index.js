@@ -8,6 +8,7 @@ import authRouter from './routes/authRouter.js'
 import {errorHandler} from './middleware/errorHandler.js'
 import {corsOptions} from './config/corsOptions.js'
 import cookieParser from 'cookie-parser'
+import { userLimiter } from './services/rateLimiter.js';
  
 
 const port = process.env.PORT || 8000  
@@ -20,10 +21,13 @@ app.use(express.json());
 import './config/database.js'
 
 
-app.use('/api/users',usersRouter) 
+app.use('/api/users',userLimiter,usersRouter) 
 app.use('/api/messages',messagesRouter)
 app.use('/api/conversation',conversationRouter)
 app.use('/api/auth',authRouter)
+app.use('*',(req, res)=>{
+    res.status(401).json('Unknown path!')
+});
 
 //Middleware for handling errors globaly
 app.use(errorHandler)
